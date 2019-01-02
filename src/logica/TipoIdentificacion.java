@@ -7,82 +7,44 @@ package logica;
  */
 public class TipoIdentificacion {
 
-	private String abreviacion;
-	private String descripcion;
-	private Integer id;
-	private String nombre;
+    private String abreviacion;
+    private String descripcion;
+    private Integer id;
+    private String nombre;
 
+    public TipoIdentificacion() {
+    }
 
+    public String getAbreviacion() {
+        return abreviacion;
+    }
 
-	public void finalize() throws Throwable {
+    public void setAbreviacion(String abreviacion) {
+        this.abreviacion = abreviacion;
+    }
 
-	}
-	public TipoIdentificacion(){
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-	}
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public TipoIdentificacion(Integer id){
+    public Integer getId() {
+        return id;
+    }
 
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 * @param nombre
-	 */
-	public TipoIdentificacion(Integer id, String nombre){
+    public String getNombre() {
+        return nombre;
+    }
 
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public String getAbreviacion(){
-		return "";
-	}
-
-	public String getDescripcion(){
-		return "";
-	}
-
-	public Integer getId(){
-		return 0;
-	}
-
-	public String getNombre(){
-		return "";
-	}
-
-	/**
-	 * 
-	 * @param abreviacion
-	 */
-	public void setAbreviacion(String abreviacion){
-
-	}
-
-	/**
-	 * 
-	 * @param descripcion
-	 */
-	public void setDescripcion(String descripcion){
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Integer id){
-
-	}
-
-	/**
-	 * 
-	 * @param nombre
-	 */
-	public void setNombre(String nombre){
-
-	}
 }//end TipoIdentificacion

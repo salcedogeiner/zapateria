@@ -8,120 +8,63 @@ import java.util.Set;
  * @created 19-dic.-2018 16:15:34
  */
 public class Usuario {
-	
-	private String clave;
-	private Integer id;
-	private String nombreUsuario;
-	private Rol rol;
-	private Set<Rol> roles;
 
+    private String clave;
+    private Integer id;
+    private String nombreUsuario;
+    private Rol rol;
+    private Set<Rol> roles;
 
+    public Usuario() {
+    }
 
-	public void finalize() throws Throwable {
+    public String getClave() {
+        return clave;
+    }
 
-	}
-	public Usuario(){
+    public void setClave(String clave) {
+        this.clave = clave;
+    }
 
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public Usuario(Integer id){
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	}
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 * @param nombreUsuario
-	 * @param clave
-	 */
-	public Usuario(Integer id, String nombreUsuario, String clave){
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
 
-	}
+    public Rol getRol() {
+        return rol;
+    }
 
-	/**
-	 * 
-	 * @param object
-	 */
-	@Override
-	public boolean equals(Object object){
-		return false;
-	}
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
 
-	public String getClave(){
-		return "";
-	}
+    public Set<Rol> getRoles() {
+        return roles;
+    }
 
-	public Integer getId(){
-		return 0;
-	}
+    public void setRoles(Set<Rol> roles) {
+        this.roles = roles;
+    }
 
-	public String getNombreUsuario(){
-		return "";
-	}
-
-	public Rol getRol(){
-		return null;
-	}
-
-	public Set<Rol> getRoles(){
-		return null;
-	}
-
-	@Override
-	public int hashCode(){
-		return 0;
-	}
-
-	/**
-	 * 
-	 * @param clave
-	 */
-	public void setClave(String clave){
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Integer id){
-
-	}
-
-	/**
-	 * 
-	 * @param nombreUsuario
-	 */
-	public void setNombreUsuario(String nombreUsuario){
-
-	}
-
-	/**
-	 * 
-	 * @param rol
-	 */
-	public void setRol(Rol rol){
-
-	}
-
-	/**
-	 * 
-	 * @param roles
-	 */
-	public void setRoles(Set<Rol> roles){
-
-	}
-
-	/**
-	 * 
-	 * @param usuario
-	 * @param clave
-	 */
-	private boolean validarUsuario(String usuario, String clave){
-		return false;
-	}
-}//end Usuario
+    public boolean validarUsuario() {
+        System.out.println(this.clave + this.nombreUsuario);
+        if ("123".equals(this.clave) && "usuario".equals(this.nombreUsuario)) {
+            
+            return true;
+        }
+        return false;
+    }
+    
+}//end Usuario 

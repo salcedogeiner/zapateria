@@ -7,82 +7,41 @@ package logica;
  */
 public class Concepto {
 
-	private String abreviacion;
-	private String descripcion;	
-	private Integer id;
-	private String nombre;
+    private String abreviacion;
+    private String descripcion;
+    private Integer id;
+    private String nombre;
 
+    public String getAbreviacion() {
+        return abreviacion;
+    }
 
+    public void setAbreviacion(String abreviacion) {
+        this.abreviacion = abreviacion;
+    }
 
-	public void finalize() throws Throwable {
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-	}
-	public Concepto(){
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public Concepto(Integer id){
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 * @param nombre
-	 */
-	public Concepto(Integer id, String nombre){
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	}
-
-	public String getAbreviacion(){
-		return "";
-	}
-
-	public String getDescripcion(){
-		return "";
-	}
-
-	public Integer getId(){
-		return 0;
-	}
-
-	public String getNombre(){
-		return "";
-	}
-
-	/**
-	 * 
-	 * @param abreviacion
-	 */
-	public void setAbreviacion(String abreviacion){
-
-	}
-
-	/**
-	 * 
-	 * @param descripcion
-	 */
-	public void setDescripcion(String descripcion){
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Integer id){
-
-	}
-
-	/**
-	 * 
-	 * @param nombre
-	 */
-	public void setNombre(String nombre){
-
-	}
 }//end Concepto

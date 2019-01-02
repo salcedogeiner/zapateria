@@ -10,73 +10,44 @@ import java.util.Date;
  */
 public class Pago {
 
-	private Concepto concepto;
-	private Date fecha;	
-	private Integer id;
-	private BigInteger valor;
+    private Concepto concepto;
+    private Date fecha;
+    private Integer id;
+    private BigInteger valor;
 
+    public Pago() {
+    }
 
+    public Concepto getConcepto() {
+        return concepto;
+    }
 
-	public void finalize() throws Throwable {
+    public void setConcepto(Concepto concepto) {
+        this.concepto = concepto;
+    }
 
-	}
-	public Pago(){
+    public Date getFecha() {
+        return fecha;
+    }
 
-	}
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public Pago(Integer id){
+    public Integer getId() {
+        return id;
+    }
 
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Concepto getConcepto(){
-		return null;
-	}
+    public BigInteger getValor() {
+        return valor;
+    }
 
-	public Date getFecha(){
-		return null;
-	}
+    public void setValor(BigInteger valor) {
+        this.valor = valor;
+    }
 
-	public Integer getId(){
-		return 0;
-	}
-
-	public BigInteger getValor(){
-		return null;
-	}
-
-	/**
-	 * 
-	 * @param concepto
-	 */
-	public void setConcepto(Concepto concepto){
-
-	}
-
-	/**
-	 * 
-	 * @param fecha
-	 */
-	public void setFecha(Date fecha){
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Integer id){
-
-	}
-
-	/**
-	 * 
-	 * @param valor
-	 */
-	public void setValor(BigInteger valor){
-
-	}
 }//end Pago

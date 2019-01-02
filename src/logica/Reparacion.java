@@ -10,188 +10,120 @@ import java.util.Set;
  */
 public class Reparacion {
 
-	private Calzado calzado;
-	private Cliente cliente;
-	private Double comisionZapatero;	
-	private EstadoReparacion estadoReparacion;
-	private int estimacionReparacion;
-	private Date fechaEntrega;
-	private Date fechaSolicitud;	
-	private Integer id;
-	private Set<Insumo> insumos;
-	private Set<Pago> pagos;
-	private Double valorReparacion;	
-	private Zapatero zapateroEncargado;
+    private Calzado calzado;
+    private Cliente cliente;
+    private Double comisionZapatero;
+    private EstadoReparacion estadoReparacion;
+    private int estimacionReparacion;
+    private Date fechaEntrega;
+    private Date fechaSolicitud;
+    private Integer id;
+    private Set<Insumo> insumos;
+    private Set<Pago> pagos;
+    private Double valorReparacion;
+    private Zapatero zapateroEncargado;
 
+    public int calcularUtilidadReparacion() {
+        return 0;
+    }
 
+    public Reparacion() {
+    }
 
-	public Reparacion(){
+    public Calzado getCalzado() {
+        return calzado;
+    }
 
-	}
+    public void setCalzado(Calzado calzado) {
+        this.calzado = calzado;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public Reparacion(Integer id){
+    public Cliente getCliente() {
+        return cliente;
+    }
 
-	}
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 * @param fechaSolicitud
-	 * @param estimacionReparacion
-	 */
-	public Reparacion(Integer id, Date fechaSolicitud, int estimacionReparacion){
+    public Double getComisionZapatero() {
+        return comisionZapatero;
+    }
 
-	}
+    public void setComisionZapatero(Double comisionZapatero) {
+        this.comisionZapatero = comisionZapatero;
+    }
 
-	public int calcularUtilidadReparacion(){
-		return 0;
-	}
+    public EstadoReparacion getEstadoReparacion() {
+        return estadoReparacion;
+    }
 
-	public Calzado getCalzado(){
-		return null;
-	}
+    public void setEstadoReparacion(EstadoReparacion estadoReparacion) {
+        this.estadoReparacion = estadoReparacion;
+    }
 
-	public Persona getCliente(){
-		return null;
-	}
+    public int getEstimacionReparacion() {
+        return estimacionReparacion;
+    }
 
-	public int getComisionZapatero(){
-		return 0;
-	}
+    public void setEstimacionReparacion(int estimacionReparacion) {
+        this.estimacionReparacion = estimacionReparacion;
+    }
 
-	public EstadoReparacion getEstadoReparacion(){
-		return null;
-	}
+    public Date getFechaEntrega() {
+        return fechaEntrega;
+    }
 
-	public int getEstimacionReparacion(){
-		return 0;
-	}
+    public void setFechaEntrega(Date fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
+    }
 
-	public Date getFechaEntrega(){
-		return null;
-	}
+    public Date getFechaSolicitud() {
+        return fechaSolicitud;
+    }
 
-	public Date getFechaSolicitud(){
-		return null;
-	}
+    public void setFechaSolicitud(Date fechaSolicitud) {
+        this.fechaSolicitud = fechaSolicitud;
+    }
 
-	public Integer getId(){
-		return 0;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public Set<Insumo> getInsumos(){
-		return null;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Set<Pago> getPagos(){
-		return null;
-	}
+    public Set<Insumo> getInsumos() {
+        return insumos;
+    }
 
-	public int getValorReparacion(){
-		return 0;
-	}
+    public void setInsumos(Set<Insumo> insumos) {
+        this.insumos = insumos;
+    }
 
-	public Zapatero getZapateroEncargado(){
-		return null;
-	}
+    public Set<Pago> getPagos() {
+        return pagos;
+    }
 
-	/**
-	 * 
-	 * @param calzado
-	 */
-	public void setCalzado(Calzado calzado){
+    public void setPagos(Set<Pago> pagos) {
+        this.pagos = pagos;
+    }
 
-	}
+    public Double getValorReparacion() {
+        return valorReparacion;
+    }
 
-	/**
-	 * 
-	 * @param persona
-	 */
-	public void setCliente(Cliente persona){
+    public void setValorReparacion(Double valorReparacion) {
+        this.valorReparacion = valorReparacion;
+    }
 
-	}
+    public Zapatero getZapateroEncargado() {
+        return zapateroEncargado;
+    }
 
-	/**
-	 * 
-	 * @param comisionZapatero
-	 */
-	public void setComisionZapatero(Double comisionZapatero){
+    public void setZapateroEncargado(Zapatero zapateroEncargado) {
+        this.zapateroEncargado = zapateroEncargado;
+    }
 
-	}
-
-	/**
-	 * 
-	 * @param estadoReparacion
-	 */
-	public void setEstadoReparacion(EstadoReparacion estadoReparacion){
-
-	}
-
-	/**
-	 * 
-	 * @param estimacionReparacion
-	 */
-	public void setEstimacionReparacion(int estimacionReparacion){
-
-	}
-
-	/**
-	 * 
-	 * @param fechaEntrega
-	 */
-	public void setFechaEntrega(Date fechaEntrega){
-
-	}
-
-	/**
-	 * 
-	 * @param fechaSolicitud
-	 */
-	public void setFechaSolicitud(Date fechaSolicitud){
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Integer id){
-
-	}
-
-	/**
-	 * 
-	 * @param insumos
-	 */
-	public void setInsumos(Set<Insumo> insumos){
-
-	}
-
-	/**
-	 * 
-	 * @param pagos
-	 */
-	public void setPagos(Set<Pago> pagos){
-
-	}
-
-	/**
-	 * 
-	 * @param valorReparacion
-	 */
-	public void setValorReparacion(Double valorReparacion){
-
-	}
-
-	/**
-	 * 
-	 * @param zapateroEncargado
-	 */
-	public void setZapateroEncargado(Zapatero zapateroEncargado){
-
-	}
 }//end Reparacion

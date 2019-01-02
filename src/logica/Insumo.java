@@ -9,109 +9,62 @@ import java.math.BigInteger;
  */
 public class Insumo {
 
-	private String abreviacion;
-	private BigInteger cantidad;
-	private BigInteger cantidadEstimada;
-	private BigInteger cantidadUtilizada;	
-	private Integer id;
-	private String nombre;
+    private String abreviacion;
+    private BigInteger cantidad;
+    private BigInteger cantidadEstimada;
+    private BigInteger cantidadUtilizada;
+    private Integer id;
+    private String nombre;
 
+    public Insumo() {
+    }
 
+    public String getAbreviacion() {
+        return abreviacion;
+    }
 
-	public void finalize() throws Throwable {
+    public void setAbreviacion(String abreviacion) {
+        this.abreviacion = abreviacion;
+    }
 
-	}
-	public Insumo(){
+    public BigInteger getCantidad() {
+        return cantidad;
+    }
 
-	}
+    public void setCantidad(BigInteger cantidad) {
+        this.cantidad = cantidad;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public Insumo(Integer id){
+    public BigInteger getCantidadEstimada() {
+        return cantidadEstimada;
+    }
 
-	}
+    public void setCantidadEstimada(BigInteger cantidadEstimada) {
+        this.cantidadEstimada = cantidadEstimada;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 * @param nombre
-	 * @param cantidad
-	 */
-	public Insumo(Integer id, String nombre, BigInteger cantidad){
+    public BigInteger getCantidadUtilizada() {
+        return cantidadUtilizada;
+    }
 
-	}
+    public void setCantidadUtilizada(BigInteger cantidadUtilizada) {
+        this.cantidadUtilizada = cantidadUtilizada;
+    }
 
-	public String getAbreviacion(){
-		return "";
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public BigInteger getCantidad(){
-		return null;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public BigInteger getCantidadEstimada(){
-		return null;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public BigInteger getCantidadUtilizada(){
-		return null;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public Integer getId(){
-		return 0;
-	}
-
-	public String getNombre(){
-		return "";
-	}
-
-	/**
-	 * 
-	 * @param abreviacion
-	 */
-	public void setAbreviacion(String abreviacion){
-
-	}
-
-	/**
-	 * 
-	 * @param cantidad
-	 */
-	public void setCantidad(BigInteger cantidad){
-
-	}
-
-	/**
-	 * 
-	 * @param cantidadEstimada
-	 */
-	public void setCantidadEstimada(BigInteger cantidadEstimada){
-
-	}
-
-	/**
-	 * 
-	 * @param cantidadUtilizada
-	 */
-	public void setCantidadUtilizada(BigInteger cantidadUtilizada){
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Integer id){
-
-	}
-
-	/**
-	 * 
-	 * @param nombre
-	 */
-	public void setNombre(String nombre){
-
-	}
 }//end Insumo

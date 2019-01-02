@@ -7,137 +7,80 @@ package logica;
  */
 public class Persona {
 
-	private String apellidos;
-	private String direccion;	
-	private Integer id;
-	private String identificacion;
-	private String nombres;
-	private String telefono;	
-	private TipoIdentificacion tipoIdentificacion;
-	private Usuario usuario;
+    private String apellidos;
+    private String direccion;
+    private Integer id;
+    private String identificacion;
+    private String nombres;
+    private String telefono;
+    private TipoIdentificacion tipoIdentificacion;
+    private Usuario usuario;
 
+    public Persona() {
+    }
 
+    public String getApellidos() {
+        return apellidos;
+    }
 
-	public void finalize() throws Throwable {
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
 
-	}
-	public Persona(){
+    public String getDireccion() {
+        return direccion;
+    }
 
-	}
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public Persona(Integer id){
+    public Integer getId() {
+        return id;
+    }
 
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 * @param nombres
-	 * @param apellidos
-	 * @param identificacion
-	 * @param tipoIdentificacion
-	 */
-	public Persona(Integer id, String nombres, String apellidos, String identificacion, TipoIdentificacion tipoIdentificacion){
+    public String getIdentificacion() {
+        return identificacion;
+    }
 
-	}
+    public void setIdentificacion(String identificacion) {
+        this.identificacion = identificacion;
+    }
 
-	public String getApellidos(){
-		return "";
-	}
+    public String getNombres() {
+        return nombres;
+    }
 
-	public String getDireccion(){
-		return "";
-	}
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
+    }
 
-	public Integer getId(){
-		return 0;
-	}
+    public String getTelefono() {
+        return telefono;
+    }
 
-	public String getIdentificacion(){
-		return "";
-	}
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
 
-	public String getNombres(){
-		return "";
-	}
+    public TipoIdentificacion getTipoIdentificacion() {
+        return tipoIdentificacion;
+    }
 
-	public String getTelefono(){
-		return "";
-	}
+    public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion) {
+        this.tipoIdentificacion = tipoIdentificacion;
+    }
 
-	public TipoIdentificacion getTipoIdentificacion(){
-		return null;
-	}
+    public Usuario getUsuario() {
+        return usuario;
+    }
 
-	public Usuario getUsuario(){
-		return null;
-	}
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
-	/**
-	 * 
-	 * @param apellidos
-	 */
-	public void setApellidos(String apellidos){
-
-	}
-
-	/**
-	 * 
-	 * @param direccion
-	 */
-	public void setDireccion(String direccion){
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Integer id){
-
-	}
-
-	/**
-	 * 
-	 * @param identificacion
-	 */
-	public void setIdentificacion(String identificacion){
-
-	}
-
-	/**
-	 * 
-	 * @param nombres
-	 */
-	public void setNombres(String nombres){
-
-	}
-
-	/**
-	 * 
-	 * @param telefono
-	 */
-	public void setTelefono(String telefono){
-
-	}
-
-	/**
-	 * 
-	 * @param tipoIdentificacion
-	 */
-	public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion){
-
-	}
-
-	/**
-	 * 
-	 * @param usuario
-	 */
-	public void setUsuario(Usuario usuario){
-
-	}
 }//end Persona

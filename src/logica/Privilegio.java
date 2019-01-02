@@ -7,63 +7,44 @@ package logica;
  */
 public class Privilegio {
 
-	private String abreviacion;
-	private String descripcion;
-	private Integer id;
-	private String nombre;
+    private String abreviacion;
+    private String descripcion;
+    private Integer id;
+    private String nombre;
 
-	public Privilegio(){
+    public Privilegio() {
+    }
 
-	}
+    public String getAbreviacion() {
+        return abreviacion;
+    }
 
-	public void finalize() throws Throwable {
+    public void setAbreviacion(String abreviacion) {
+        this.abreviacion = abreviacion;
+    }
 
-	}
-	public String getAbreviacion(){
-		return "";
-	}
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-	public String getDescripcion(){
-		return "";
-	}
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-	public String getId(){
-		return "";
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getNombre(){
-		return "";
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	/**
-	 * 
-	 * @param a
-	 */
-	public void setAbreviacion(String a){
+    public String getNombre() {
+        return nombre;
+    }
 
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	/**
-	 * 
-	 * @param a
-	 */
-	public void setDescripcion(String a){
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Integer id){
-
-	}
-
-	/**
-	 * 
-	 * @param a
-	 */
-	public void setNombre(String a){
-
-	}
 }//end Privilegio

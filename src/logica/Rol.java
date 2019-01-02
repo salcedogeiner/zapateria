@@ -9,102 +9,53 @@ import java.util.Set;
  */
 public class Rol {
 
-	private String abreviacion;
-	private String descripcion;	
-	private Integer id;
-	private String nombre;
-	private Set<Privilegio> privillegios;
+    private String abreviacion;
+    private String descripcion;
+    private Integer id;
+    private String nombre;
+    private Set<Privilegio> privillegios;
 
+    public Rol() {
+    }
 
+    public String getAbreviacion() {
+        return abreviacion;
+    }
 
-	public void finalize() throws Throwable {
+    public void setAbreviacion(String abreviacion) {
+        this.abreviacion = abreviacion;
+    }
 
-	}
-	public Rol(){
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-	}
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public Rol(Integer id){
+    public Integer getId() {
+        return id;
+    }
 
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 * @param nombre
-	 */
-	public Rol(Integer id, String nombre){
+    public String getNombre() {
+        return nombre;
+    }
 
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	/**
-	 * 
-	 * @param object
-	 */
-	@Override
-	public boolean equals(Object object){
-		return false;
-	}
+    public Set<Privilegio> getPrivillegios() {
+        return privillegios;
+    }
 
-	public String getAbreviacion(){
-		return "";
-	}
+    public void setPrivillegios(Set<Privilegio> privillegios) {
+        this.privillegios = privillegios;
+    }
 
-	public String getDescripcion(){
-		return "";
-	}
-
-	public Integer getId(){
-		return 0;
-	}
-
-	public String getNombre(){
-		return "";
-	}
-
-	@Override
-	public int hashCode(){
-		return 0;
-	}
-
-	/**
-	 * 
-	 * @param abreviacion
-	 */
-	public void setAbreviacion(String abreviacion){
-
-	}
-
-	/**
-	 * 
-	 * @param descripcion
-	 */
-	public void setDescripcion(String descripcion){
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Integer id){
-
-	}
-
-	/**
-	 * 
-	 * @param nombre
-	 */
-	public void setNombre(String nombre){
-
-	}
-
-	@Override
-	public String toString(){
-		return "";
-	}
 }//end Rol

@@ -7,99 +7,50 @@ package logica;
  */
 public class Calzado {
 
-	private String color;
-	private Integer id;
-	private String marca;
-	private String material;
-	private String talla;
+    private String color;
+    private Integer id;
+    private String marca;
+    private String material;
+    private String talla;
 
+    public String getColor() {
+        return color;
+    }
 
+    public void setColor(String color) {
+        this.color = color;
+    }
 
-	public void finalize() throws Throwable {
+    public Integer getId() {
+        return id;
+    }
 
-	}
-        
-	public Calzado(){
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	}
+    public String getMarca() {
+        return marca;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public Calzado(Integer id){
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
 
-	}
+    public String getMaterial() {
+        return material;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 * @param marca
-	 * @param color
-	 * @param talla
-	 * @param material
-	 */
-	public Calzado(Integer id, String marca, String color, String talla, String material){
+    public void setMaterial(String material) {
+        this.material = material;
+    }
 
-	}
+    public String getTalla() {
+        return talla;
+    }
 
-	public String getColor(){
-		return "";
-	}
+    public void setTalla(String talla) {
+        this.talla = talla;
+    }
 
-	public Integer getId(){
-		return 0;
-	}
-
-	public String getMarca(){
-		return "";
-	}
-
-	public String getMaterial(){
-		return "";
-	}
-
-	public String getTalla(){
-		return "";
-	}
-
-	/**
-	 * 
-	 * @param color
-	 */
-	public void setColor(String color){
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Integer id){
-
-	}
-
-	/**
-	 * 
-	 * @param marca
-	 */
-	public void setMarca(String marca){
-
-	}
-
-	/**
-	 * 
-	 * @param material
-	 */
-	public void setMaterial(String material){
-
-	}
-
-	/**
-	 * 
-	 * @param talla
-	 */
-	public void setTalla(String talla){
-
-	}
 }//end Calzado
