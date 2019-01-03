@@ -5,7 +5,7 @@ package org.zapateria.logica;
  * @version 1.0
  * @created 19-dic.-2018 16:15:34
  */
-public class Persona {
+public abstract class Persona {
 
     private String apellidos;
     private String direccion;
