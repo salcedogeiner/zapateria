@@ -6,7 +6,8 @@
 package org.zapateria.gui;
 
 
-import javax.swing.*;
+import javax.swing.JPasswordField;
+
 import org.zapateria.logica.Usuario;
 /**
  *
