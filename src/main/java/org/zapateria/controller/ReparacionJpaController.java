@@ -10,18 +10,18 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.zapateria.entidad.Calzado;
-import org.zapateria.entidad.EstadoReparacion;
-import org.zapateria.entidad.Persona;
-import org.zapateria.entidad.IsumoReparacion;
+import org.zapateria.logica.Calzado;
+import org.zapateria.logica.EstadoReparacion;
+import org.zapateria.logica.Persona;
+import org.zapateria.logica.IsumoReparacion;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
 import org.zapateria.controller.exceptions.PreexistingEntityException;
-import org.zapateria.entidad.Pago;
-import org.zapateria.entidad.Reparacion;
+import org.zapateria.logica.Pago;
+import org.zapateria.logica.Reparacion;
 
 /**
  *

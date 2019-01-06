@@ -1,86 +1,182 @@
 package org.zapateria.logica;
 
+import java.io.Serializable;
+import javax.persistence.*;
+import java.util.List;
+
+
 /**
- * @author geiner
- * @version 1.0
- * @created 19-dic.-2018 16:15:34
+ * The persistent class for the persona database table.
+ * 
  */
-public abstract class Persona {
+@Entity
+@NamedQuery(name="Persona.findAll", query="SELECT p FROM Persona p")
+public class Persona implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private String apellidos;
-    private String direccion;
-    private Integer id;
-    private String identificacion;
-    private String nombres;
-    private String telefono;
-    private TipoIdentificacion tipoIdentificacion;
-    private Usuario usuario;
+	@Id
+	private Integer id;
 
-    public Persona() {
-    }
+	private String apellidos;
 
-    public String getApellidos() {
-        return apellidos;
-    }
+	private String direccion;
 
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
-    }
+	private String identificacion;
 
-    public String getDireccion() {
-        return direccion;
-    }
+	private String nombres;
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
+	private String telefono;
 
-    public Integer getId() {
-        return id;
-    }
+	private String tipo;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	//bi-directional many-to-one association to TipoIdentificacion
+	@ManyToOne
+	@JoinColumn(name="tipo_identificacion")
+	private TipoIdentificacion tipoIdentificacionBean;
 
-    public String getIdentificacion() {
-        return identificacion;
-    }
+	//bi-directional many-to-one association to Reparacion
+	@OneToMany(mappedBy="persona1")
+	private List<Reparacion> reparacions1;
 
-    public void setIdentificacion(String identificacion) {
-        this.identificacion = identificacion;
-    }
+	//bi-directional many-to-one association to Reparacion
+	@OneToMany(mappedBy="persona2")
+	private List<Reparacion> reparacions2;
 
-    public String getNombres() {
-        return nombres;
-    }
+	//bi-directional many-to-one association to Usuario
+	@OneToMany(mappedBy="personaBean")
+	private List<Usuario> usuarios;
 
-    public void setNombres(String nombres) {
-        this.nombres = nombres;
-    }
+	public Persona() {
+	}
 
-    public String getTelefono() {
-        return telefono;
-    }
+	public Integer getId() {
+		return this.id;
+	}
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public TipoIdentificacion getTipoIdentificacion() {
-        return tipoIdentificacion;
-    }
+	public String getApellidos() {
+		return this.apellidos;
+	}
 
-    public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion) {
-        this.tipoIdentificacion = tipoIdentificacion;
-    }
+	public void setApellidos(String apellidos) {
+		this.apellidos = apellidos;
+	}
 
-    public Usuario getUsuario() {
-        return usuario;
-    }
+	public String getDireccion() {
+		return this.direccion;
+	}
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
 
-}//end Persona
+	public String getIdentificacion() {
+		return this.identificacion;
+	}
+
+	public void setIdentificacion(String identificacion) {
+		this.identificacion = identificacion;
+	}
+
+	public String getNombres() {
+		return this.nombres;
+	}
+
+	public void setNombres(String nombres) {
+		this.nombres = nombres;
+	}
+
+	public String getTelefono() {
+		return this.telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+
+	public String getTipo() {
+		return this.tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public TipoIdentificacion getTipoIdentificacionBean() {
+		return this.tipoIdentificacionBean;
+	}
+
+	public void setTipoIdentificacionBean(TipoIdentificacion tipoIdentificacionBean) {
+		this.tipoIdentificacionBean = tipoIdentificacionBean;
+	}
+
+	public List<Reparacion> getReparacions1() {
+		return this.reparacions1;
+	}
+
+	public void setReparacions1(List<Reparacion> reparacions1) {
+		this.reparacions1 = reparacions1;
+	}
+
+	public Reparacion addReparacions1(Reparacion reparacions1) {
+		getReparacions1().add(reparacions1);
+		reparacions1.setPersona1(this);
+
+		return reparacions1;
+	}
+
+	public Reparacion removeReparacions1(Reparacion reparacions1) {
+		getReparacions1().remove(reparacions1);
+		reparacions1.setPersona1(null);
+
+		return reparacions1;
+	}
+
+	public List<Reparacion> getReparacions2() {
+		return this.reparacions2;
+	}
+
+	public void setReparacions2(List<Reparacion> reparacions2) {
+		this.reparacions2 = reparacions2;
+	}
+
+	public Reparacion addReparacions2(Reparacion reparacions2) {
+		getReparacions2().add(reparacions2);
+		reparacions2.setPersona2(this);
+
+		return reparacions2;
+	}
+
+	public Reparacion removeReparacions2(Reparacion reparacions2) {
+		getReparacions2().remove(reparacions2);
+		reparacions2.setPersona2(null);
+
+		return reparacions2;
+	}
+
+	public List<Usuario> getUsuarios() {
+		return this.usuarios;
+	}
+
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
+
+	/*public Usuario addUsuario(Usuario usuario) {
+		getUsuarios().add(usuario);
+		usuario.setPersonaBean(this);
+
+		return usuario;
+	}*/
+
+	public Usuario removeUsuario(Usuario usuario) {
+		getUsuarios().remove(usuario);
+		usuario.setPersonaBean(null);
+
+		return usuario;
+	}
+
+}

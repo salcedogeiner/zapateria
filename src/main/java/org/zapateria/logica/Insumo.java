@@ -1,70 +1,88 @@
 package org.zapateria.logica;
 
-import java.math.BigInteger;
+import java.io.Serializable;
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.List;
+
 
 /**
- * @author geiner
- * @version 1.0
- * @created 19-dic.-2018 16:15:33
+ * The persistent class for the insumo database table.
+ * 
  */
-public class Insumo {
+@Entity
+@NamedQuery(name="Insumo.findAll", query="SELECT i FROM Insumo i")
+public class Insumo implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private String abreviacion;
-    private BigInteger cantidad;
-    private BigInteger cantidadEstimada;
-    private BigInteger cantidadUtilizada;
-    private Integer id;
-    private String nombre;
+	@Id
+	private Integer id;
 
-    public Insumo() {
-    }
+	private String abreviacion;
 
-    public String getAbreviacion() {
-        return abreviacion;
-    }
+	private BigDecimal cantidad;
 
-    public void setAbreviacion(String abreviacion) {
-        this.abreviacion = abreviacion;
-    }
+	private String nombre;
 
-    public BigInteger getCantidad() {
-        return cantidad;
-    }
+	//bi-directional many-to-one association to IsumoReparacion
+	@OneToMany(mappedBy="insumoBean")
+	private List<IsumoReparacion> isumoReparacions;
 
-    public void setCantidad(BigInteger cantidad) {
-        this.cantidad = cantidad;
-    }
+	public Insumo() {
+	}
 
-    public BigInteger getCantidadEstimada() {
-        return cantidadEstimada;
-    }
+	public Integer getId() {
+		return this.id;
+	}
 
-    public void setCantidadEstimada(BigInteger cantidadEstimada) {
-        this.cantidadEstimada = cantidadEstimada;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public BigInteger getCantidadUtilizada() {
-        return cantidadUtilizada;
-    }
+	public String getAbreviacion() {
+		return this.abreviacion;
+	}
 
-    public void setCantidadUtilizada(BigInteger cantidadUtilizada) {
-        this.cantidadUtilizada = cantidadUtilizada;
-    }
+	public void setAbreviacion(String abreviacion) {
+		this.abreviacion = abreviacion;
+	}
 
-    public Integer getId() {
-        return id;
-    }
+	public BigDecimal getCantidad() {
+		return this.cantidad;
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public void setCantidad(BigDecimal cantidad) {
+		this.cantidad = cantidad;
+	}
 
-    public String getNombre() {
-        return nombre;
-    }
+	public String getNombre() {
+		return this.nombre;
+	}
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 
-}//end Insumo
+	public List<IsumoReparacion> getIsumoReparacions() {
+		return this.isumoReparacions;
+	}
+
+	public void setIsumoReparacions(List<IsumoReparacion> isumoReparacions) {
+		this.isumoReparacions = isumoReparacions;
+	}
+
+	public IsumoReparacion addIsumoReparacion(IsumoReparacion isumoReparacion) {
+		getIsumoReparacions().add(isumoReparacion);
+		isumoReparacion.setInsumoBean(this);
+
+		return isumoReparacion;
+	}
+
+	public IsumoReparacion removeIsumoReparacion(IsumoReparacion isumoReparacion) {
+		getIsumoReparacions().remove(isumoReparacion);
+		isumoReparacion.setInsumoBean(null);
+
+		return isumoReparacion;
+	}
+
+}

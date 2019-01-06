@@ -10,15 +10,14 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.zapateria.entidad.Persona;
-import org.zapateria.entidad.RolUsuario;
+import org.zapateria.logica.RolUsuario;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
 import org.zapateria.controller.exceptions.PreexistingEntityException;
-import org.zapateria.entidad.Usuario;
+import org.zapateria.logica.Usuario;
 
 /**
  *
@@ -43,11 +42,11 @@ public class UsuarioJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Persona personaBean = usuario.getPersonaBean();
+           /* Persona personaBean = usuario.getPersonaBean();
             if (personaBean != null) {
                 personaBean = em.getReference(personaBean.getClass(), personaBean.getId());
                 usuario.setPersonaBean(personaBean);
-            }
+            }*/
             List<RolUsuario> attachedRolUsuarios = new ArrayList<RolUsuario>();
             for (RolUsuario rolUsuariosRolUsuarioToAttach : usuario.getRolUsuarios()) {
                 rolUsuariosRolUsuarioToAttach = em.getReference(rolUsuariosRolUsuarioToAttach.getClass(), rolUsuariosRolUsuarioToAttach.getId());
@@ -55,7 +54,7 @@ public class UsuarioJpaController implements Serializable {
             }
             usuario.setRolUsuarios(attachedRolUsuarios);
             em.persist(usuario);
-            if (personaBean != null) {
+           /* if (personaBean != null) {
                 personaBean.getUsuarios().add(usuario);
                 personaBean = em.merge(personaBean);
             }
@@ -67,7 +66,7 @@ public class UsuarioJpaController implements Serializable {
                     oldUsuarioBeanOfRolUsuariosRolUsuario.getRolUsuarios().remove(rolUsuariosRolUsuario);
                     oldUsuarioBeanOfRolUsuariosRolUsuario = em.merge(oldUsuarioBeanOfRolUsuariosRolUsuario);
                 }
-            }
+            }*/
             em.getTransaction().commit();
         } catch (Exception ex) {
             if (findUsuario(usuario.getId()) != null) {
@@ -81,7 +80,7 @@ public class UsuarioJpaController implements Serializable {
         }
     }
 
-    public void edit(Usuario usuario) throws NonexistentEntityException, Exception {
+ /*   public void edit(Usuario usuario) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -117,16 +116,16 @@ public class UsuarioJpaController implements Serializable {
                     rolUsuariosOldRolUsuario = em.merge(rolUsuariosOldRolUsuario);
                 }
             }
-            for (RolUsuario rolUsuariosNewRolUsuario : rolUsuariosNew) {
-                if (!rolUsuariosOld.contains(rolUsuariosNewRolUsuario)) {
-                    Usuario oldUsuarioBeanOfRolUsuariosNewRolUsuario = rolUsuariosNewRolUsuario.getUsuarioBean();
-                    rolUsuariosNewRolUsuario.setUsuarioBean(usuario);
-                    rolUsuariosNewRolUsuario = em.merge(rolUsuariosNewRolUsuario);
-                    if (oldUsuarioBeanOfRolUsuariosNewRolUsuario != null && !oldUsuarioBeanOfRolUsuariosNewRolUsuario.equals(usuario)) {
-                        oldUsuarioBeanOfRolUsuariosNewRolUsuario.getRolUsuarios().remove(rolUsuariosNewRolUsuario);
-                        oldUsuarioBeanOfRolUsuariosNewRolUsuario = em.merge(oldUsuarioBeanOfRolUsuariosNewRolUsuario);
-                    }
-                }
+           // for (RolUsuario rolUsuariosNewRolUsuario : rolUsuariosNew) {
+                //if (!rolUsuariosOld.contains(rolUsuariosNewRolUsuario)) {
+                   // Usuario oldUsuarioBeanOfRolUsuariosNewRolUsuario = rolUsuariosNewRolUsuario.getUsuarioBean();
+                   // rolUsuariosNewRolUsuario.setUsuarioBean(usuario);
+                   // rolUsuariosNewRolUsuario = em.merge(rolUsuariosNewRolUsuario);
+                   // if (oldUsuarioBeanOfRolUsuariosNewRolUsuario != null && !oldUsuarioBeanOfRolUsuariosNewRolUsuario.equals(usuario)) {
+                   //     oldUsuarioBeanOfRolUsuariosNewRolUsuario.getRolUsuarios().remove(rolUsuariosNewRolUsuario);
+                   //     oldUsuarioBeanOfRolUsuariosNewRolUsuario = em.merge(oldUsuarioBeanOfRolUsuariosNewRolUsuario);
+                //    }
+            //    }
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -143,7 +142,7 @@ public class UsuarioJpaController implements Serializable {
                 em.close();
             }
         }
-    }
+    }*/
 
     public void destroy(Integer id) throws NonexistentEntityException {
         EntityManager em = null;
@@ -157,14 +156,14 @@ public class UsuarioJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The usuario with id " + id + " no longer exists.", enfe);
             }
-            Persona personaBean = usuario.getPersonaBean();
-            if (personaBean != null) {
-                personaBean.getUsuarios().remove(usuario);
-                personaBean = em.merge(personaBean);
-            }
+           // Persona personaBean = usuario.getPersonaBean();
+           // if (personaBean != null) {
+           //     personaBean.getUsuarios().remove(usuario);
+            //    personaBean = em.merge(personaBean);
+           // }
             List<RolUsuario> rolUsuarios = usuario.getRolUsuarios();
             for (RolUsuario rolUsuariosRolUsuario : rolUsuarios) {
-                rolUsuariosRolUsuario.setUsuarioBean(null);
+               // rolUsuariosRolUsuario.setUsuarioBean(null);
                 rolUsuariosRolUsuario = em.merge(rolUsuariosRolUsuario);
             }
             em.remove(usuario);
@@ -217,6 +216,28 @@ public class UsuarioJpaController implements Serializable {
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
+        } finally {
+            em.close();
+        }
+    }
+    
+    /**
+     * Consulta el usuario por medio de nombre_usuario y clave
+     * @param usuario
+     * @return usuario
+     */
+    public Usuario consultarUsuario(Usuario usuario) {
+        EntityManager em = getEntityManager();
+        try {
+            Query query;
+            query = em.createQuery
+                ("SELECT usuario FROM Usuario usuario WHERE usuario.nombreUsuario = :nombre and usuario.clave = :clave");
+            query.setParameter("nombre", usuario.getNombreUsuario());
+            query.setParameter("clave", usuario.getClave());
+            
+            usuario = (Usuario) query.getSingleResult();
+            
+            return usuario;
         } finally {
             em.close();
         }

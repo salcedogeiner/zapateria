@@ -1,50 +1,88 @@
 package org.zapateria.logica;
 
+import java.io.Serializable;
+import javax.persistence.*;
+import java.util.List;
+
+
 /**
- * @author geiner
- * @version 1.0
- * @created 19-dic.-2018 16:15:33
+ * The persistent class for the estado_reparacion database table.
+ * 
  */
-public class EstadoReparacion {
+@Entity
+@Table(name="estado_reparacion")
+@NamedQuery(name="EstadoReparacion.findAll", query="SELECT e FROM EstadoReparacion e")
+public class EstadoReparacion implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private String abreviacion;
-    private String descripcion;
-    private Integer id;
-    private String nombre;
+	@Id
+	private Integer id;
 
-    public EstadoReparacion() {
-    }
+	private String abreviacion;
 
-    public String getAbreviacion() {
-        return abreviacion;
-    }
+	private String descripcion;
 
-    public void setAbreviacion(String abreviacion) {
-        this.abreviacion = abreviacion;
-    }
+	private String nombre;
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+	//bi-directional many-to-one association to Reparacion
+	@OneToMany(mappedBy="estadoReparacionBean")
+	private List<Reparacion> reparacions;
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+	public EstadoReparacion() {
+	}
 
-    public Integer getId() {
-        return id;
-    }
+	public Integer getId() {
+		return this.id;
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public String getNombre() {
-        return nombre;
-    }
+	public String getAbreviacion() {
+		return this.abreviacion;
+	}
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+	public void setAbreviacion(String abreviacion) {
+		this.abreviacion = abreviacion;
+	}
 
-}//end EstadoReparacion
+	public String getDescripcion() {
+		return this.descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public String getNombre() {
+		return this.nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public List<Reparacion> getReparacions() {
+		return this.reparacions;
+	}
+
+	public void setReparacions(List<Reparacion> reparacions) {
+		this.reparacions = reparacions;
+	}
+
+	public Reparacion addReparacion(Reparacion reparacion) {
+		getReparacions().add(reparacion);
+		reparacion.setEstadoReparacionBean(this);
+
+		return reparacion;
+	}
+
+	public Reparacion removeReparacion(Reparacion reparacion) {
+		getReparacions().remove(reparacion);
+		reparacion.setEstadoReparacionBean(null);
+
+		return reparacion;
+	}
+
+}
