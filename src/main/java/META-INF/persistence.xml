@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="zapateria" transaction-type="RESOURCE_LOCAL">
+    <class>org.zapateria.logica.Calzado</class>
+    <class>org.zapateria.logica.Concepto</class>
+    <class>org.zapateria.logica.EstadoReparacion</class>
+    <class>org.zapateria.logica.Insumo</class>
+    <class>org.zapateria.logica.IsumoReparacion</class>
+    <class>org.zapateria.logica.Persona</class>
+    <class>org.zapateria.logica.Privilegio</class>
+    <class>org.zapateria.logica.Reparacion</class>
+    <class>org.zapateria.logica.Rol</class>
+    <class>org.zapateria.logica.RolPrivilegio</class>
+    <class>org.zapateria.logica.RolUsuario</class>
+    <class>org.zapateria.logica.TipoIdentificacion</class>
+    <class>org.zapateria.logica.Usuario</class>
+    <class>org.zapateria.logica.Pago_old</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/zapateria"/>
+      <property name="javax.persistence.jdbc.user" value="postgres"/>
+      <property name="javax.persistence.jdbc.password" value="postgres"/>
+      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+    </properties>
+  </persistence-unit>
+</persistence>
