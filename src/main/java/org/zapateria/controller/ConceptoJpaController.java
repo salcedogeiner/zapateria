@@ -10,14 +10,14 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.zapateria.entidad.Pago;
+import org.zapateria.logica.Pago;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
 import org.zapateria.controller.exceptions.PreexistingEntityException;
-import org.zapateria.entidad.Concepto;
+import org.zapateria.logica.Concepto;
 
 /**
  *

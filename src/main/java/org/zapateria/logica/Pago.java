@@ -1,53 +1,79 @@
 package org.zapateria.logica;
 
-import java.math.BigInteger;
+import java.io.Serializable;
+import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
+
 /**
- * @author geiner
- * @version 1.0
- * @created 19-dic.-2018 16:15:33
+ * The persistent class for the pago database table.
+ * 
  */
-public class Pago {
+@Entity
+@NamedQuery(name="Pago.findAll", query="SELECT p FROM Pago p")
+public class Pago implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private Concepto concepto;
-    private Date fecha;
-    private Integer id;
-    private BigInteger valor;
+	@Id
+	private Integer id;
 
-    public Pago() {
-    }
+	@Temporal(TemporalType.DATE)
+	private Date fecha;
 
-    public Concepto getConcepto() {
-        return concepto;
-    }
+	private BigDecimal valor;
 
-    public void setConcepto(Concepto concepto) {
-        this.concepto = concepto;
-    }
+	//bi-directional many-to-one association to Concepto
+	@ManyToOne
+	@JoinColumn(name="concepto")
+	private Concepto conceptoBean;
 
-    public Date getFecha() {
-        return fecha;
-    }
+	//bi-directional many-to-one association to Reparacion
+	@ManyToOne
+	@JoinColumn(name="reparacion")
+	private Reparacion reparacionBean;
 
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
-    }
+	public Pago() {
+	}
 
-    public Integer getId() {
-        return id;
-    }
+	public Integer getId() {
+		return this.id;
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public BigInteger getValor() {
-        return valor;
-    }
+	public Date getFecha() {
+		return this.fecha;
+	}
 
-    public void setValor(BigInteger valor) {
-        this.valor = valor;
-    }
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
 
-}//end Pago
+	public BigDecimal getValor() {
+		return this.valor;
+	}
+
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
+	}
+
+	public Concepto getConceptoBean() {
+		return this.conceptoBean;
+	}
+
+	public void setConceptoBean(Concepto conceptoBean) {
+		this.conceptoBean = conceptoBean;
+	}
+
+	public Reparacion getReparacionBean() {
+		return this.reparacionBean;
+	}
+
+	public void setReparacionBean(Reparacion reparacionBean) {
+		this.reparacionBean = reparacionBean;
+	}
+
+}

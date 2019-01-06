@@ -7,9 +7,11 @@ import java.util.Set;
  * @version 1.0
  * @created 19-dic.-2018 16:15:33
  */
-public class Cliente extends Persona {
+public class Cliente extends Persona
+{
 
-	private Set<Reparacion> reparaciones;
+	private Set<Reparacion
+                > reparaciones;
 
 	public Cliente(){
 
@@ -22,7 +24,8 @@ public class Cliente extends Persona {
 	 * 
 	 * @param reparacion
 	 */
-	public void agregarReparacion(Reparacion reparacion){
+	public void agregarReparacion(Reparacion
+                reparacion){
 
 	}
 
@@ -30,7 +33,9 @@ public class Cliente extends Persona {
 	 * 
 	 * @param estado
 	 */
-	public Set<Reparacion> buscarReparacionesPorEstado(EstadoReparacion estado){
+	public Set<Reparacion
+        > buscarReparacionesPorEstado(EstadoReparacion
+                estado){
 		return null;
 	}
 
@@ -38,11 +43,13 @@ public class Cliente extends Persona {
 	 * 
 	 * @param reparacion
 	 */
-	public void eliminarReparacion(Reparacion reparacion){
+	public void eliminarReparacion(Reparacion
+                reparacion){
 
 	}
 
-	public Set<Reparacion> listarReparaciones(){
+	public Set<Reparacion
+        > listarReparaciones(){
 		return null;
 	}
 }//end Cliente

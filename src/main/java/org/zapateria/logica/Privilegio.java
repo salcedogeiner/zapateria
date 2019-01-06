@@ -1,50 +1,87 @@
 package org.zapateria.logica;
 
+import java.io.Serializable;
+import javax.persistence.*;
+import java.util.List;
+
+
 /**
- * @author g.salcedo
- * @version 1.0
- * @created 19-dic.-2018 16:02:28
+ * The persistent class for the privilegio database table.
+ * 
  */
-public class Privilegio {
+@Entity
+@NamedQuery(name="Privilegio.findAll", query="SELECT p FROM Privilegio p")
+public class Privilegio implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private String abreviacion;
-    private String descripcion;
-    private Integer id;
-    private String nombre;
+	@Id
+	private Integer id;
 
-    public Privilegio() {
-    }
+	private String abreviacion;
 
-    public String getAbreviacion() {
-        return abreviacion;
-    }
+	private String descripcion;
 
-    public void setAbreviacion(String abreviacion) {
-        this.abreviacion = abreviacion;
-    }
+	private String nombre;
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+	//bi-directional many-to-one association to RolPrivilegio
+	@OneToMany(mappedBy="privilegioBean")
+	private List<RolPrivilegio> rolPrivilegios;
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+	public Privilegio() {
+	}
 
-    public Integer getId() {
-        return id;
-    }
+	public Integer getId() {
+		return this.id;
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public String getNombre() {
-        return nombre;
-    }
+	public String getAbreviacion() {
+		return this.abreviacion;
+	}
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+	public void setAbreviacion(String abreviacion) {
+		this.abreviacion = abreviacion;
+	}
 
-}//end Privilegio
+	public String getDescripcion() {
+		return this.descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public String getNombre() {
+		return this.nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public List<RolPrivilegio> getRolPrivilegios() {
+		return this.rolPrivilegios;
+	}
+
+	public void setRolPrivilegios(List<RolPrivilegio> rolPrivilegios) {
+		this.rolPrivilegios = rolPrivilegios;
+	}
+
+	public RolPrivilegio addRolPrivilegio(RolPrivilegio rolPrivilegio) {
+		getRolPrivilegios().add(rolPrivilegio);
+		rolPrivilegio.setPrivilegioBean(this);
+
+		return rolPrivilegio;
+	}
+
+	public RolPrivilegio removeRolPrivilegio(RolPrivilegio rolPrivilegio) {
+		getRolPrivilegios().remove(rolPrivilegio);
+		rolPrivilegio.setPrivilegioBean(null);
+
+		return rolPrivilegio;
+	}
+
+}

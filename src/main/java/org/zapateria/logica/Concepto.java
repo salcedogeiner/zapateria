@@ -1,47 +1,87 @@
 package org.zapateria.logica;
 
+import java.io.Serializable;
+import javax.persistence.*;
+import java.util.List;
+
+
 /**
- * @author geiner
- * @version 1.0
- * @created 19-dic.-2018 16:15:33
+ * The persistent class for the concepto database table.
+ * 
  */
-public class Concepto {
+@Entity
+@NamedQuery(name="Concepto.findAll", query="SELECT c FROM Concepto c")
+public class Concepto implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private String abreviacion;
-    private String descripcion;
-    private Integer id;
-    private String nombre;
+	@Id
+	private Integer id;
 
-    public String getAbreviacion() {
-        return abreviacion;
-    }
+	private String abreviacion;
 
-    public void setAbreviacion(String abreviacion) {
-        this.abreviacion = abreviacion;
-    }
+	private String descripcion;
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+	private String nombre;
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+	//bi-directional many-to-one association to Pago
+	@OneToMany(mappedBy="conceptoBean")
+	private List<Pago> pagos;
 
-    public Integer getId() {
-        return id;
-    }
+	public Concepto() {
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public Integer getId() {
+		return this.id;
+	}
 
-    public String getNombre() {
-        return nombre;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+	public String getAbreviacion() {
+		return this.abreviacion;
+	}
 
-}//end Concepto
+	public void setAbreviacion(String abreviacion) {
+		this.abreviacion = abreviacion;
+	}
+
+	public String getDescripcion() {
+		return this.descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public String getNombre() {
+		return this.nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public List<Pago> getPagos() {
+		return this.pagos;
+	}
+
+	public void setPagos(List<Pago> pagos) {
+		this.pagos = pagos;
+	}
+
+	public Pago addPago(Pago pago) {
+		getPagos().add(pago);
+		pago.setConceptoBean(this);
+
+		return pago;
+	}
+
+	public Pago removePago(Pago pago) {
+		getPagos().remove(pago);
+		pago.setConceptoBean(null);
+
+		return pago;
+	}
+
+}

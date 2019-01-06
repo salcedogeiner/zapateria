@@ -15,9 +15,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
 import org.zapateria.controller.exceptions.PreexistingEntityException;
-import org.zapateria.entidad.Rol;
-import org.zapateria.entidad.RolUsuario;
-import org.zapateria.entidad.Usuario;
+import org.zapateria.logica.Rol;
+import org.zapateria.logica.RolUsuario;
+import org.zapateria.logica.Usuario;
 
 /**
  *

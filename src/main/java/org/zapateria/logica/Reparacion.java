@@ -1,129 +1,206 @@
 package org.zapateria.logica;
 
+
+import java.io.Serializable;
+import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
+
 
 /**
- * @author geiner
- * @version 1.0
- * @created 19-dic.-2018 16:15:34
+ * The persistent class for the reparacion database table.
+ * 
  */
-public class Reparacion {
+@Entity
+@NamedQuery(name="Reparacion.findAll", query="SELECT r FROM Reparacion r")
+public class Reparacion implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private Calzado calzado;
-    private Cliente cliente;
-    private Double comisionZapatero;
-    private EstadoReparacion estadoReparacion;
-    private int estimacionReparacion;
-    private Date fechaEntrega;
-    private Date fechaSolicitud;
-    private Integer id;
-    private Set<Insumo> insumos;
-    private Set<Pago> pagos;
-    private Double valorReparacion;
-    private Zapatero zapateroEncargado;
+	@Id
+	private Integer id;
 
-    public int calcularUtilidadReparacion() {
-        return 0;
-    }
+	@Column(name="caracteristica_calzado")
+	private String caracteristicaCalzado;
 
-    public Reparacion() {
-    }
+	@Column(name="comision_zapatero")
+	private BigDecimal comisionZapatero;
 
-    public Calzado getCalzado() {
-        return calzado;
-    }
+	@Column(name="estimacion_reparacion")
+	private Integer estimacionReparacion;
 
-    public void setCalzado(Calzado calzado) {
-        this.calzado = calzado;
-    }
+	@Temporal(TemporalType.DATE)
+	@Column(name="fecha_entrega")
+	private Date fechaEntrega;
 
-    public Cliente getCliente() {
-        return cliente;
-    }
+	@Temporal(TemporalType.DATE)
+	@Column(name="fecha_solicitud")
+	private Date fechaSolicitud;
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
+	@Column(name="valor_reparacion")
+	private BigDecimal valorReparacion;
 
-    public Double getComisionZapatero() {
-        return comisionZapatero;
-    }
+	//bi-directional many-to-one association to IsumoReparacion
+	@OneToMany(mappedBy="reparacionBean")
+	private List<IsumoReparacion> isumoReparacions;
 
-    public void setComisionZapatero(Double comisionZapatero) {
-        this.comisionZapatero = comisionZapatero;
-    }
+	//bi-directional many-to-one association to Pago
+	@OneToMany(mappedBy="reparacionBean")
+	private List<Pago> pagos;
 
-    public EstadoReparacion getEstadoReparacion() {
-        return estadoReparacion;
-    }
+	//bi-directional many-to-one association to Calzado
+	@ManyToOne
+	@JoinColumn(name="calzado")
+	private Calzado calzadoBean;
 
-    public void setEstadoReparacion(EstadoReparacion estadoReparacion) {
-        this.estadoReparacion = estadoReparacion;
-    }
+	//bi-directional many-to-one association to EstadoReparacion
+	@ManyToOne
+	@JoinColumn(name="estado_reparacion")
+	private EstadoReparacion estadoReparacionBean;
 
-    public int getEstimacionReparacion() {
-        return estimacionReparacion;
-    }
+	//bi-directional many-to-one association to Persona
+	@ManyToOne
+	@JoinColumn(name="cliente")
+	private Persona persona1;
 
-    public void setEstimacionReparacion(int estimacionReparacion) {
-        this.estimacionReparacion = estimacionReparacion;
-    }
+	//bi-directional many-to-one association to Persona
+	@ManyToOne
+	@JoinColumn(name="zapatero_encargado")
+	private Persona persona2;
 
-    public Date getFechaEntrega() {
-        return fechaEntrega;
-    }
+	public Reparacion() {
+	}
 
-    public void setFechaEntrega(Date fechaEntrega) {
-        this.fechaEntrega = fechaEntrega;
-    }
+	public Integer getId() {
+		return this.id;
+	}
 
-    public Date getFechaSolicitud() {
-        return fechaSolicitud;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setFechaSolicitud(Date fechaSolicitud) {
-        this.fechaSolicitud = fechaSolicitud;
-    }
+	public String getCaracteristicaCalzado() {
+		return this.caracteristicaCalzado;
+	}
 
-    public Integer getId() {
-        return id;
-    }
+	public void setCaracteristicaCalzado(String caracteristicaCalzado) {
+		this.caracteristicaCalzado = caracteristicaCalzado;
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public BigDecimal getComisionZapatero() {
+		return this.comisionZapatero;
+	}
 
-    public Set<Insumo> getInsumos() {
-        return insumos;
-    }
+	public void setComisionZapatero(BigDecimal comisionZapatero) {
+		this.comisionZapatero = comisionZapatero;
+	}
 
-    public void setInsumos(Set<Insumo> insumos) {
-        this.insumos = insumos;
-    }
+	public Integer getEstimacionReparacion() {
+		return this.estimacionReparacion;
+	}
 
-    public Set<Pago> getPagos() {
-        return pagos;
-    }
+	public void setEstimacionReparacion(Integer estimacionReparacion) {
+		this.estimacionReparacion = estimacionReparacion;
+	}
 
-    public void setPagos(Set<Pago> pagos) {
-        this.pagos = pagos;
-    }
+	public Date getFechaEntrega() {
+		return this.fechaEntrega;
+	}
 
-    public Double getValorReparacion() {
-        return valorReparacion;
-    }
+	public void setFechaEntrega(Date fechaEntrega) {
+		this.fechaEntrega = fechaEntrega;
+	}
 
-    public void setValorReparacion(Double valorReparacion) {
-        this.valorReparacion = valorReparacion;
-    }
+	public Date getFechaSolicitud() {
+		return this.fechaSolicitud;
+	}
 
-    public Zapatero getZapateroEncargado() {
-        return zapateroEncargado;
-    }
+	public void setFechaSolicitud(Date fechaSolicitud) {
+		this.fechaSolicitud = fechaSolicitud;
+	}
 
-    public void setZapateroEncargado(Zapatero zapateroEncargado) {
-        this.zapateroEncargado = zapateroEncargado;
-    }
+	public BigDecimal getValorReparacion() {
+		return this.valorReparacion;
+	}
 
-}//end Reparacion
+	public void setValorReparacion(BigDecimal valorReparacion) {
+		this.valorReparacion = valorReparacion;
+	}
+
+	public List<IsumoReparacion> getIsumoReparacions() {
+		return this.isumoReparacions;
+	}
+
+	public void setIsumoReparacions(List<IsumoReparacion> isumoReparacions) {
+		this.isumoReparacions = isumoReparacions;
+	}
+
+	public IsumoReparacion addIsumoReparacion(IsumoReparacion isumoReparacion) {
+		getIsumoReparacions().add(isumoReparacion);
+		isumoReparacion.setReparacionBean(this);
+
+		return isumoReparacion;
+	}
+
+	public IsumoReparacion removeIsumoReparacion(IsumoReparacion isumoReparacion) {
+		getIsumoReparacions().remove(isumoReparacion);
+		isumoReparacion.setReparacionBean(null);
+
+		return isumoReparacion;
+	}
+
+	public List<Pago> getPagos() {
+		return this.pagos;
+	}
+
+	public void setPagos(List<Pago> pagos) {
+		this.pagos = pagos;
+	}
+
+	public Pago addPago(Pago pago) {
+		getPagos().add(pago);
+		pago.setReparacionBean(this);
+
+		return pago;
+	}
+
+	public Pago removePago(Pago pago) {
+		getPagos().remove(pago);
+		pago.setReparacionBean(null);
+
+		return pago;
+	}
+
+	public Calzado getCalzadoBean() {
+		return this.calzadoBean;
+	}
+
+	public void setCalzadoBean(Calzado calzadoBean) {
+		this.calzadoBean = calzadoBean;
+	}
+
+	public EstadoReparacion getEstadoReparacionBean() {
+		return this.estadoReparacionBean;
+	}
+
+	public void setEstadoReparacionBean(EstadoReparacion estadoReparacionBean) {
+		this.estadoReparacionBean = estadoReparacionBean;
+	}
+
+	public Persona getPersona1() {
+		return this.persona1;
+	}
+
+	public void setPersona1(Persona persona1) {
+		this.persona1 = persona1;
+	}
+
+	public Persona getPersona2() {
+		return this.persona2;
+	}
+
+	public void setPersona2(Persona persona2) {
+		this.persona2 = persona2;
+	}
+
+}

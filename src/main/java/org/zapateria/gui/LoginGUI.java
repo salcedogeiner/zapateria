@@ -9,6 +9,7 @@ package org.zapateria.gui;
 import javax.swing.JPasswordField;
 
 import org.zapateria.logica.Usuario;
+import org.zapateria.mapper.UsuarioMapper;
 /**
  *
  * @author geiner
@@ -132,10 +133,15 @@ public class LoginGUI extends javax.swing.JFrame {
 
     private void jButtonIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIngresarActionPerformed
         // TODO add your handling code here:
+        
+        UsuarioMapper usuarioMapper = new UsuarioMapper();
+        
         Usuario usuario = new Usuario();
         usuario.setClave(this.jTextPassword.getText());
         usuario.setNombreUsuario(this.jTextUsuario.getText());
-        if (usuario.validarUsuario()) {
+        
+        if (usuarioMapper.consultarUsuario(usuario)) {
+            this.dispose();
             RolGUI rolGUI = new RolGUI();
             rolGUI.setVisible(true);
             this.jLabelMensaje.setText("Usuario valido");

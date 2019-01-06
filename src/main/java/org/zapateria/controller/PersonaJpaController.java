@@ -10,16 +10,16 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.zapateria.entidad.TipoIdentificacion;
-import org.zapateria.entidad.Reparacion;
+import org.zapateria.logica.TipoIdentificacion;
+import org.zapateria.logica.Reparacion;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
 import org.zapateria.controller.exceptions.PreexistingEntityException;
-import org.zapateria.entidad.Persona;
-import org.zapateria.entidad.Usuario;
+import org.zapateria.logica.Persona;
+import org.zapateria.logica.Usuario;
 
 /**
  *
@@ -96,7 +96,7 @@ public class PersonaJpaController implements Serializable {
                     oldPersona2OfReparacions2Reparacion = em.merge(oldPersona2OfReparacions2Reparacion);
                 }
             }
-            for (Usuario usuariosUsuario : persona.getUsuarios()) {
+           /* for (Usuario usuariosUsuario : persona.getUsuarios()) {
                 Persona oldPersonaBeanOfUsuariosUsuario = usuariosUsuario.getPersonaBean();
                 usuariosUsuario.setPersonaBean(persona);
                 usuariosUsuario = em.merge(usuariosUsuario);
@@ -104,7 +104,7 @@ public class PersonaJpaController implements Serializable {
                     oldPersonaBeanOfUsuariosUsuario.getUsuarios().remove(usuariosUsuario);
                     oldPersonaBeanOfUsuariosUsuario = em.merge(oldPersonaBeanOfUsuariosUsuario);
                 }
-            }
+            }*/
             em.getTransaction().commit();
         } catch (Exception ex) {
             if (findPersona(persona.getId()) != null) {
@@ -206,7 +206,7 @@ public class PersonaJpaController implements Serializable {
                     usuariosOldUsuario = em.merge(usuariosOldUsuario);
                 }
             }
-            for (Usuario usuariosNewUsuario : usuariosNew) {
+           /* for (Usuario usuariosNewUsuario : usuariosNew) {
                 if (!usuariosOld.contains(usuariosNewUsuario)) {
                     Persona oldPersonaBeanOfUsuariosNewUsuario = usuariosNewUsuario.getPersonaBean();
                     usuariosNewUsuario.setPersonaBean(persona);
@@ -216,7 +216,7 @@ public class PersonaJpaController implements Serializable {
                         oldPersonaBeanOfUsuariosNewUsuario = em.merge(oldPersonaBeanOfUsuariosNewUsuario);
                     }
                 }
-            }
+            }*/
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();

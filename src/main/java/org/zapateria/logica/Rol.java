@@ -1,61 +1,113 @@
 package org.zapateria.logica;
 
-import java.util.Set;
+import java.io.Serializable;
+import javax.persistence.*;
+import java.util.List;
+
 
 /**
- * @author geiner
- * @version 1.0
- * @created 19-dic.-2018 16:15:34
+ * The persistent class for the rol database table.
+ * 
  */
-public class Rol {
+@Entity
+@NamedQuery(name="Rol.findAll", query="SELECT r FROM Rol r")
+public class Rol implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private String abreviacion;
-    private String descripcion;
-    private Integer id;
-    private String nombre;
-    private Set<Privilegio> privillegios;
+	@Id
+	private Integer id;
 
-    public Rol() {
-    }
+	private String abreviacion;
 
-    public String getAbreviacion() {
-        return abreviacion;
-    }
+	private String descripcion;
 
-    public void setAbreviacion(String abreviacion) {
-        this.abreviacion = abreviacion;
-    }
+	private String nombre;
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+	//bi-directional many-to-one association to RolPrivilegio
+	@OneToMany(mappedBy="rolBean")
+	private List<RolPrivilegio> rolPrivilegios;
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+	//bi-directional many-to-one association to RolUsuario
+	@OneToMany(mappedBy="rolBean")
+	private List<RolUsuario> rolUsuarios;
 
-    public Integer getId() {
-        return id;
-    }
+	public Rol() {
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public Integer getId() {
+		return this.id;
+	}
 
-    public String getNombre() {
-        return nombre;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+	public String getAbreviacion() {
+		return this.abreviacion;
+	}
 
-    public Set<Privilegio> getPrivillegios() {
-        return privillegios;
-    }
+	public void setAbreviacion(String abreviacion) {
+		this.abreviacion = abreviacion;
+	}
 
-    public void setPrivillegios(Set<Privilegio> privillegios) {
-        this.privillegios = privillegios;
-    }
+	public String getDescripcion() {
+		return this.descripcion;
+	}
 
-}//end Rol
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public String getNombre() {
+		return this.nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public List<RolPrivilegio> getRolPrivilegios() {
+		return this.rolPrivilegios;
+	}
+
+	public void setRolPrivilegios(List<RolPrivilegio> rolPrivilegios) {
+		this.rolPrivilegios = rolPrivilegios;
+	}
+
+	public RolPrivilegio addRolPrivilegio(RolPrivilegio rolPrivilegio) {
+		getRolPrivilegios().add(rolPrivilegio);
+		rolPrivilegio.setRolBean(this);
+
+		return rolPrivilegio;
+	}
+
+	public RolPrivilegio removeRolPrivilegio(RolPrivilegio rolPrivilegio) {
+		getRolPrivilegios().remove(rolPrivilegio);
+		rolPrivilegio.setRolBean(null);
+
+		return rolPrivilegio;
+	}
+
+	public List<RolUsuario> getRolUsuarios() {
+		return this.rolUsuarios;
+	}
+
+	public void setRolUsuarios(List<RolUsuario> rolUsuarios) {
+		this.rolUsuarios = rolUsuarios;
+	}
+
+	public RolUsuario addRolUsuario(RolUsuario rolUsuario) {
+		getRolUsuarios().add(rolUsuario);
+		rolUsuario.setRolBean(this);
+
+		return rolUsuario;
+	}
+
+	public RolUsuario removeRolUsuario(RolUsuario rolUsuario) {
+		getRolUsuarios().remove(rolUsuario);
+		rolUsuario.setRolBean(null);
+
+		return rolUsuario;
+	}
+
+}
