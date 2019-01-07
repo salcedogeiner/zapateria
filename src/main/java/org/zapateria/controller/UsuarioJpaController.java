@@ -10,18 +10,19 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.zapateria.logica.RolUsuario;
+import org.zapateria.logica.Persona;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.zapateria.controller.exceptions.IllegalOrphanException;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
-import org.zapateria.controller.exceptions.PreexistingEntityException;
 import org.zapateria.logica.Usuario;
 
 /**
  *
- * @author jose_
+ * @author g.salcedo
  */
 public class UsuarioJpaController implements Serializable {
 
@@ -34,45 +35,36 @@ public class UsuarioJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Usuario usuario) throws PreexistingEntityException, Exception {
-        if (usuario.getRolUsuarios() == null) {
-            usuario.setRolUsuarios(new ArrayList<RolUsuario>());
+    public void create(Usuario usuario) throws IllegalOrphanException {
+        List<String> illegalOrphanMessages = null;
+        Persona personaOrphanCheck = usuario.getPersona();
+        if (personaOrphanCheck != null) {
+            Usuario oldUsuarioOfPersona = personaOrphanCheck.getUsuario();
+            if (oldUsuarioOfPersona != null) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("The Persona " + personaOrphanCheck + " already has an item of type Usuario whose persona column cannot be null. Please make another selection for the persona field.");
+            }
+        }
+        if (illegalOrphanMessages != null) {
+            throw new IllegalOrphanException(illegalOrphanMessages);
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-           /* Persona personaBean = usuario.getPersonaBean();
-            if (personaBean != null) {
-                personaBean = em.getReference(personaBean.getClass(), personaBean.getId());
-                usuario.setPersonaBean(personaBean);
-            }*/
-            List<RolUsuario> attachedRolUsuarios = new ArrayList<RolUsuario>();
-            for (RolUsuario rolUsuariosRolUsuarioToAttach : usuario.getRolUsuarios()) {
-                rolUsuariosRolUsuarioToAttach = em.getReference(rolUsuariosRolUsuarioToAttach.getClass(), rolUsuariosRolUsuarioToAttach.getId());
-                attachedRolUsuarios.add(rolUsuariosRolUsuarioToAttach);
+            Persona persona = usuario.getPersona();
+            if (persona != null) {
+                persona = em.getReference(persona.getClass(), persona.getId());
+                usuario.setPersona(persona);
             }
-            usuario.setRolUsuarios(attachedRolUsuarios);
             em.persist(usuario);
-           /* if (personaBean != null) {
-                personaBean.getUsuarios().add(usuario);
-                personaBean = em.merge(personaBean);
+            if (persona != null) {
+                persona.setUsuario(usuario);
+                persona = em.merge(persona);
             }
-            for (RolUsuario rolUsuariosRolUsuario : usuario.getRolUsuarios()) {
-                Usuario oldUsuarioBeanOfRolUsuariosRolUsuario = rolUsuariosRolUsuario.getUsuarioBean();
-                rolUsuariosRolUsuario.setUsuarioBean(usuario);
-                rolUsuariosRolUsuario = em.merge(rolUsuariosRolUsuario);
-                if (oldUsuarioBeanOfRolUsuariosRolUsuario != null) {
-                    oldUsuarioBeanOfRolUsuariosRolUsuario.getRolUsuarios().remove(rolUsuariosRolUsuario);
-                    oldUsuarioBeanOfRolUsuariosRolUsuario = em.merge(oldUsuarioBeanOfRolUsuariosRolUsuario);
-                }
-            }*/
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findUsuario(usuario.getId()) != null) {
-                throw new PreexistingEntityException("Usuario " + usuario + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -80,52 +72,39 @@ public class UsuarioJpaController implements Serializable {
         }
     }
 
- /*   public void edit(Usuario usuario) throws NonexistentEntityException, Exception {
+    public void edit(Usuario usuario) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             Usuario persistentUsuario = em.find(Usuario.class, usuario.getId());
-            Persona personaBeanOld = persistentUsuario.getPersonaBean();
-            Persona personaBeanNew = usuario.getPersonaBean();
-            List<RolUsuario> rolUsuariosOld = persistentUsuario.getRolUsuarios();
-            List<RolUsuario> rolUsuariosNew = usuario.getRolUsuarios();
-            if (personaBeanNew != null) {
-                personaBeanNew = em.getReference(personaBeanNew.getClass(), personaBeanNew.getId());
-                usuario.setPersonaBean(personaBeanNew);
-            }
-            List<RolUsuario> attachedRolUsuariosNew = new ArrayList<RolUsuario>();
-            for (RolUsuario rolUsuariosNewRolUsuarioToAttach : rolUsuariosNew) {
-                rolUsuariosNewRolUsuarioToAttach = em.getReference(rolUsuariosNewRolUsuarioToAttach.getClass(), rolUsuariosNewRolUsuarioToAttach.getId());
-                attachedRolUsuariosNew.add(rolUsuariosNewRolUsuarioToAttach);
-            }
-            rolUsuariosNew = attachedRolUsuariosNew;
-            usuario.setRolUsuarios(rolUsuariosNew);
-            usuario = em.merge(usuario);
-            if (personaBeanOld != null && !personaBeanOld.equals(personaBeanNew)) {
-                personaBeanOld.getUsuarios().remove(usuario);
-                personaBeanOld = em.merge(personaBeanOld);
-            }
-            if (personaBeanNew != null && !personaBeanNew.equals(personaBeanOld)) {
-                personaBeanNew.getUsuarios().add(usuario);
-                personaBeanNew = em.merge(personaBeanNew);
-            }
-            for (RolUsuario rolUsuariosOldRolUsuario : rolUsuariosOld) {
-                if (!rolUsuariosNew.contains(rolUsuariosOldRolUsuario)) {
-                    rolUsuariosOldRolUsuario.setUsuarioBean(null);
-                    rolUsuariosOldRolUsuario = em.merge(rolUsuariosOldRolUsuario);
+            Persona personaOld = persistentUsuario.getPersona();
+            Persona personaNew = usuario.getPersona();
+            List<String> illegalOrphanMessages = null;
+            if (personaNew != null && !personaNew.equals(personaOld)) {
+                Usuario oldUsuarioOfPersona = personaNew.getUsuario();
+                if (oldUsuarioOfPersona != null) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("The Persona " + personaNew + " already has an item of type Usuario whose persona column cannot be null. Please make another selection for the persona field.");
                 }
             }
-           // for (RolUsuario rolUsuariosNewRolUsuario : rolUsuariosNew) {
-                //if (!rolUsuariosOld.contains(rolUsuariosNewRolUsuario)) {
-                   // Usuario oldUsuarioBeanOfRolUsuariosNewRolUsuario = rolUsuariosNewRolUsuario.getUsuarioBean();
-                   // rolUsuariosNewRolUsuario.setUsuarioBean(usuario);
-                   // rolUsuariosNewRolUsuario = em.merge(rolUsuariosNewRolUsuario);
-                   // if (oldUsuarioBeanOfRolUsuariosNewRolUsuario != null && !oldUsuarioBeanOfRolUsuariosNewRolUsuario.equals(usuario)) {
-                   //     oldUsuarioBeanOfRolUsuariosNewRolUsuario.getRolUsuarios().remove(rolUsuariosNewRolUsuario);
-                   //     oldUsuarioBeanOfRolUsuariosNewRolUsuario = em.merge(oldUsuarioBeanOfRolUsuariosNewRolUsuario);
-                //    }
-            //    }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            if (personaNew != null) {
+                personaNew = em.getReference(personaNew.getClass(), personaNew.getId());
+                usuario.setPersona(personaNew);
+            }
+            usuario = em.merge(usuario);
+            if (personaOld != null && !personaOld.equals(personaNew)) {
+                personaOld.setUsuario(null);
+                personaOld = em.merge(personaOld);
+            }
+            if (personaNew != null && !personaNew.equals(personaOld)) {
+                personaNew.setUsuario(usuario);
+                personaNew = em.merge(personaNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -142,7 +121,7 @@ public class UsuarioJpaController implements Serializable {
                 em.close();
             }
         }
-    }*/
+    }
 
     public void destroy(Integer id) throws NonexistentEntityException {
         EntityManager em = null;
@@ -156,15 +135,10 @@ public class UsuarioJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The usuario with id " + id + " no longer exists.", enfe);
             }
-           // Persona personaBean = usuario.getPersonaBean();
-           // if (personaBean != null) {
-           //     personaBean.getUsuarios().remove(usuario);
-            //    personaBean = em.merge(personaBean);
-           // }
-            List<RolUsuario> rolUsuarios = usuario.getRolUsuarios();
-            for (RolUsuario rolUsuariosRolUsuario : rolUsuarios) {
-               // rolUsuariosRolUsuario.setUsuarioBean(null);
-                rolUsuariosRolUsuario = em.merge(rolUsuariosRolUsuario);
+            Persona persona = usuario.getPersona();
+            if (persona != null) {
+                persona.setUsuario(null);
+                persona = em.merge(persona);
             }
             em.remove(usuario);
             em.getTransaction().commit();
@@ -236,6 +210,11 @@ public class UsuarioJpaController implements Serializable {
             query.setParameter("clave", usuario.getClave());
             
             usuario = (Usuario) query.getSingleResult();
+            System.out.println(usuario.getPersona().getApellidos());
+            for (Iterator iterator = usuario.getRoles().iterator(); iterator.hasNext();) {
+                Object next = iterator.next();
+                System.out.println(next.toString());                
+            }
             
             return usuario;
         } finally {

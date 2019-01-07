@@ -11,17 +11,17 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.zapateria.logica.Pago;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
-import org.zapateria.controller.exceptions.PreexistingEntityException;
 import org.zapateria.logica.Concepto;
 
 /**
  *
- * @author jose_
+ * @author g.salcedo
  */
 public class ConceptoJpaController implements Serializable {
 
@@ -34,36 +34,31 @@ public class ConceptoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Concepto concepto) throws PreexistingEntityException, Exception {
-        if (concepto.getPagos() == null) {
-            concepto.setPagos(new ArrayList<Pago>());
+    public void create(Concepto concepto) {
+        if (concepto.getPagoSet() == null) {
+            concepto.setPagoSet(new HashSet<Pago>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            List<Pago> attachedPagos = new ArrayList<Pago>();
-            for (Pago pagosPagoToAttach : concepto.getPagos()) {
-                pagosPagoToAttach = em.getReference(pagosPagoToAttach.getClass(), pagosPagoToAttach.getId());
-                attachedPagos.add(pagosPagoToAttach);
+            Set<Pago> attachedPagoSet = new HashSet<Pago>();
+            for (Pago pagoSetPagoToAttach : concepto.getPagoSet()) {
+                pagoSetPagoToAttach = em.getReference(pagoSetPagoToAttach.getClass(), pagoSetPagoToAttach.getId());
+                attachedPagoSet.add(pagoSetPagoToAttach);
             }
-            concepto.setPagos(attachedPagos);
+            concepto.setPagoSet(attachedPagoSet);
             em.persist(concepto);
-            for (Pago pagosPago : concepto.getPagos()) {
-                Concepto oldConceptoBeanOfPagosPago = pagosPago.getConceptoBean();
-                pagosPago.setConceptoBean(concepto);
-                pagosPago = em.merge(pagosPago);
-                if (oldConceptoBeanOfPagosPago != null) {
-                    oldConceptoBeanOfPagosPago.getPagos().remove(pagosPago);
-                    oldConceptoBeanOfPagosPago = em.merge(oldConceptoBeanOfPagosPago);
+            for (Pago pagoSetPago : concepto.getPagoSet()) {
+                Concepto oldConceptoOfPagoSetPago = pagoSetPago.getConcepto();
+                pagoSetPago.setConcepto(concepto);
+                pagoSetPago = em.merge(pagoSetPago);
+                if (oldConceptoOfPagoSetPago != null) {
+                    oldConceptoOfPagoSetPago.getPagoSet().remove(pagoSetPago);
+                    oldConceptoOfPagoSetPago = em.merge(oldConceptoOfPagoSetPago);
                 }
             }
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findConcepto(concepto.getId()) != null) {
-                throw new PreexistingEntityException("Concepto " + concepto + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -77,30 +72,30 @@ public class ConceptoJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Concepto persistentConcepto = em.find(Concepto.class, concepto.getId());
-            List<Pago> pagosOld = persistentConcepto.getPagos();
-            List<Pago> pagosNew = concepto.getPagos();
-            List<Pago> attachedPagosNew = new ArrayList<Pago>();
-            for (Pago pagosNewPagoToAttach : pagosNew) {
-                pagosNewPagoToAttach = em.getReference(pagosNewPagoToAttach.getClass(), pagosNewPagoToAttach.getId());
-                attachedPagosNew.add(pagosNewPagoToAttach);
+            Set<Pago> pagoSetOld = persistentConcepto.getPagoSet();
+            Set<Pago> pagoSetNew = concepto.getPagoSet();
+            Set<Pago> attachedPagoSetNew = new HashSet<Pago>();
+            for (Pago pagoSetNewPagoToAttach : pagoSetNew) {
+                pagoSetNewPagoToAttach = em.getReference(pagoSetNewPagoToAttach.getClass(), pagoSetNewPagoToAttach.getId());
+                attachedPagoSetNew.add(pagoSetNewPagoToAttach);
             }
-            pagosNew = attachedPagosNew;
-            concepto.setPagos(pagosNew);
+            pagoSetNew = attachedPagoSetNew;
+            concepto.setPagoSet(pagoSetNew);
             concepto = em.merge(concepto);
-            for (Pago pagosOldPago : pagosOld) {
-                if (!pagosNew.contains(pagosOldPago)) {
-                    pagosOldPago.setConceptoBean(null);
-                    pagosOldPago = em.merge(pagosOldPago);
+            for (Pago pagoSetOldPago : pagoSetOld) {
+                if (!pagoSetNew.contains(pagoSetOldPago)) {
+                    pagoSetOldPago.setConcepto(null);
+                    pagoSetOldPago = em.merge(pagoSetOldPago);
                 }
             }
-            for (Pago pagosNewPago : pagosNew) {
-                if (!pagosOld.contains(pagosNewPago)) {
-                    Concepto oldConceptoBeanOfPagosNewPago = pagosNewPago.getConceptoBean();
-                    pagosNewPago.setConceptoBean(concepto);
-                    pagosNewPago = em.merge(pagosNewPago);
-                    if (oldConceptoBeanOfPagosNewPago != null && !oldConceptoBeanOfPagosNewPago.equals(concepto)) {
-                        oldConceptoBeanOfPagosNewPago.getPagos().remove(pagosNewPago);
-                        oldConceptoBeanOfPagosNewPago = em.merge(oldConceptoBeanOfPagosNewPago);
+            for (Pago pagoSetNewPago : pagoSetNew) {
+                if (!pagoSetOld.contains(pagoSetNewPago)) {
+                    Concepto oldConceptoOfPagoSetNewPago = pagoSetNewPago.getConcepto();
+                    pagoSetNewPago.setConcepto(concepto);
+                    pagoSetNewPago = em.merge(pagoSetNewPago);
+                    if (oldConceptoOfPagoSetNewPago != null && !oldConceptoOfPagoSetNewPago.equals(concepto)) {
+                        oldConceptoOfPagoSetNewPago.getPagoSet().remove(pagoSetNewPago);
+                        oldConceptoOfPagoSetNewPago = em.merge(oldConceptoOfPagoSetNewPago);
                     }
                 }
             }
@@ -133,10 +128,10 @@ public class ConceptoJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The concepto with id " + id + " no longer exists.", enfe);
             }
-            List<Pago> pagos = concepto.getPagos();
-            for (Pago pagosPago : pagos) {
-                pagosPago.setConceptoBean(null);
-                pagosPago = em.merge(pagosPago);
+            Set<Pago> pagoSet = concepto.getPagoSet();
+            for (Pago pagoSetPago : pagoSet) {
+                pagoSetPago.setConcepto(null);
+                pagoSetPago = em.merge(pagoSetPago);
             }
             em.remove(concepto);
             em.getTransaction().commit();

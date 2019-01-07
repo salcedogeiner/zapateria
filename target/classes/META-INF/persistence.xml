@@ -14,11 +14,11 @@
     <class>org.zapateria.logica.RolUsuario</class>
     <class>org.zapateria.logica.TipoIdentificacion</class>
     <class>org.zapateria.logica.Usuario</class>
-    <class>org.zapateria.logica.Pago_old</class>
+    <class>org.zapateria.logica.Pago</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/zapateria"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/zapateriadb"/>
       <property name="javax.persistence.jdbc.user" value="postgres"/>
-      <property name="javax.persistence.jdbc.password" value="postgres"/>
+      <property name="javax.persistence.jdbc.password" value=""/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
     </properties>
   </persistence-unit>

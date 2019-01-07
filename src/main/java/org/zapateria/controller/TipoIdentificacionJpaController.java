@@ -11,17 +11,19 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.zapateria.logica.Persona;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.zapateria.controller.exceptions.IllegalOrphanException;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
-import org.zapateria.controller.exceptions.PreexistingEntityException;
 import org.zapateria.logica.TipoIdentificacion;
 
 /**
  *
- * @author jose_
+ * @author g.salcedo
  */
 public class TipoIdentificacionJpaController implements Serializable {
 
@@ -34,36 +36,31 @@ public class TipoIdentificacionJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(TipoIdentificacion tipoIdentificacion) throws PreexistingEntityException, Exception {
-        if (tipoIdentificacion.getPersonas() == null) {
-            tipoIdentificacion.setPersonas(new ArrayList<Persona>());
+    public void create(TipoIdentificacion tipoIdentificacion) {
+        if (tipoIdentificacion.getPersonaSet() == null) {
+            tipoIdentificacion.setPersonaSet(new HashSet<Persona>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            List<Persona> attachedPersonas = new ArrayList<Persona>();
-            for (Persona personasPersonaToAttach : tipoIdentificacion.getPersonas()) {
-                personasPersonaToAttach = em.getReference(personasPersonaToAttach.getClass(), personasPersonaToAttach.getId());
-                attachedPersonas.add(personasPersonaToAttach);
+            Set<Persona> attachedPersonaSet = new HashSet<Persona>();
+            for (Persona personaSetPersonaToAttach : tipoIdentificacion.getPersonaSet()) {
+                personaSetPersonaToAttach = em.getReference(personaSetPersonaToAttach.getClass(), personaSetPersonaToAttach.getId());
+                attachedPersonaSet.add(personaSetPersonaToAttach);
             }
-            tipoIdentificacion.setPersonas(attachedPersonas);
+            tipoIdentificacion.setPersonaSet(attachedPersonaSet);
             em.persist(tipoIdentificacion);
-            for (Persona personasPersona : tipoIdentificacion.getPersonas()) {
-                TipoIdentificacion oldTipoIdentificacionBeanOfPersonasPersona = personasPersona.getTipoIdentificacionBean();
-                personasPersona.setTipoIdentificacionBean(tipoIdentificacion);
-                personasPersona = em.merge(personasPersona);
-                if (oldTipoIdentificacionBeanOfPersonasPersona != null) {
-                    oldTipoIdentificacionBeanOfPersonasPersona.getPersonas().remove(personasPersona);
-                    oldTipoIdentificacionBeanOfPersonasPersona = em.merge(oldTipoIdentificacionBeanOfPersonasPersona);
+            for (Persona personaSetPersona : tipoIdentificacion.getPersonaSet()) {
+                TipoIdentificacion oldTipoIdentificacionOfPersonaSetPersona = personaSetPersona.getTipoIdentificacion();
+                personaSetPersona.setTipoIdentificacion(tipoIdentificacion);
+                personaSetPersona = em.merge(personaSetPersona);
+                if (oldTipoIdentificacionOfPersonaSetPersona != null) {
+                    oldTipoIdentificacionOfPersonaSetPersona.getPersonaSet().remove(personaSetPersona);
+                    oldTipoIdentificacionOfPersonaSetPersona = em.merge(oldTipoIdentificacionOfPersonaSetPersona);
                 }
             }
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findTipoIdentificacion(tipoIdentificacion.getId()) != null) {
-                throw new PreexistingEntityException("TipoIdentificacion " + tipoIdentificacion + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -71,36 +68,42 @@ public class TipoIdentificacionJpaController implements Serializable {
         }
     }
 
-    public void edit(TipoIdentificacion tipoIdentificacion) throws NonexistentEntityException, Exception {
+    public void edit(TipoIdentificacion tipoIdentificacion) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             TipoIdentificacion persistentTipoIdentificacion = em.find(TipoIdentificacion.class, tipoIdentificacion.getId());
-            List<Persona> personasOld = persistentTipoIdentificacion.getPersonas();
-            List<Persona> personasNew = tipoIdentificacion.getPersonas();
-            List<Persona> attachedPersonasNew = new ArrayList<Persona>();
-            for (Persona personasNewPersonaToAttach : personasNew) {
-                personasNewPersonaToAttach = em.getReference(personasNewPersonaToAttach.getClass(), personasNewPersonaToAttach.getId());
-                attachedPersonasNew.add(personasNewPersonaToAttach);
-            }
-            personasNew = attachedPersonasNew;
-            tipoIdentificacion.setPersonas(personasNew);
-            tipoIdentificacion = em.merge(tipoIdentificacion);
-            for (Persona personasOldPersona : personasOld) {
-                if (!personasNew.contains(personasOldPersona)) {
-                    personasOldPersona.setTipoIdentificacionBean(null);
-                    personasOldPersona = em.merge(personasOldPersona);
+            Set<Persona> personaSetOld = persistentTipoIdentificacion.getPersonaSet();
+            Set<Persona> personaSetNew = tipoIdentificacion.getPersonaSet();
+            List<String> illegalOrphanMessages = null;
+            for (Persona personaSetOldPersona : personaSetOld) {
+                if (!personaSetNew.contains(personaSetOldPersona)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Persona " + personaSetOldPersona + " since its tipoIdentificacion field is not nullable.");
                 }
             }
-            for (Persona personasNewPersona : personasNew) {
-                if (!personasOld.contains(personasNewPersona)) {
-                    TipoIdentificacion oldTipoIdentificacionBeanOfPersonasNewPersona = personasNewPersona.getTipoIdentificacionBean();
-                    personasNewPersona.setTipoIdentificacionBean(tipoIdentificacion);
-                    personasNewPersona = em.merge(personasNewPersona);
-                    if (oldTipoIdentificacionBeanOfPersonasNewPersona != null && !oldTipoIdentificacionBeanOfPersonasNewPersona.equals(tipoIdentificacion)) {
-                        oldTipoIdentificacionBeanOfPersonasNewPersona.getPersonas().remove(personasNewPersona);
-                        oldTipoIdentificacionBeanOfPersonasNewPersona = em.merge(oldTipoIdentificacionBeanOfPersonasNewPersona);
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            Set<Persona> attachedPersonaSetNew = new HashSet<Persona>();
+            for (Persona personaSetNewPersonaToAttach : personaSetNew) {
+                personaSetNewPersonaToAttach = em.getReference(personaSetNewPersonaToAttach.getClass(), personaSetNewPersonaToAttach.getId());
+                attachedPersonaSetNew.add(personaSetNewPersonaToAttach);
+            }
+            personaSetNew = attachedPersonaSetNew;
+            tipoIdentificacion.setPersonaSet(personaSetNew);
+            tipoIdentificacion = em.merge(tipoIdentificacion);
+            for (Persona personaSetNewPersona : personaSetNew) {
+                if (!personaSetOld.contains(personaSetNewPersona)) {
+                    TipoIdentificacion oldTipoIdentificacionOfPersonaSetNewPersona = personaSetNewPersona.getTipoIdentificacion();
+                    personaSetNewPersona.setTipoIdentificacion(tipoIdentificacion);
+                    personaSetNewPersona = em.merge(personaSetNewPersona);
+                    if (oldTipoIdentificacionOfPersonaSetNewPersona != null && !oldTipoIdentificacionOfPersonaSetNewPersona.equals(tipoIdentificacion)) {
+                        oldTipoIdentificacionOfPersonaSetNewPersona.getPersonaSet().remove(personaSetNewPersona);
+                        oldTipoIdentificacionOfPersonaSetNewPersona = em.merge(oldTipoIdentificacionOfPersonaSetNewPersona);
                     }
                 }
             }
@@ -121,7 +124,7 @@ public class TipoIdentificacionJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -133,10 +136,16 @@ public class TipoIdentificacionJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The tipoIdentificacion with id " + id + " no longer exists.", enfe);
             }
-            List<Persona> personas = tipoIdentificacion.getPersonas();
-            for (Persona personasPersona : personas) {
-                personasPersona.setTipoIdentificacionBean(null);
-                personasPersona = em.merge(personasPersona);
+            List<String> illegalOrphanMessages = null;
+            Set<Persona> personaSetOrphanCheck = tipoIdentificacion.getPersonaSet();
+            for (Persona personaSetOrphanCheckPersona : personaSetOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This TipoIdentificacion (" + tipoIdentificacion + ") cannot be destroyed since the Persona " + personaSetOrphanCheckPersona + " in its personaSet field has a non-nullable tipoIdentificacion field.");
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             em.remove(tipoIdentificacion);
             em.getTransaction().commit();

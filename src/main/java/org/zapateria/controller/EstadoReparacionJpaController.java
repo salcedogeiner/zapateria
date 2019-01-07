@@ -11,17 +11,19 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.zapateria.logica.Reparacion;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.zapateria.controller.exceptions.IllegalOrphanException;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
-import org.zapateria.controller.exceptions.PreexistingEntityException;
 import org.zapateria.logica.EstadoReparacion;
 
 /**
  *
- * @author jose_
+ * @author g.salcedo
  */
 public class EstadoReparacionJpaController implements Serializable {
 
@@ -34,36 +36,31 @@ public class EstadoReparacionJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(EstadoReparacion estadoReparacion) throws PreexistingEntityException, Exception {
-        if (estadoReparacion.getReparacions() == null) {
-            estadoReparacion.setReparacions(new ArrayList<Reparacion>());
+    public void create(EstadoReparacion estadoReparacion) {
+        if (estadoReparacion.getReparacionSet() == null) {
+            estadoReparacion.setReparacionSet(new HashSet<Reparacion>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            List<Reparacion> attachedReparacions = new ArrayList<Reparacion>();
-            for (Reparacion reparacionsReparacionToAttach : estadoReparacion.getReparacions()) {
-                reparacionsReparacionToAttach = em.getReference(reparacionsReparacionToAttach.getClass(), reparacionsReparacionToAttach.getId());
-                attachedReparacions.add(reparacionsReparacionToAttach);
+            Set<Reparacion> attachedReparacionSet = new HashSet<Reparacion>();
+            for (Reparacion reparacionSetReparacionToAttach : estadoReparacion.getReparacionSet()) {
+                reparacionSetReparacionToAttach = em.getReference(reparacionSetReparacionToAttach.getClass(), reparacionSetReparacionToAttach.getId());
+                attachedReparacionSet.add(reparacionSetReparacionToAttach);
             }
-            estadoReparacion.setReparacions(attachedReparacions);
+            estadoReparacion.setReparacionSet(attachedReparacionSet);
             em.persist(estadoReparacion);
-            for (Reparacion reparacionsReparacion : estadoReparacion.getReparacions()) {
-                EstadoReparacion oldEstadoReparacionBeanOfReparacionsReparacion = reparacionsReparacion.getEstadoReparacionBean();
-                reparacionsReparacion.setEstadoReparacionBean(estadoReparacion);
-                reparacionsReparacion = em.merge(reparacionsReparacion);
-                if (oldEstadoReparacionBeanOfReparacionsReparacion != null) {
-                    oldEstadoReparacionBeanOfReparacionsReparacion.getReparacions().remove(reparacionsReparacion);
-                    oldEstadoReparacionBeanOfReparacionsReparacion = em.merge(oldEstadoReparacionBeanOfReparacionsReparacion);
+            for (Reparacion reparacionSetReparacion : estadoReparacion.getReparacionSet()) {
+                EstadoReparacion oldEstadoReparacionOfReparacionSetReparacion = reparacionSetReparacion.getEstadoReparacion();
+                reparacionSetReparacion.setEstadoReparacion(estadoReparacion);
+                reparacionSetReparacion = em.merge(reparacionSetReparacion);
+                if (oldEstadoReparacionOfReparacionSetReparacion != null) {
+                    oldEstadoReparacionOfReparacionSetReparacion.getReparacionSet().remove(reparacionSetReparacion);
+                    oldEstadoReparacionOfReparacionSetReparacion = em.merge(oldEstadoReparacionOfReparacionSetReparacion);
                 }
             }
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findEstadoReparacion(estadoReparacion.getId()) != null) {
-                throw new PreexistingEntityException("EstadoReparacion " + estadoReparacion + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -71,36 +68,42 @@ public class EstadoReparacionJpaController implements Serializable {
         }
     }
 
-    public void edit(EstadoReparacion estadoReparacion) throws NonexistentEntityException, Exception {
+    public void edit(EstadoReparacion estadoReparacion) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             EstadoReparacion persistentEstadoReparacion = em.find(EstadoReparacion.class, estadoReparacion.getId());
-            List<Reparacion> reparacionsOld = persistentEstadoReparacion.getReparacions();
-            List<Reparacion> reparacionsNew = estadoReparacion.getReparacions();
-            List<Reparacion> attachedReparacionsNew = new ArrayList<Reparacion>();
-            for (Reparacion reparacionsNewReparacionToAttach : reparacionsNew) {
-                reparacionsNewReparacionToAttach = em.getReference(reparacionsNewReparacionToAttach.getClass(), reparacionsNewReparacionToAttach.getId());
-                attachedReparacionsNew.add(reparacionsNewReparacionToAttach);
-            }
-            reparacionsNew = attachedReparacionsNew;
-            estadoReparacion.setReparacions(reparacionsNew);
-            estadoReparacion = em.merge(estadoReparacion);
-            for (Reparacion reparacionsOldReparacion : reparacionsOld) {
-                if (!reparacionsNew.contains(reparacionsOldReparacion)) {
-                    reparacionsOldReparacion.setEstadoReparacionBean(null);
-                    reparacionsOldReparacion = em.merge(reparacionsOldReparacion);
+            Set<Reparacion> reparacionSetOld = persistentEstadoReparacion.getReparacionSet();
+            Set<Reparacion> reparacionSetNew = estadoReparacion.getReparacionSet();
+            List<String> illegalOrphanMessages = null;
+            for (Reparacion reparacionSetOldReparacion : reparacionSetOld) {
+                if (!reparacionSetNew.contains(reparacionSetOldReparacion)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Reparacion " + reparacionSetOldReparacion + " since its estadoReparacion field is not nullable.");
                 }
             }
-            for (Reparacion reparacionsNewReparacion : reparacionsNew) {
-                if (!reparacionsOld.contains(reparacionsNewReparacion)) {
-                    EstadoReparacion oldEstadoReparacionBeanOfReparacionsNewReparacion = reparacionsNewReparacion.getEstadoReparacionBean();
-                    reparacionsNewReparacion.setEstadoReparacionBean(estadoReparacion);
-                    reparacionsNewReparacion = em.merge(reparacionsNewReparacion);
-                    if (oldEstadoReparacionBeanOfReparacionsNewReparacion != null && !oldEstadoReparacionBeanOfReparacionsNewReparacion.equals(estadoReparacion)) {
-                        oldEstadoReparacionBeanOfReparacionsNewReparacion.getReparacions().remove(reparacionsNewReparacion);
-                        oldEstadoReparacionBeanOfReparacionsNewReparacion = em.merge(oldEstadoReparacionBeanOfReparacionsNewReparacion);
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            Set<Reparacion> attachedReparacionSetNew = new HashSet<Reparacion>();
+            for (Reparacion reparacionSetNewReparacionToAttach : reparacionSetNew) {
+                reparacionSetNewReparacionToAttach = em.getReference(reparacionSetNewReparacionToAttach.getClass(), reparacionSetNewReparacionToAttach.getId());
+                attachedReparacionSetNew.add(reparacionSetNewReparacionToAttach);
+            }
+            reparacionSetNew = attachedReparacionSetNew;
+            estadoReparacion.setReparacionSet(reparacionSetNew);
+            estadoReparacion = em.merge(estadoReparacion);
+            for (Reparacion reparacionSetNewReparacion : reparacionSetNew) {
+                if (!reparacionSetOld.contains(reparacionSetNewReparacion)) {
+                    EstadoReparacion oldEstadoReparacionOfReparacionSetNewReparacion = reparacionSetNewReparacion.getEstadoReparacion();
+                    reparacionSetNewReparacion.setEstadoReparacion(estadoReparacion);
+                    reparacionSetNewReparacion = em.merge(reparacionSetNewReparacion);
+                    if (oldEstadoReparacionOfReparacionSetNewReparacion != null && !oldEstadoReparacionOfReparacionSetNewReparacion.equals(estadoReparacion)) {
+                        oldEstadoReparacionOfReparacionSetNewReparacion.getReparacionSet().remove(reparacionSetNewReparacion);
+                        oldEstadoReparacionOfReparacionSetNewReparacion = em.merge(oldEstadoReparacionOfReparacionSetNewReparacion);
                     }
                 }
             }
@@ -121,7 +124,7 @@ public class EstadoReparacionJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -133,10 +136,16 @@ public class EstadoReparacionJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The estadoReparacion with id " + id + " no longer exists.", enfe);
             }
-            List<Reparacion> reparacions = estadoReparacion.getReparacions();
-            for (Reparacion reparacionsReparacion : reparacions) {
-                reparacionsReparacion.setEstadoReparacionBean(null);
-                reparacionsReparacion = em.merge(reparacionsReparacion);
+            List<String> illegalOrphanMessages = null;
+            Set<Reparacion> reparacionSetOrphanCheck = estadoReparacion.getReparacionSet();
+            for (Reparacion reparacionSetOrphanCheckReparacion : reparacionSetOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This EstadoReparacion (" + estadoReparacion + ") cannot be destroyed since the Reparacion " + reparacionSetOrphanCheckReparacion + " in its reparacionSet field has a non-nullable estadoReparacion field.");
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             em.remove(estadoReparacion);
             em.getTransaction().commit();

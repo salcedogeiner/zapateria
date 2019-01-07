@@ -14,14 +14,13 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
-import org.zapateria.controller.exceptions.PreexistingEntityException;
 import org.zapateria.logica.Concepto;
 import org.zapateria.logica.Pago;
 import org.zapateria.logica.Reparacion;
 
 /**
  *
- * @author jose_
+ * @author g.salcedo
  */
 public class PagoJpaController implements Serializable {
 
@@ -34,36 +33,31 @@ public class PagoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Pago pago) throws PreexistingEntityException, Exception {
+    public void create(Pago pago) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Concepto conceptoBean = pago.getConceptoBean();
-            if (conceptoBean != null) {
-                conceptoBean = em.getReference(conceptoBean.getClass(), conceptoBean.getId());
-                pago.setConceptoBean(conceptoBean);
+            Concepto concepto = pago.getConcepto();
+            if (concepto != null) {
+                concepto = em.getReference(concepto.getClass(), concepto.getId());
+                pago.setConcepto(concepto);
             }
-            Reparacion reparacionBean = pago.getReparacionBean();
-            if (reparacionBean != null) {
-                reparacionBean = em.getReference(reparacionBean.getClass(), reparacionBean.getId());
-                pago.setReparacionBean(reparacionBean);
+            Reparacion reparacion = pago.getReparacion();
+            if (reparacion != null) {
+                reparacion = em.getReference(reparacion.getClass(), reparacion.getId());
+                pago.setReparacion(reparacion);
             }
             em.persist(pago);
-            if (conceptoBean != null) {
-                conceptoBean.getPagos().add(pago);
-                conceptoBean = em.merge(conceptoBean);
+            if (concepto != null) {
+                concepto.getPagoSet().add(pago);
+                concepto = em.merge(concepto);
             }
-            if (reparacionBean != null) {
-                reparacionBean.getPagos().add(pago);
-                reparacionBean = em.merge(reparacionBean);
+            if (reparacion != null) {
+                reparacion.getPagoSet().add(pago);
+                reparacion = em.merge(reparacion);
             }
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findPago(pago.getId()) != null) {
-                throw new PreexistingEntityException("Pago " + pago + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -77,34 +71,34 @@ public class PagoJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Pago persistentPago = em.find(Pago.class, pago.getId());
-            Concepto conceptoBeanOld = persistentPago.getConceptoBean();
-            Concepto conceptoBeanNew = pago.getConceptoBean();
-            Reparacion reparacionBeanOld = persistentPago.getReparacionBean();
-            Reparacion reparacionBeanNew = pago.getReparacionBean();
-            if (conceptoBeanNew != null) {
-                conceptoBeanNew = em.getReference(conceptoBeanNew.getClass(), conceptoBeanNew.getId());
-                pago.setConceptoBean(conceptoBeanNew);
+            Concepto conceptoOld = persistentPago.getConcepto();
+            Concepto conceptoNew = pago.getConcepto();
+            Reparacion reparacionOld = persistentPago.getReparacion();
+            Reparacion reparacionNew = pago.getReparacion();
+            if (conceptoNew != null) {
+                conceptoNew = em.getReference(conceptoNew.getClass(), conceptoNew.getId());
+                pago.setConcepto(conceptoNew);
             }
-            if (reparacionBeanNew != null) {
-                reparacionBeanNew = em.getReference(reparacionBeanNew.getClass(), reparacionBeanNew.getId());
-                pago.setReparacionBean(reparacionBeanNew);
+            if (reparacionNew != null) {
+                reparacionNew = em.getReference(reparacionNew.getClass(), reparacionNew.getId());
+                pago.setReparacion(reparacionNew);
             }
             pago = em.merge(pago);
-            if (conceptoBeanOld != null && !conceptoBeanOld.equals(conceptoBeanNew)) {
-                conceptoBeanOld.getPagos().remove(pago);
-                conceptoBeanOld = em.merge(conceptoBeanOld);
+            if (conceptoOld != null && !conceptoOld.equals(conceptoNew)) {
+                conceptoOld.getPagoSet().remove(pago);
+                conceptoOld = em.merge(conceptoOld);
             }
-            if (conceptoBeanNew != null && !conceptoBeanNew.equals(conceptoBeanOld)) {
-                conceptoBeanNew.getPagos().add(pago);
-                conceptoBeanNew = em.merge(conceptoBeanNew);
+            if (conceptoNew != null && !conceptoNew.equals(conceptoOld)) {
+                conceptoNew.getPagoSet().add(pago);
+                conceptoNew = em.merge(conceptoNew);
             }
-            if (reparacionBeanOld != null && !reparacionBeanOld.equals(reparacionBeanNew)) {
-                reparacionBeanOld.getPagos().remove(pago);
-                reparacionBeanOld = em.merge(reparacionBeanOld);
+            if (reparacionOld != null && !reparacionOld.equals(reparacionNew)) {
+                reparacionOld.getPagoSet().remove(pago);
+                reparacionOld = em.merge(reparacionOld);
             }
-            if (reparacionBeanNew != null && !reparacionBeanNew.equals(reparacionBeanOld)) {
-                reparacionBeanNew.getPagos().add(pago);
-                reparacionBeanNew = em.merge(reparacionBeanNew);
+            if (reparacionNew != null && !reparacionNew.equals(reparacionOld)) {
+                reparacionNew.getPagoSet().add(pago);
+                reparacionNew = em.merge(reparacionNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -135,15 +129,15 @@ public class PagoJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The pago with id " + id + " no longer exists.", enfe);
             }
-            Concepto conceptoBean = pago.getConceptoBean();
-            if (conceptoBean != null) {
-                conceptoBean.getPagos().remove(pago);
-                conceptoBean = em.merge(conceptoBean);
+            Concepto concepto = pago.getConcepto();
+            if (concepto != null) {
+                concepto.getPagoSet().remove(pago);
+                concepto = em.merge(concepto);
             }
-            Reparacion reparacionBean = pago.getReparacionBean();
-            if (reparacionBean != null) {
-                reparacionBean.getPagos().remove(pago);
-                reparacionBean = em.merge(reparacionBean);
+            Reparacion reparacion = pago.getReparacion();
+            if (reparacion != null) {
+                reparacion.getPagoSet().remove(pago);
+                reparacion = em.merge(reparacion);
             }
             em.remove(pago);
             em.getTransaction().commit();

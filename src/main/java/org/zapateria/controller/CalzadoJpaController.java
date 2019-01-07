@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.zapateria.controller.exceptions.IllegalOrphanException;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
-import org.zapateria.controller.exceptions.PreexistingEntityException;
 import org.zapateria.logica.Calzado;
 
 /**
  *
- * @author jose_
+ * @author g.salcedo
  */
 public class CalzadoJpaController implements Serializable {
 
@@ -34,36 +34,27 @@ public class CalzadoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Calzado calzado) throws PreexistingEntityException, Exception {
-        if (calzado.getReparacions() == null) {
-            calzado.setReparacions(new ArrayList<Reparacion>());
-        }
+    public void create(Calzado calzado) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            List<Reparacion> attachedReparacions = new ArrayList<Reparacion>();
-            for (Reparacion reparacionsReparacionToAttach : calzado.getReparacions()) {
-                reparacionsReparacionToAttach = em.getReference(reparacionsReparacionToAttach.getClass(), reparacionsReparacionToAttach.getId());
-                attachedReparacions.add(reparacionsReparacionToAttach);
+            Reparacion reparacion = calzado.getReparacion();
+            if (reparacion != null) {
+                reparacion = em.getReference(reparacion.getClass(), reparacion.getId());
+                calzado.setReparacion(reparacion);
             }
-            calzado.setReparacions(attachedReparacions);
             em.persist(calzado);
-            for (Reparacion reparacionsReparacion : calzado.getReparacions()) {
-                Calzado oldCalzadoBeanOfReparacionsReparacion = reparacionsReparacion.getCalzadoBean();
-                reparacionsReparacion.setCalzadoBean(calzado);
-                reparacionsReparacion = em.merge(reparacionsReparacion);
-                if (oldCalzadoBeanOfReparacionsReparacion != null) {
-                    oldCalzadoBeanOfReparacionsReparacion.getReparacions().remove(reparacionsReparacion);
-                    oldCalzadoBeanOfReparacionsReparacion = em.merge(oldCalzadoBeanOfReparacionsReparacion);
+            if (reparacion != null) {
+                Calzado oldCalzadoOfReparacion = reparacion.getCalzado();
+                if (oldCalzadoOfReparacion != null) {
+                    oldCalzadoOfReparacion.setReparacion(null);
+                    oldCalzadoOfReparacion = em.merge(oldCalzadoOfReparacion);
                 }
+                reparacion.setCalzado(calzado);
+                reparacion = em.merge(reparacion);
             }
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findCalzado(calzado.getId()) != null) {
-                throw new PreexistingEntityException("Calzado " + calzado + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -71,38 +62,37 @@ public class CalzadoJpaController implements Serializable {
         }
     }
 
-    public void edit(Calzado calzado) throws NonexistentEntityException, Exception {
+    public void edit(Calzado calzado) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             Calzado persistentCalzado = em.find(Calzado.class, calzado.getId());
-            List<Reparacion> reparacionsOld = persistentCalzado.getReparacions();
-            List<Reparacion> reparacionsNew = calzado.getReparacions();
-            List<Reparacion> attachedReparacionsNew = new ArrayList<Reparacion>();
-            for (Reparacion reparacionsNewReparacionToAttach : reparacionsNew) {
-                reparacionsNewReparacionToAttach = em.getReference(reparacionsNewReparacionToAttach.getClass(), reparacionsNewReparacionToAttach.getId());
-                attachedReparacionsNew.add(reparacionsNewReparacionToAttach);
+            Reparacion reparacionOld = persistentCalzado.getReparacion();
+            Reparacion reparacionNew = calzado.getReparacion();
+            List<String> illegalOrphanMessages = null;
+            if (reparacionOld != null && !reparacionOld.equals(reparacionNew)) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("You must retain Reparacion " + reparacionOld + " since its calzado field is not nullable.");
             }
-            reparacionsNew = attachedReparacionsNew;
-            calzado.setReparacions(reparacionsNew);
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            if (reparacionNew != null) {
+                reparacionNew = em.getReference(reparacionNew.getClass(), reparacionNew.getId());
+                calzado.setReparacion(reparacionNew);
+            }
             calzado = em.merge(calzado);
-            for (Reparacion reparacionsOldReparacion : reparacionsOld) {
-                if (!reparacionsNew.contains(reparacionsOldReparacion)) {
-                    reparacionsOldReparacion.setCalzadoBean(null);
-                    reparacionsOldReparacion = em.merge(reparacionsOldReparacion);
+            if (reparacionNew != null && !reparacionNew.equals(reparacionOld)) {
+                Calzado oldCalzadoOfReparacion = reparacionNew.getCalzado();
+                if (oldCalzadoOfReparacion != null) {
+                    oldCalzadoOfReparacion.setReparacion(null);
+                    oldCalzadoOfReparacion = em.merge(oldCalzadoOfReparacion);
                 }
-            }
-            for (Reparacion reparacionsNewReparacion : reparacionsNew) {
-                if (!reparacionsOld.contains(reparacionsNewReparacion)) {
-                    Calzado oldCalzadoBeanOfReparacionsNewReparacion = reparacionsNewReparacion.getCalzadoBean();
-                    reparacionsNewReparacion.setCalzadoBean(calzado);
-                    reparacionsNewReparacion = em.merge(reparacionsNewReparacion);
-                    if (oldCalzadoBeanOfReparacionsNewReparacion != null && !oldCalzadoBeanOfReparacionsNewReparacion.equals(calzado)) {
-                        oldCalzadoBeanOfReparacionsNewReparacion.getReparacions().remove(reparacionsNewReparacion);
-                        oldCalzadoBeanOfReparacionsNewReparacion = em.merge(oldCalzadoBeanOfReparacionsNewReparacion);
-                    }
-                }
+                reparacionNew.setCalzado(calzado);
+                reparacionNew = em.merge(reparacionNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -121,7 +111,7 @@ public class CalzadoJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -133,10 +123,16 @@ public class CalzadoJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The calzado with id " + id + " no longer exists.", enfe);
             }
-            List<Reparacion> reparacions = calzado.getReparacions();
-            for (Reparacion reparacionsReparacion : reparacions) {
-                reparacionsReparacion.setCalzadoBean(null);
-                reparacionsReparacion = em.merge(reparacionsReparacion);
+            List<String> illegalOrphanMessages = null;
+            Reparacion reparacionOrphanCheck = calzado.getReparacion();
+            if (reparacionOrphanCheck != null) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Calzado (" + calzado + ") cannot be destroyed since the Reparacion " + reparacionOrphanCheck + " in its reparacion field has a non-nullable calzado field.");
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             em.remove(calzado);
             em.getTransaction().commit();

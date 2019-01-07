@@ -11,19 +11,21 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.zapateria.logica.TipoIdentificacion;
+import org.zapateria.logica.Usuario;
 import org.zapateria.logica.Reparacion;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.zapateria.controller.exceptions.IllegalOrphanException;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
-import org.zapateria.controller.exceptions.PreexistingEntityException;
 import org.zapateria.logica.Persona;
-import org.zapateria.logica.Usuario;
 
 /**
  *
- * @author jose_
+ * @author g.salcedo
  */
 public class PersonaJpaController implements Serializable {
 
@@ -36,81 +38,72 @@ public class PersonaJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Persona persona) throws PreexistingEntityException, Exception {
-        if (persona.getReparacions1() == null) {
-            persona.setReparacions1(new ArrayList<Reparacion>());
+    public void create(Persona persona) {
+        if (persona.getReparacionSet() == null) {
+            persona.setReparacionSet(new HashSet<Reparacion>());
         }
-        if (persona.getReparacions2() == null) {
-            persona.setReparacions2(new ArrayList<Reparacion>());
-        }
-        if (persona.getUsuarios() == null) {
-            persona.setUsuarios(new ArrayList<Usuario>());
+        if (persona.getReparacionSet1() == null) {
+            persona.setReparacionSet1(new HashSet<Reparacion>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TipoIdentificacion tipoIdentificacionBean = persona.getTipoIdentificacionBean();
-            if (tipoIdentificacionBean != null) {
-                tipoIdentificacionBean = em.getReference(tipoIdentificacionBean.getClass(), tipoIdentificacionBean.getId());
-                persona.setTipoIdentificacionBean(tipoIdentificacionBean);
+            TipoIdentificacion tipoIdentificacion = persona.getTipoIdentificacion();
+            if (tipoIdentificacion != null) {
+                tipoIdentificacion = em.getReference(tipoIdentificacion.getClass(), tipoIdentificacion.getId());
+                persona.setTipoIdentificacion(tipoIdentificacion);
             }
-            List<Reparacion> attachedReparacions1 = new ArrayList<Reparacion>();
-            for (Reparacion reparacions1ReparacionToAttach : persona.getReparacions1()) {
-                reparacions1ReparacionToAttach = em.getReference(reparacions1ReparacionToAttach.getClass(), reparacions1ReparacionToAttach.getId());
-                attachedReparacions1.add(reparacions1ReparacionToAttach);
+            Usuario usuario = persona.getUsuario();
+            if (usuario != null) {
+                usuario = em.getReference(usuario.getClass(), usuario.getId());
+                persona.setUsuario(usuario);
             }
-            persona.setReparacions1(attachedReparacions1);
-            List<Reparacion> attachedReparacions2 = new ArrayList<Reparacion>();
-            for (Reparacion reparacions2ReparacionToAttach : persona.getReparacions2()) {
-                reparacions2ReparacionToAttach = em.getReference(reparacions2ReparacionToAttach.getClass(), reparacions2ReparacionToAttach.getId());
-                attachedReparacions2.add(reparacions2ReparacionToAttach);
+            Set<Reparacion> attachedReparacionSet = new HashSet<Reparacion>();
+            for (Reparacion reparacionSetReparacionToAttach : persona.getReparacionSet()) {
+                reparacionSetReparacionToAttach = em.getReference(reparacionSetReparacionToAttach.getClass(), reparacionSetReparacionToAttach.getId());
+                attachedReparacionSet.add(reparacionSetReparacionToAttach);
             }
-            persona.setReparacions2(attachedReparacions2);
-            List<Usuario> attachedUsuarios = new ArrayList<Usuario>();
-            for (Usuario usuariosUsuarioToAttach : persona.getUsuarios()) {
-                usuariosUsuarioToAttach = em.getReference(usuariosUsuarioToAttach.getClass(), usuariosUsuarioToAttach.getId());
-                attachedUsuarios.add(usuariosUsuarioToAttach);
+            persona.setReparacionSet(attachedReparacionSet);
+            Set<Reparacion> attachedReparacionSet1 = new HashSet<Reparacion>();
+            for (Reparacion reparacionSet1ReparacionToAttach : persona.getReparacionSet1()) {
+                reparacionSet1ReparacionToAttach = em.getReference(reparacionSet1ReparacionToAttach.getClass(), reparacionSet1ReparacionToAttach.getId());
+                attachedReparacionSet1.add(reparacionSet1ReparacionToAttach);
             }
-            persona.setUsuarios(attachedUsuarios);
+            persona.setReparacionSet1(attachedReparacionSet1);
             em.persist(persona);
-            if (tipoIdentificacionBean != null) {
-                tipoIdentificacionBean.getPersonas().add(persona);
-                tipoIdentificacionBean = em.merge(tipoIdentificacionBean);
+            if (tipoIdentificacion != null) {
+                tipoIdentificacion.getPersonaSet().add(persona);
+                tipoIdentificacion = em.merge(tipoIdentificacion);
             }
-            for (Reparacion reparacions1Reparacion : persona.getReparacions1()) {
-                Persona oldPersona1OfReparacions1Reparacion = reparacions1Reparacion.getPersona1();
-                reparacions1Reparacion.setPersona1(persona);
-                reparacions1Reparacion = em.merge(reparacions1Reparacion);
-                if (oldPersona1OfReparacions1Reparacion != null) {
-                    oldPersona1OfReparacions1Reparacion.getReparacions1().remove(reparacions1Reparacion);
-                    oldPersona1OfReparacions1Reparacion = em.merge(oldPersona1OfReparacions1Reparacion);
+            if (usuario != null) {
+                Persona oldPersonaOfUsuario = usuario.getPersona();
+                if (oldPersonaOfUsuario != null) {
+                    oldPersonaOfUsuario.setUsuario(null);
+                    oldPersonaOfUsuario = em.merge(oldPersonaOfUsuario);
+                }
+                usuario.setPersona(persona);
+                usuario = em.merge(usuario);
+            }
+            for (Reparacion reparacionSetReparacion : persona.getReparacionSet()) {
+                Persona oldClienteOfReparacionSetReparacion = reparacionSetReparacion.getCliente();
+                reparacionSetReparacion.setCliente(persona);
+                reparacionSetReparacion = em.merge(reparacionSetReparacion);
+                if (oldClienteOfReparacionSetReparacion != null) {
+                    oldClienteOfReparacionSetReparacion.getReparacionSet().remove(reparacionSetReparacion);
+                    oldClienteOfReparacionSetReparacion = em.merge(oldClienteOfReparacionSetReparacion);
                 }
             }
-            for (Reparacion reparacions2Reparacion : persona.getReparacions2()) {
-                Persona oldPersona2OfReparacions2Reparacion = reparacions2Reparacion.getPersona2();
-                reparacions2Reparacion.setPersona2(persona);
-                reparacions2Reparacion = em.merge(reparacions2Reparacion);
-                if (oldPersona2OfReparacions2Reparacion != null) {
-                    oldPersona2OfReparacions2Reparacion.getReparacions2().remove(reparacions2Reparacion);
-                    oldPersona2OfReparacions2Reparacion = em.merge(oldPersona2OfReparacions2Reparacion);
+            for (Reparacion reparacionSet1Reparacion : persona.getReparacionSet1()) {
+                Persona oldZapateroEncargadoOfReparacionSet1Reparacion = reparacionSet1Reparacion.getZapateroEncargado();
+                reparacionSet1Reparacion.setZapateroEncargado(persona);
+                reparacionSet1Reparacion = em.merge(reparacionSet1Reparacion);
+                if (oldZapateroEncargadoOfReparacionSet1Reparacion != null) {
+                    oldZapateroEncargadoOfReparacionSet1Reparacion.getReparacionSet1().remove(reparacionSet1Reparacion);
+                    oldZapateroEncargadoOfReparacionSet1Reparacion = em.merge(oldZapateroEncargadoOfReparacionSet1Reparacion);
                 }
             }
-           /* for (Usuario usuariosUsuario : persona.getUsuarios()) {
-                Persona oldPersonaBeanOfUsuariosUsuario = usuariosUsuario.getPersonaBean();
-                usuariosUsuario.setPersonaBean(persona);
-                usuariosUsuario = em.merge(usuariosUsuario);
-                if (oldPersonaBeanOfUsuariosUsuario != null) {
-                    oldPersonaBeanOfUsuariosUsuario.getUsuarios().remove(usuariosUsuario);
-                    oldPersonaBeanOfUsuariosUsuario = em.merge(oldPersonaBeanOfUsuariosUsuario);
-                }
-            }*/
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findPersona(persona.getId()) != null) {
-                throw new PreexistingEntityException("Persona " + persona + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -118,105 +111,108 @@ public class PersonaJpaController implements Serializable {
         }
     }
 
-    public void edit(Persona persona) throws NonexistentEntityException, Exception {
+    public void edit(Persona persona) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             Persona persistentPersona = em.find(Persona.class, persona.getId());
-            TipoIdentificacion tipoIdentificacionBeanOld = persistentPersona.getTipoIdentificacionBean();
-            TipoIdentificacion tipoIdentificacionBeanNew = persona.getTipoIdentificacionBean();
-            List<Reparacion> reparacions1Old = persistentPersona.getReparacions1();
-            List<Reparacion> reparacions1New = persona.getReparacions1();
-            List<Reparacion> reparacions2Old = persistentPersona.getReparacions2();
-            List<Reparacion> reparacions2New = persona.getReparacions2();
-            List<Usuario> usuariosOld = persistentPersona.getUsuarios();
-            List<Usuario> usuariosNew = persona.getUsuarios();
-            if (tipoIdentificacionBeanNew != null) {
-                tipoIdentificacionBeanNew = em.getReference(tipoIdentificacionBeanNew.getClass(), tipoIdentificacionBeanNew.getId());
-                persona.setTipoIdentificacionBean(tipoIdentificacionBeanNew);
+            TipoIdentificacion tipoIdentificacionOld = persistentPersona.getTipoIdentificacion();
+            TipoIdentificacion tipoIdentificacionNew = persona.getTipoIdentificacion();
+            Usuario usuarioOld = persistentPersona.getUsuario();
+            Usuario usuarioNew = persona.getUsuario();
+            Set<Reparacion> reparacionSetOld = persistentPersona.getReparacionSet();
+            Set<Reparacion> reparacionSetNew = persona.getReparacionSet();
+            Set<Reparacion> reparacionSet1Old = persistentPersona.getReparacionSet1();
+            Set<Reparacion> reparacionSet1New = persona.getReparacionSet1();
+            List<String> illegalOrphanMessages = null;
+            if (usuarioOld != null && !usuarioOld.equals(usuarioNew)) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("You must retain Usuario " + usuarioOld + " since its persona field is not nullable.");
             }
-            List<Reparacion> attachedReparacions1New = new ArrayList<Reparacion>();
-            for (Reparacion reparacions1NewReparacionToAttach : reparacions1New) {
-                reparacions1NewReparacionToAttach = em.getReference(reparacions1NewReparacionToAttach.getClass(), reparacions1NewReparacionToAttach.getId());
-                attachedReparacions1New.add(reparacions1NewReparacionToAttach);
+            for (Reparacion reparacionSetOldReparacion : reparacionSetOld) {
+                if (!reparacionSetNew.contains(reparacionSetOldReparacion)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Reparacion " + reparacionSetOldReparacion + " since its cliente field is not nullable.");
+                }
             }
-            reparacions1New = attachedReparacions1New;
-            persona.setReparacions1(reparacions1New);
-            List<Reparacion> attachedReparacions2New = new ArrayList<Reparacion>();
-            for (Reparacion reparacions2NewReparacionToAttach : reparacions2New) {
-                reparacions2NewReparacionToAttach = em.getReference(reparacions2NewReparacionToAttach.getClass(), reparacions2NewReparacionToAttach.getId());
-                attachedReparacions2New.add(reparacions2NewReparacionToAttach);
+            for (Reparacion reparacionSet1OldReparacion : reparacionSet1Old) {
+                if (!reparacionSet1New.contains(reparacionSet1OldReparacion)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Reparacion " + reparacionSet1OldReparacion + " since its zapateroEncargado field is not nullable.");
+                }
             }
-            reparacions2New = attachedReparacions2New;
-            persona.setReparacions2(reparacions2New);
-            List<Usuario> attachedUsuariosNew = new ArrayList<Usuario>();
-            for (Usuario usuariosNewUsuarioToAttach : usuariosNew) {
-                usuariosNewUsuarioToAttach = em.getReference(usuariosNewUsuarioToAttach.getClass(), usuariosNewUsuarioToAttach.getId());
-                attachedUsuariosNew.add(usuariosNewUsuarioToAttach);
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            usuariosNew = attachedUsuariosNew;
-            persona.setUsuarios(usuariosNew);
+            if (tipoIdentificacionNew != null) {
+                tipoIdentificacionNew = em.getReference(tipoIdentificacionNew.getClass(), tipoIdentificacionNew.getId());
+                persona.setTipoIdentificacion(tipoIdentificacionNew);
+            }
+            if (usuarioNew != null) {
+                usuarioNew = em.getReference(usuarioNew.getClass(), usuarioNew.getId());
+                persona.setUsuario(usuarioNew);
+            }
+            Set<Reparacion> attachedReparacionSetNew = new HashSet<Reparacion>();
+            for (Reparacion reparacionSetNewReparacionToAttach : reparacionSetNew) {
+                reparacionSetNewReparacionToAttach = em.getReference(reparacionSetNewReparacionToAttach.getClass(), reparacionSetNewReparacionToAttach.getId());
+                attachedReparacionSetNew.add(reparacionSetNewReparacionToAttach);
+            }
+            reparacionSetNew = attachedReparacionSetNew;
+            persona.setReparacionSet(reparacionSetNew);
+            Set<Reparacion> attachedReparacionSet1New = new HashSet<Reparacion>();
+            for (Reparacion reparacionSet1NewReparacionToAttach : reparacionSet1New) {
+                reparacionSet1NewReparacionToAttach = em.getReference(reparacionSet1NewReparacionToAttach.getClass(), reparacionSet1NewReparacionToAttach.getId());
+                attachedReparacionSet1New.add(reparacionSet1NewReparacionToAttach);
+            }
+            reparacionSet1New = attachedReparacionSet1New;
+            persona.setReparacionSet1(reparacionSet1New);
             persona = em.merge(persona);
-            if (tipoIdentificacionBeanOld != null && !tipoIdentificacionBeanOld.equals(tipoIdentificacionBeanNew)) {
-                tipoIdentificacionBeanOld.getPersonas().remove(persona);
-                tipoIdentificacionBeanOld = em.merge(tipoIdentificacionBeanOld);
+            if (tipoIdentificacionOld != null && !tipoIdentificacionOld.equals(tipoIdentificacionNew)) {
+                tipoIdentificacionOld.getPersonaSet().remove(persona);
+                tipoIdentificacionOld = em.merge(tipoIdentificacionOld);
             }
-            if (tipoIdentificacionBeanNew != null && !tipoIdentificacionBeanNew.equals(tipoIdentificacionBeanOld)) {
-                tipoIdentificacionBeanNew.getPersonas().add(persona);
-                tipoIdentificacionBeanNew = em.merge(tipoIdentificacionBeanNew);
+            if (tipoIdentificacionNew != null && !tipoIdentificacionNew.equals(tipoIdentificacionOld)) {
+                tipoIdentificacionNew.getPersonaSet().add(persona);
+                tipoIdentificacionNew = em.merge(tipoIdentificacionNew);
             }
-            for (Reparacion reparacions1OldReparacion : reparacions1Old) {
-                if (!reparacions1New.contains(reparacions1OldReparacion)) {
-                    reparacions1OldReparacion.setPersona1(null);
-                    reparacions1OldReparacion = em.merge(reparacions1OldReparacion);
+            if (usuarioNew != null && !usuarioNew.equals(usuarioOld)) {
+                Persona oldPersonaOfUsuario = usuarioNew.getPersona();
+                if (oldPersonaOfUsuario != null) {
+                    oldPersonaOfUsuario.setUsuario(null);
+                    oldPersonaOfUsuario = em.merge(oldPersonaOfUsuario);
                 }
+                usuarioNew.setPersona(persona);
+                usuarioNew = em.merge(usuarioNew);
             }
-            for (Reparacion reparacions1NewReparacion : reparacions1New) {
-                if (!reparacions1Old.contains(reparacions1NewReparacion)) {
-                    Persona oldPersona1OfReparacions1NewReparacion = reparacions1NewReparacion.getPersona1();
-                    reparacions1NewReparacion.setPersona1(persona);
-                    reparacions1NewReparacion = em.merge(reparacions1NewReparacion);
-                    if (oldPersona1OfReparacions1NewReparacion != null && !oldPersona1OfReparacions1NewReparacion.equals(persona)) {
-                        oldPersona1OfReparacions1NewReparacion.getReparacions1().remove(reparacions1NewReparacion);
-                        oldPersona1OfReparacions1NewReparacion = em.merge(oldPersona1OfReparacions1NewReparacion);
+            for (Reparacion reparacionSetNewReparacion : reparacionSetNew) {
+                if (!reparacionSetOld.contains(reparacionSetNewReparacion)) {
+                    Persona oldClienteOfReparacionSetNewReparacion = reparacionSetNewReparacion.getCliente();
+                    reparacionSetNewReparacion.setCliente(persona);
+                    reparacionSetNewReparacion = em.merge(reparacionSetNewReparacion);
+                    if (oldClienteOfReparacionSetNewReparacion != null && !oldClienteOfReparacionSetNewReparacion.equals(persona)) {
+                        oldClienteOfReparacionSetNewReparacion.getReparacionSet().remove(reparacionSetNewReparacion);
+                        oldClienteOfReparacionSetNewReparacion = em.merge(oldClienteOfReparacionSetNewReparacion);
                     }
                 }
             }
-            for (Reparacion reparacions2OldReparacion : reparacions2Old) {
-                if (!reparacions2New.contains(reparacions2OldReparacion)) {
-                    reparacions2OldReparacion.setPersona2(null);
-                    reparacions2OldReparacion = em.merge(reparacions2OldReparacion);
-                }
-            }
-            for (Reparacion reparacions2NewReparacion : reparacions2New) {
-                if (!reparacions2Old.contains(reparacions2NewReparacion)) {
-                    Persona oldPersona2OfReparacions2NewReparacion = reparacions2NewReparacion.getPersona2();
-                    reparacions2NewReparacion.setPersona2(persona);
-                    reparacions2NewReparacion = em.merge(reparacions2NewReparacion);
-                    if (oldPersona2OfReparacions2NewReparacion != null && !oldPersona2OfReparacions2NewReparacion.equals(persona)) {
-                        oldPersona2OfReparacions2NewReparacion.getReparacions2().remove(reparacions2NewReparacion);
-                        oldPersona2OfReparacions2NewReparacion = em.merge(oldPersona2OfReparacions2NewReparacion);
+            for (Reparacion reparacionSet1NewReparacion : reparacionSet1New) {
+                if (!reparacionSet1Old.contains(reparacionSet1NewReparacion)) {
+                    Persona oldZapateroEncargadoOfReparacionSet1NewReparacion = reparacionSet1NewReparacion.getZapateroEncargado();
+                    reparacionSet1NewReparacion.setZapateroEncargado(persona);
+                    reparacionSet1NewReparacion = em.merge(reparacionSet1NewReparacion);
+                    if (oldZapateroEncargadoOfReparacionSet1NewReparacion != null && !oldZapateroEncargadoOfReparacionSet1NewReparacion.equals(persona)) {
+                        oldZapateroEncargadoOfReparacionSet1NewReparacion.getReparacionSet1().remove(reparacionSet1NewReparacion);
+                        oldZapateroEncargadoOfReparacionSet1NewReparacion = em.merge(oldZapateroEncargadoOfReparacionSet1NewReparacion);
                     }
                 }
             }
-            for (Usuario usuariosOldUsuario : usuariosOld) {
-                if (!usuariosNew.contains(usuariosOldUsuario)) {
-                    usuariosOldUsuario.setPersonaBean(null);
-                    usuariosOldUsuario = em.merge(usuariosOldUsuario);
-                }
-            }
-           /* for (Usuario usuariosNewUsuario : usuariosNew) {
-                if (!usuariosOld.contains(usuariosNewUsuario)) {
-                    Persona oldPersonaBeanOfUsuariosNewUsuario = usuariosNewUsuario.getPersonaBean();
-                    usuariosNewUsuario.setPersonaBean(persona);
-                    usuariosNewUsuario = em.merge(usuariosNewUsuario);
-                    if (oldPersonaBeanOfUsuariosNewUsuario != null && !oldPersonaBeanOfUsuariosNewUsuario.equals(persona)) {
-                        oldPersonaBeanOfUsuariosNewUsuario.getUsuarios().remove(usuariosNewUsuario);
-                        oldPersonaBeanOfUsuariosNewUsuario = em.merge(oldPersonaBeanOfUsuariosNewUsuario);
-                    }
-                }
-            }*/
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -234,7 +230,7 @@ public class PersonaJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -246,25 +242,35 @@ public class PersonaJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The persona with id " + id + " no longer exists.", enfe);
             }
-            TipoIdentificacion tipoIdentificacionBean = persona.getTipoIdentificacionBean();
-            if (tipoIdentificacionBean != null) {
-                tipoIdentificacionBean.getPersonas().remove(persona);
-                tipoIdentificacionBean = em.merge(tipoIdentificacionBean);
+            List<String> illegalOrphanMessages = null;
+            Usuario usuarioOrphanCheck = persona.getUsuario();
+            if (usuarioOrphanCheck != null) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Persona (" + persona + ") cannot be destroyed since the Usuario " + usuarioOrphanCheck + " in its usuario field has a non-nullable persona field.");
             }
-            List<Reparacion> reparacions1 = persona.getReparacions1();
-            for (Reparacion reparacions1Reparacion : reparacions1) {
-                reparacions1Reparacion.setPersona1(null);
-                reparacions1Reparacion = em.merge(reparacions1Reparacion);
+            Set<Reparacion> reparacionSetOrphanCheck = persona.getReparacionSet();
+            for (Reparacion reparacionSetOrphanCheckReparacion : reparacionSetOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Persona (" + persona + ") cannot be destroyed since the Reparacion " + reparacionSetOrphanCheckReparacion + " in its reparacionSet field has a non-nullable cliente field.");
             }
-            List<Reparacion> reparacions2 = persona.getReparacions2();
-            for (Reparacion reparacions2Reparacion : reparacions2) {
-                reparacions2Reparacion.setPersona2(null);
-                reparacions2Reparacion = em.merge(reparacions2Reparacion);
+            Set<Reparacion> reparacionSet1OrphanCheck = persona.getReparacionSet1();
+            for (Reparacion reparacionSet1OrphanCheckReparacion : reparacionSet1OrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Persona (" + persona + ") cannot be destroyed since the Reparacion " + reparacionSet1OrphanCheckReparacion + " in its reparacionSet1 field has a non-nullable zapateroEncargado field.");
             }
-            List<Usuario> usuarios = persona.getUsuarios();
-            for (Usuario usuariosUsuario : usuarios) {
-                usuariosUsuario.setPersonaBean(null);
-                usuariosUsuario = em.merge(usuariosUsuario);
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            TipoIdentificacion tipoIdentificacion = persona.getTipoIdentificacion();
+            if (tipoIdentificacion != null) {
+                tipoIdentificacion.getPersonaSet().remove(persona);
+                tipoIdentificacion = em.merge(tipoIdentificacion);
             }
             em.remove(persona);
             em.getTransaction().commit();

@@ -93,7 +93,7 @@ public class UsuarioMapper {
          boolean login = false;
          try {
              usuario = usuarioController.consultarUsuario(usuario);
-             if ( Objects.nonNull(login) && Objects.nonNull(usuario.getPersonaBean())  )
+             if ( Objects.nonNull(login) && Objects.nonNull(usuario.getPersona())  )
                  login = true;
          } catch(Exception e) {
              login = false;

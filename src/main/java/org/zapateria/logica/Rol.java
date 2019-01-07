@@ -1,113 +1,123 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.zapateria.logica;
 
 import java.io.Serializable;
-import javax.persistence.*;
-import java.util.List;
-
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * The persistent class for the rol database table.
- * 
+ *
+ * @author g.salcedo
  */
 @Entity
-@NamedQuery(name="Rol.findAll", query="SELECT r FROM Rol r")
+@Table(name = "rol", catalog = "zapateriadb", schema = "public")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Rol.findAll", query = "SELECT r FROM Rol r"),
+    @NamedQuery(name = "Rol.findById", query = "SELECT r FROM Rol r WHERE r.id = :id"),
+    @NamedQuery(name = "Rol.findByNombre", query = "SELECT r FROM Rol r WHERE r.nombre = :nombre"),
+    @NamedQuery(name = "Rol.findByDescripcion", query = "SELECT r FROM Rol r WHERE r.descripcion = :descripcion"),
+    @NamedQuery(name = "Rol.findByAbreviacion", query = "SELECT r FROM Rol r WHERE r.abreviacion = :abreviacion")})
 public class Rol implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	private Integer id;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
+    @Basic(optional = false)
+    @Column(name = "nombre")
+    private String nombre;
+    @Column(name = "descripcion")
+    private String descripcion;
+    @Column(name = "abreviacion")
+    private String abreviacion;
+    @ManyToMany(mappedBy = "roles")
+    private Set<Usuario> usuarios = new HashSet<>();
 
-	private String abreviacion;
+    public Rol() {
+    }
 
-	private String descripcion;
+    public Rol(Integer id) {
+        this.id = id;
+    }
 
-	private String nombre;
+    public Rol(Integer id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
 
-	//bi-directional many-to-one association to RolPrivilegio
-	@OneToMany(mappedBy="rolBean")
-	private List<RolPrivilegio> rolPrivilegios;
+    public Integer getId() {
+        return id;
+    }
 
-	//bi-directional many-to-one association to RolUsuario
-	@OneToMany(mappedBy="rolBean")
-	private List<RolUsuario> rolUsuarios;
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Rol() {
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public Integer getId() {
-		return this.id;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-	public String getAbreviacion() {
-		return this.abreviacion;
-	}
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-	public void setAbreviacion(String abreviacion) {
-		this.abreviacion = abreviacion;
-	}
+    public String getAbreviacion() {
+        return abreviacion;
+    }
 
-	public String getDescripcion() {
-		return this.descripcion;
-	}
+    public void setAbreviacion(String abreviacion) {
+        this.abreviacion = abreviacion;
+    }
 
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
 
-	public String getNombre() {
-		return this.nombre;
-	}
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Rol)) {
+            return false;
+        }
+        Rol other = (Rol) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public List<RolPrivilegio> getRolPrivilegios() {
-		return this.rolPrivilegios;
-	}
-
-	public void setRolPrivilegios(List<RolPrivilegio> rolPrivilegios) {
-		this.rolPrivilegios = rolPrivilegios;
-	}
-
-	public RolPrivilegio addRolPrivilegio(RolPrivilegio rolPrivilegio) {
-		getRolPrivilegios().add(rolPrivilegio);
-		rolPrivilegio.setRolBean(this);
-
-		return rolPrivilegio;
-	}
-
-	public RolPrivilegio removeRolPrivilegio(RolPrivilegio rolPrivilegio) {
-		getRolPrivilegios().remove(rolPrivilegio);
-		rolPrivilegio.setRolBean(null);
-
-		return rolPrivilegio;
-	}
-
-	public List<RolUsuario> getRolUsuarios() {
-		return this.rolUsuarios;
-	}
-
-	public void setRolUsuarios(List<RolUsuario> rolUsuarios) {
-		this.rolUsuarios = rolUsuarios;
-	}
-
-	public RolUsuario addRolUsuario(RolUsuario rolUsuario) {
-		getRolUsuarios().add(rolUsuario);
-		rolUsuario.setRolBean(this);
-
-		return rolUsuario;
-	}
-
-	public RolUsuario removeRolUsuario(RolUsuario rolUsuario) {
-		getRolUsuarios().remove(rolUsuario);
-		rolUsuario.setRolBean(null);
-
-		return rolUsuario;
-	}
-
+    @Override
+    public String toString() {
+        return "org.zapateria.logica.Rol[ id=" + id + " ]";
+    }
+    
 }

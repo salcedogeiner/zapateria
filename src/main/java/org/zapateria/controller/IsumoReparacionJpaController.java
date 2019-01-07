@@ -14,14 +14,13 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
-import org.zapateria.controller.exceptions.PreexistingEntityException;
 import org.zapateria.logica.Insumo;
 import org.zapateria.logica.IsumoReparacion;
 import org.zapateria.logica.Reparacion;
 
 /**
  *
- * @author jose_
+ * @author g.salcedo
  */
 public class IsumoReparacionJpaController implements Serializable {
 
@@ -34,36 +33,31 @@ public class IsumoReparacionJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(IsumoReparacion isumoReparacion) throws PreexistingEntityException, Exception {
+    public void create(IsumoReparacion isumoReparacion) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Insumo insumoBean = isumoReparacion.getInsumoBean();
-            if (insumoBean != null) {
-                insumoBean = em.getReference(insumoBean.getClass(), insumoBean.getId());
-                isumoReparacion.setInsumoBean(insumoBean);
+            Insumo insumo = isumoReparacion.getInsumo();
+            if (insumo != null) {
+                insumo = em.getReference(insumo.getClass(), insumo.getId());
+                isumoReparacion.setInsumo(insumo);
             }
-            Reparacion reparacionBean = isumoReparacion.getReparacionBean();
-            if (reparacionBean != null) {
-                reparacionBean = em.getReference(reparacionBean.getClass(), reparacionBean.getId());
-                isumoReparacion.setReparacionBean(reparacionBean);
+            Reparacion reparacion = isumoReparacion.getReparacion();
+            if (reparacion != null) {
+                reparacion = em.getReference(reparacion.getClass(), reparacion.getId());
+                isumoReparacion.setReparacion(reparacion);
             }
             em.persist(isumoReparacion);
-            if (insumoBean != null) {
-                insumoBean.getIsumoReparacions().add(isumoReparacion);
-                insumoBean = em.merge(insumoBean);
+            if (insumo != null) {
+                insumo.getIsumoReparacionSet().add(isumoReparacion);
+                insumo = em.merge(insumo);
             }
-            if (reparacionBean != null) {
-                reparacionBean.getIsumoReparacions().add(isumoReparacion);
-                reparacionBean = em.merge(reparacionBean);
+            if (reparacion != null) {
+                reparacion.getIsumoReparacionSet().add(isumoReparacion);
+                reparacion = em.merge(reparacion);
             }
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findIsumoReparacion(isumoReparacion.getId()) != null) {
-                throw new PreexistingEntityException("IsumoReparacion " + isumoReparacion + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -77,34 +71,34 @@ public class IsumoReparacionJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             IsumoReparacion persistentIsumoReparacion = em.find(IsumoReparacion.class, isumoReparacion.getId());
-            Insumo insumoBeanOld = persistentIsumoReparacion.getInsumoBean();
-            Insumo insumoBeanNew = isumoReparacion.getInsumoBean();
-            Reparacion reparacionBeanOld = persistentIsumoReparacion.getReparacionBean();
-            Reparacion reparacionBeanNew = isumoReparacion.getReparacionBean();
-            if (insumoBeanNew != null) {
-                insumoBeanNew = em.getReference(insumoBeanNew.getClass(), insumoBeanNew.getId());
-                isumoReparacion.setInsumoBean(insumoBeanNew);
+            Insumo insumoOld = persistentIsumoReparacion.getInsumo();
+            Insumo insumoNew = isumoReparacion.getInsumo();
+            Reparacion reparacionOld = persistentIsumoReparacion.getReparacion();
+            Reparacion reparacionNew = isumoReparacion.getReparacion();
+            if (insumoNew != null) {
+                insumoNew = em.getReference(insumoNew.getClass(), insumoNew.getId());
+                isumoReparacion.setInsumo(insumoNew);
             }
-            if (reparacionBeanNew != null) {
-                reparacionBeanNew = em.getReference(reparacionBeanNew.getClass(), reparacionBeanNew.getId());
-                isumoReparacion.setReparacionBean(reparacionBeanNew);
+            if (reparacionNew != null) {
+                reparacionNew = em.getReference(reparacionNew.getClass(), reparacionNew.getId());
+                isumoReparacion.setReparacion(reparacionNew);
             }
             isumoReparacion = em.merge(isumoReparacion);
-            if (insumoBeanOld != null && !insumoBeanOld.equals(insumoBeanNew)) {
-                insumoBeanOld.getIsumoReparacions().remove(isumoReparacion);
-                insumoBeanOld = em.merge(insumoBeanOld);
+            if (insumoOld != null && !insumoOld.equals(insumoNew)) {
+                insumoOld.getIsumoReparacionSet().remove(isumoReparacion);
+                insumoOld = em.merge(insumoOld);
             }
-            if (insumoBeanNew != null && !insumoBeanNew.equals(insumoBeanOld)) {
-                insumoBeanNew.getIsumoReparacions().add(isumoReparacion);
-                insumoBeanNew = em.merge(insumoBeanNew);
+            if (insumoNew != null && !insumoNew.equals(insumoOld)) {
+                insumoNew.getIsumoReparacionSet().add(isumoReparacion);
+                insumoNew = em.merge(insumoNew);
             }
-            if (reparacionBeanOld != null && !reparacionBeanOld.equals(reparacionBeanNew)) {
-                reparacionBeanOld.getIsumoReparacions().remove(isumoReparacion);
-                reparacionBeanOld = em.merge(reparacionBeanOld);
+            if (reparacionOld != null && !reparacionOld.equals(reparacionNew)) {
+                reparacionOld.getIsumoReparacionSet().remove(isumoReparacion);
+                reparacionOld = em.merge(reparacionOld);
             }
-            if (reparacionBeanNew != null && !reparacionBeanNew.equals(reparacionBeanOld)) {
-                reparacionBeanNew.getIsumoReparacions().add(isumoReparacion);
-                reparacionBeanNew = em.merge(reparacionBeanNew);
+            if (reparacionNew != null && !reparacionNew.equals(reparacionOld)) {
+                reparacionNew.getIsumoReparacionSet().add(isumoReparacion);
+                reparacionNew = em.merge(reparacionNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -135,15 +129,15 @@ public class IsumoReparacionJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The isumoReparacion with id " + id + " no longer exists.", enfe);
             }
-            Insumo insumoBean = isumoReparacion.getInsumoBean();
-            if (insumoBean != null) {
-                insumoBean.getIsumoReparacions().remove(isumoReparacion);
-                insumoBean = em.merge(insumoBean);
+            Insumo insumo = isumoReparacion.getInsumo();
+            if (insumo != null) {
+                insumo.getIsumoReparacionSet().remove(isumoReparacion);
+                insumo = em.merge(insumo);
             }
-            Reparacion reparacionBean = isumoReparacion.getReparacionBean();
-            if (reparacionBean != null) {
-                reparacionBean.getIsumoReparacions().remove(isumoReparacion);
-                reparacionBean = em.merge(reparacionBean);
+            Reparacion reparacion = isumoReparacion.getReparacion();
+            if (reparacion != null) {
+                reparacion.getIsumoReparacionSet().remove(isumoReparacion);
+                reparacion = em.merge(reparacion);
             }
             em.remove(isumoReparacion);
             em.getTransaction().commit();

@@ -14,18 +14,20 @@ import org.zapateria.logica.Calzado;
 import org.zapateria.logica.EstadoReparacion;
 import org.zapateria.logica.Persona;
 import org.zapateria.logica.IsumoReparacion;
+import java.util.HashSet;
+import java.util.Set;
+import org.zapateria.logica.Pago;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.zapateria.controller.exceptions.IllegalOrphanException;
 import org.zapateria.controller.exceptions.NonexistentEntityException;
-import org.zapateria.controller.exceptions.PreexistingEntityException;
-import org.zapateria.logica.Pago;
 import org.zapateria.logica.Reparacion;
 
 /**
  *
- * @author jose_
+ * @author g.salcedo
  */
 public class ReparacionJpaController implements Serializable {
 
@@ -38,90 +40,99 @@ public class ReparacionJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Reparacion reparacion) throws PreexistingEntityException, Exception {
-        if (reparacion.getIsumoReparacions() == null) {
-            reparacion.setIsumoReparacions(new ArrayList<IsumoReparacion>());
+    public void create(Reparacion reparacion) throws IllegalOrphanException {
+        if (reparacion.getIsumoReparacionSet() == null) {
+            reparacion.setIsumoReparacionSet(new HashSet<IsumoReparacion>());
         }
-        if (reparacion.getPagos() == null) {
-            reparacion.setPagos(new ArrayList<Pago>());
+        if (reparacion.getPagoSet() == null) {
+            reparacion.setPagoSet(new HashSet<Pago>());
+        }
+        List<String> illegalOrphanMessages = null;
+        Calzado calzadoOrphanCheck = reparacion.getCalzado();
+        if (calzadoOrphanCheck != null) {
+            Reparacion oldReparacionOfCalzado = calzadoOrphanCheck.getReparacion();
+            if (oldReparacionOfCalzado != null) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("The Calzado " + calzadoOrphanCheck + " already has an item of type Reparacion whose calzado column cannot be null. Please make another selection for the calzado field.");
+            }
+        }
+        if (illegalOrphanMessages != null) {
+            throw new IllegalOrphanException(illegalOrphanMessages);
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Calzado calzadoBean = reparacion.getCalzadoBean();
-            if (calzadoBean != null) {
-                calzadoBean = em.getReference(calzadoBean.getClass(), calzadoBean.getId());
-                reparacion.setCalzadoBean(calzadoBean);
+            Calzado calzado = reparacion.getCalzado();
+            if (calzado != null) {
+                calzado = em.getReference(calzado.getClass(), calzado.getId());
+                reparacion.setCalzado(calzado);
             }
-            EstadoReparacion estadoReparacionBean = reparacion.getEstadoReparacionBean();
-            if (estadoReparacionBean != null) {
-                estadoReparacionBean = em.getReference(estadoReparacionBean.getClass(), estadoReparacionBean.getId());
-                reparacion.setEstadoReparacionBean(estadoReparacionBean);
+            EstadoReparacion estadoReparacion = reparacion.getEstadoReparacion();
+            if (estadoReparacion != null) {
+                estadoReparacion = em.getReference(estadoReparacion.getClass(), estadoReparacion.getId());
+                reparacion.setEstadoReparacion(estadoReparacion);
             }
-            Persona persona1 = reparacion.getPersona1();
-            if (persona1 != null) {
-                persona1 = em.getReference(persona1.getClass(), persona1.getId());
-                reparacion.setPersona1(persona1);
+            Persona cliente = reparacion.getCliente();
+            if (cliente != null) {
+                cliente = em.getReference(cliente.getClass(), cliente.getId());
+                reparacion.setCliente(cliente);
             }
-            Persona persona2 = reparacion.getPersona2();
-            if (persona2 != null) {
-                persona2 = em.getReference(persona2.getClass(), persona2.getId());
-                reparacion.setPersona2(persona2);
+            Persona zapateroEncargado = reparacion.getZapateroEncargado();
+            if (zapateroEncargado != null) {
+                zapateroEncargado = em.getReference(zapateroEncargado.getClass(), zapateroEncargado.getId());
+                reparacion.setZapateroEncargado(zapateroEncargado);
             }
-            List<IsumoReparacion> attachedIsumoReparacions = new ArrayList<IsumoReparacion>();
-            for (IsumoReparacion isumoReparacionsIsumoReparacionToAttach : reparacion.getIsumoReparacions()) {
-                isumoReparacionsIsumoReparacionToAttach = em.getReference(isumoReparacionsIsumoReparacionToAttach.getClass(), isumoReparacionsIsumoReparacionToAttach.getId());
-                attachedIsumoReparacions.add(isumoReparacionsIsumoReparacionToAttach);
+            Set<IsumoReparacion> attachedIsumoReparacionSet = new HashSet<IsumoReparacion>();
+            for (IsumoReparacion isumoReparacionSetIsumoReparacionToAttach : reparacion.getIsumoReparacionSet()) {
+                isumoReparacionSetIsumoReparacionToAttach = em.getReference(isumoReparacionSetIsumoReparacionToAttach.getClass(), isumoReparacionSetIsumoReparacionToAttach.getId());
+                attachedIsumoReparacionSet.add(isumoReparacionSetIsumoReparacionToAttach);
             }
-            reparacion.setIsumoReparacions(attachedIsumoReparacions);
-            List<Pago> attachedPagos = new ArrayList<Pago>();
-            for (Pago pagosPagoToAttach : reparacion.getPagos()) {
-                pagosPagoToAttach = em.getReference(pagosPagoToAttach.getClass(), pagosPagoToAttach.getId());
-                attachedPagos.add(pagosPagoToAttach);
+            reparacion.setIsumoReparacionSet(attachedIsumoReparacionSet);
+            Set<Pago> attachedPagoSet = new HashSet<Pago>();
+            for (Pago pagoSetPagoToAttach : reparacion.getPagoSet()) {
+                pagoSetPagoToAttach = em.getReference(pagoSetPagoToAttach.getClass(), pagoSetPagoToAttach.getId());
+                attachedPagoSet.add(pagoSetPagoToAttach);
             }
-            reparacion.setPagos(attachedPagos);
+            reparacion.setPagoSet(attachedPagoSet);
             em.persist(reparacion);
-            if (calzadoBean != null) {
-                calzadoBean.getReparacions().add(reparacion);
-                calzadoBean = em.merge(calzadoBean);
+            if (calzado != null) {
+                calzado.setReparacion(reparacion);
+                calzado = em.merge(calzado);
             }
-            if (estadoReparacionBean != null) {
-                estadoReparacionBean.getReparacions().add(reparacion);
-                estadoReparacionBean = em.merge(estadoReparacionBean);
+            if (estadoReparacion != null) {
+                estadoReparacion.getReparacionSet().add(reparacion);
+                estadoReparacion = em.merge(estadoReparacion);
             }
-            if (persona1 != null) {
-                persona1.getReparacions1().add(reparacion);
-                persona1 = em.merge(persona1);
+            if (cliente != null) {
+                cliente.getReparacionSet().add(reparacion);
+                cliente = em.merge(cliente);
             }
-            if (persona2 != null) {
-                persona2.getReparacions1().add(reparacion);
-                persona2 = em.merge(persona2);
+            if (zapateroEncargado != null) {
+                zapateroEncargado.getReparacionSet().add(reparacion);
+                zapateroEncargado = em.merge(zapateroEncargado);
             }
-            for (IsumoReparacion isumoReparacionsIsumoReparacion : reparacion.getIsumoReparacions()) {
-                Reparacion oldReparacionBeanOfIsumoReparacionsIsumoReparacion = isumoReparacionsIsumoReparacion.getReparacionBean();
-                isumoReparacionsIsumoReparacion.setReparacionBean(reparacion);
-                isumoReparacionsIsumoReparacion = em.merge(isumoReparacionsIsumoReparacion);
-                if (oldReparacionBeanOfIsumoReparacionsIsumoReparacion != null) {
-                    oldReparacionBeanOfIsumoReparacionsIsumoReparacion.getIsumoReparacions().remove(isumoReparacionsIsumoReparacion);
-                    oldReparacionBeanOfIsumoReparacionsIsumoReparacion = em.merge(oldReparacionBeanOfIsumoReparacionsIsumoReparacion);
+            for (IsumoReparacion isumoReparacionSetIsumoReparacion : reparacion.getIsumoReparacionSet()) {
+                Reparacion oldReparacionOfIsumoReparacionSetIsumoReparacion = isumoReparacionSetIsumoReparacion.getReparacion();
+                isumoReparacionSetIsumoReparacion.setReparacion(reparacion);
+                isumoReparacionSetIsumoReparacion = em.merge(isumoReparacionSetIsumoReparacion);
+                if (oldReparacionOfIsumoReparacionSetIsumoReparacion != null) {
+                    oldReparacionOfIsumoReparacionSetIsumoReparacion.getIsumoReparacionSet().remove(isumoReparacionSetIsumoReparacion);
+                    oldReparacionOfIsumoReparacionSetIsumoReparacion = em.merge(oldReparacionOfIsumoReparacionSetIsumoReparacion);
                 }
             }
-            for (Pago pagosPago : reparacion.getPagos()) {
-                Reparacion oldReparacionBeanOfPagosPago = pagosPago.getReparacionBean();
-                pagosPago.setReparacionBean(reparacion);
-                pagosPago = em.merge(pagosPago);
-                if (oldReparacionBeanOfPagosPago != null) {
-                    oldReparacionBeanOfPagosPago.getPagos().remove(pagosPago);
-                    oldReparacionBeanOfPagosPago = em.merge(oldReparacionBeanOfPagosPago);
+            for (Pago pagoSetPago : reparacion.getPagoSet()) {
+                Reparacion oldReparacionOfPagoSetPago = pagoSetPago.getReparacion();
+                pagoSetPago.setReparacion(reparacion);
+                pagoSetPago = em.merge(pagoSetPago);
+                if (oldReparacionOfPagoSetPago != null) {
+                    oldReparacionOfPagoSetPago.getPagoSet().remove(pagoSetPago);
+                    oldReparacionOfPagoSetPago = em.merge(oldReparacionOfPagoSetPago);
                 }
             }
             em.getTransaction().commit();
-        } catch (Exception ex) {
-            if (findReparacion(reparacion.getId()) != null) {
-                throw new PreexistingEntityException("Reparacion " + reparacion + " already exists.", ex);
-            }
-            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -129,118 +140,133 @@ public class ReparacionJpaController implements Serializable {
         }
     }
 
-    public void edit(Reparacion reparacion) throws NonexistentEntityException, Exception {
+    public void edit(Reparacion reparacion) throws IllegalOrphanException, NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             Reparacion persistentReparacion = em.find(Reparacion.class, reparacion.getId());
-            Calzado calzadoBeanOld = persistentReparacion.getCalzadoBean();
-            Calzado calzadoBeanNew = reparacion.getCalzadoBean();
-            EstadoReparacion estadoReparacionBeanOld = persistentReparacion.getEstadoReparacionBean();
-            EstadoReparacion estadoReparacionBeanNew = reparacion.getEstadoReparacionBean();
-            Persona persona1Old = persistentReparacion.getPersona1();
-            Persona persona1New = reparacion.getPersona1();
-            Persona persona2Old = persistentReparacion.getPersona2();
-            Persona persona2New = reparacion.getPersona2();
-            List<IsumoReparacion> isumoReparacionsOld = persistentReparacion.getIsumoReparacions();
-            List<IsumoReparacion> isumoReparacionsNew = reparacion.getIsumoReparacions();
-            List<Pago> pagosOld = persistentReparacion.getPagos();
-            List<Pago> pagosNew = reparacion.getPagos();
-            if (calzadoBeanNew != null) {
-                calzadoBeanNew = em.getReference(calzadoBeanNew.getClass(), calzadoBeanNew.getId());
-                reparacion.setCalzadoBean(calzadoBeanNew);
-            }
-            if (estadoReparacionBeanNew != null) {
-                estadoReparacionBeanNew = em.getReference(estadoReparacionBeanNew.getClass(), estadoReparacionBeanNew.getId());
-                reparacion.setEstadoReparacionBean(estadoReparacionBeanNew);
-            }
-            if (persona1New != null) {
-                persona1New = em.getReference(persona1New.getClass(), persona1New.getId());
-                reparacion.setPersona1(persona1New);
-            }
-            if (persona2New != null) {
-                persona2New = em.getReference(persona2New.getClass(), persona2New.getId());
-                reparacion.setPersona2(persona2New);
-            }
-            List<IsumoReparacion> attachedIsumoReparacionsNew = new ArrayList<IsumoReparacion>();
-            for (IsumoReparacion isumoReparacionsNewIsumoReparacionToAttach : isumoReparacionsNew) {
-                isumoReparacionsNewIsumoReparacionToAttach = em.getReference(isumoReparacionsNewIsumoReparacionToAttach.getClass(), isumoReparacionsNewIsumoReparacionToAttach.getId());
-                attachedIsumoReparacionsNew.add(isumoReparacionsNewIsumoReparacionToAttach);
-            }
-            isumoReparacionsNew = attachedIsumoReparacionsNew;
-            reparacion.setIsumoReparacions(isumoReparacionsNew);
-            List<Pago> attachedPagosNew = new ArrayList<Pago>();
-            for (Pago pagosNewPagoToAttach : pagosNew) {
-                pagosNewPagoToAttach = em.getReference(pagosNewPagoToAttach.getClass(), pagosNewPagoToAttach.getId());
-                attachedPagosNew.add(pagosNewPagoToAttach);
-            }
-            pagosNew = attachedPagosNew;
-            reparacion.setPagos(pagosNew);
-            reparacion = em.merge(reparacion);
-            if (calzadoBeanOld != null && !calzadoBeanOld.equals(calzadoBeanNew)) {
-                calzadoBeanOld.getReparacions().remove(reparacion);
-                calzadoBeanOld = em.merge(calzadoBeanOld);
-            }
-            if (calzadoBeanNew != null && !calzadoBeanNew.equals(calzadoBeanOld)) {
-                calzadoBeanNew.getReparacions().add(reparacion);
-                calzadoBeanNew = em.merge(calzadoBeanNew);
-            }
-            if (estadoReparacionBeanOld != null && !estadoReparacionBeanOld.equals(estadoReparacionBeanNew)) {
-                estadoReparacionBeanOld.getReparacions().remove(reparacion);
-                estadoReparacionBeanOld = em.merge(estadoReparacionBeanOld);
-            }
-            if (estadoReparacionBeanNew != null && !estadoReparacionBeanNew.equals(estadoReparacionBeanOld)) {
-                estadoReparacionBeanNew.getReparacions().add(reparacion);
-                estadoReparacionBeanNew = em.merge(estadoReparacionBeanNew);
-            }
-            if (persona1Old != null && !persona1Old.equals(persona1New)) {
-                persona1Old.getReparacions1().remove(reparacion);
-                persona1Old = em.merge(persona1Old);
-            }
-            if (persona1New != null && !persona1New.equals(persona1Old)) {
-                persona1New.getReparacions1().add(reparacion);
-                persona1New = em.merge(persona1New);
-            }
-            if (persona2Old != null && !persona2Old.equals(persona2New)) {
-                persona2Old.getReparacions1().remove(reparacion);
-                persona2Old = em.merge(persona2Old);
-            }
-            if (persona2New != null && !persona2New.equals(persona2Old)) {
-                persona2New.getReparacions1().add(reparacion);
-                persona2New = em.merge(persona2New);
-            }
-            for (IsumoReparacion isumoReparacionsOldIsumoReparacion : isumoReparacionsOld) {
-                if (!isumoReparacionsNew.contains(isumoReparacionsOldIsumoReparacion)) {
-                    isumoReparacionsOldIsumoReparacion.setReparacionBean(null);
-                    isumoReparacionsOldIsumoReparacion = em.merge(isumoReparacionsOldIsumoReparacion);
+            Calzado calzadoOld = persistentReparacion.getCalzado();
+            Calzado calzadoNew = reparacion.getCalzado();
+            EstadoReparacion estadoReparacionOld = persistentReparacion.getEstadoReparacion();
+            EstadoReparacion estadoReparacionNew = reparacion.getEstadoReparacion();
+            Persona clienteOld = persistentReparacion.getCliente();
+            Persona clienteNew = reparacion.getCliente();
+            Persona zapateroEncargadoOld = persistentReparacion.getZapateroEncargado();
+            Persona zapateroEncargadoNew = reparacion.getZapateroEncargado();
+            Set<IsumoReparacion> isumoReparacionSetOld = persistentReparacion.getIsumoReparacionSet();
+            Set<IsumoReparacion> isumoReparacionSetNew = reparacion.getIsumoReparacionSet();
+            Set<Pago> pagoSetOld = persistentReparacion.getPagoSet();
+            Set<Pago> pagoSetNew = reparacion.getPagoSet();
+            List<String> illegalOrphanMessages = null;
+            if (calzadoNew != null && !calzadoNew.equals(calzadoOld)) {
+                Reparacion oldReparacionOfCalzado = calzadoNew.getReparacion();
+                if (oldReparacionOfCalzado != null) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("The Calzado " + calzadoNew + " already has an item of type Reparacion whose calzado column cannot be null. Please make another selection for the calzado field.");
                 }
             }
-            for (IsumoReparacion isumoReparacionsNewIsumoReparacion : isumoReparacionsNew) {
-                if (!isumoReparacionsOld.contains(isumoReparacionsNewIsumoReparacion)) {
-                    Reparacion oldReparacionBeanOfIsumoReparacionsNewIsumoReparacion = isumoReparacionsNewIsumoReparacion.getReparacionBean();
-                    isumoReparacionsNewIsumoReparacion.setReparacionBean(reparacion);
-                    isumoReparacionsNewIsumoReparacion = em.merge(isumoReparacionsNewIsumoReparacion);
-                    if (oldReparacionBeanOfIsumoReparacionsNewIsumoReparacion != null && !oldReparacionBeanOfIsumoReparacionsNewIsumoReparacion.equals(reparacion)) {
-                        oldReparacionBeanOfIsumoReparacionsNewIsumoReparacion.getIsumoReparacions().remove(isumoReparacionsNewIsumoReparacion);
-                        oldReparacionBeanOfIsumoReparacionsNewIsumoReparacion = em.merge(oldReparacionBeanOfIsumoReparacionsNewIsumoReparacion);
+            for (IsumoReparacion isumoReparacionSetOldIsumoReparacion : isumoReparacionSetOld) {
+                if (!isumoReparacionSetNew.contains(isumoReparacionSetOldIsumoReparacion)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain IsumoReparacion " + isumoReparacionSetOldIsumoReparacion + " since its reparacion field is not nullable.");
+                }
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            if (calzadoNew != null) {
+                calzadoNew = em.getReference(calzadoNew.getClass(), calzadoNew.getId());
+                reparacion.setCalzado(calzadoNew);
+            }
+            if (estadoReparacionNew != null) {
+                estadoReparacionNew = em.getReference(estadoReparacionNew.getClass(), estadoReparacionNew.getId());
+                reparacion.setEstadoReparacion(estadoReparacionNew);
+            }
+            if (clienteNew != null) {
+                clienteNew = em.getReference(clienteNew.getClass(), clienteNew.getId());
+                reparacion.setCliente(clienteNew);
+            }
+            if (zapateroEncargadoNew != null) {
+                zapateroEncargadoNew = em.getReference(zapateroEncargadoNew.getClass(), zapateroEncargadoNew.getId());
+                reparacion.setZapateroEncargado(zapateroEncargadoNew);
+            }
+            Set<IsumoReparacion> attachedIsumoReparacionSetNew = new HashSet<IsumoReparacion>();
+            for (IsumoReparacion isumoReparacionSetNewIsumoReparacionToAttach : isumoReparacionSetNew) {
+                isumoReparacionSetNewIsumoReparacionToAttach = em.getReference(isumoReparacionSetNewIsumoReparacionToAttach.getClass(), isumoReparacionSetNewIsumoReparacionToAttach.getId());
+                attachedIsumoReparacionSetNew.add(isumoReparacionSetNewIsumoReparacionToAttach);
+            }
+            isumoReparacionSetNew = attachedIsumoReparacionSetNew;
+            reparacion.setIsumoReparacionSet(isumoReparacionSetNew);
+            Set<Pago> attachedPagoSetNew = new HashSet<Pago>();
+            for (Pago pagoSetNewPagoToAttach : pagoSetNew) {
+                pagoSetNewPagoToAttach = em.getReference(pagoSetNewPagoToAttach.getClass(), pagoSetNewPagoToAttach.getId());
+                attachedPagoSetNew.add(pagoSetNewPagoToAttach);
+            }
+            pagoSetNew = attachedPagoSetNew;
+            reparacion.setPagoSet(pagoSetNew);
+            reparacion = em.merge(reparacion);
+            if (calzadoOld != null && !calzadoOld.equals(calzadoNew)) {
+                calzadoOld.setReparacion(null);
+                calzadoOld = em.merge(calzadoOld);
+            }
+            if (calzadoNew != null && !calzadoNew.equals(calzadoOld)) {
+                calzadoNew.setReparacion(reparacion);
+                calzadoNew = em.merge(calzadoNew);
+            }
+            if (estadoReparacionOld != null && !estadoReparacionOld.equals(estadoReparacionNew)) {
+                estadoReparacionOld.getReparacionSet().remove(reparacion);
+                estadoReparacionOld = em.merge(estadoReparacionOld);
+            }
+            if (estadoReparacionNew != null && !estadoReparacionNew.equals(estadoReparacionOld)) {
+                estadoReparacionNew.getReparacionSet().add(reparacion);
+                estadoReparacionNew = em.merge(estadoReparacionNew);
+            }
+            if (clienteOld != null && !clienteOld.equals(clienteNew)) {
+                clienteOld.getReparacionSet().remove(reparacion);
+                clienteOld = em.merge(clienteOld);
+            }
+            if (clienteNew != null && !clienteNew.equals(clienteOld)) {
+                clienteNew.getReparacionSet().add(reparacion);
+                clienteNew = em.merge(clienteNew);
+            }
+            if (zapateroEncargadoOld != null && !zapateroEncargadoOld.equals(zapateroEncargadoNew)) {
+                zapateroEncargadoOld.getReparacionSet().remove(reparacion);
+                zapateroEncargadoOld = em.merge(zapateroEncargadoOld);
+            }
+            if (zapateroEncargadoNew != null && !zapateroEncargadoNew.equals(zapateroEncargadoOld)) {
+                zapateroEncargadoNew.getReparacionSet().add(reparacion);
+                zapateroEncargadoNew = em.merge(zapateroEncargadoNew);
+            }
+            for (IsumoReparacion isumoReparacionSetNewIsumoReparacion : isumoReparacionSetNew) {
+                if (!isumoReparacionSetOld.contains(isumoReparacionSetNewIsumoReparacion)) {
+                    Reparacion oldReparacionOfIsumoReparacionSetNewIsumoReparacion = isumoReparacionSetNewIsumoReparacion.getReparacion();
+                    isumoReparacionSetNewIsumoReparacion.setReparacion(reparacion);
+                    isumoReparacionSetNewIsumoReparacion = em.merge(isumoReparacionSetNewIsumoReparacion);
+                    if (oldReparacionOfIsumoReparacionSetNewIsumoReparacion != null && !oldReparacionOfIsumoReparacionSetNewIsumoReparacion.equals(reparacion)) {
+                        oldReparacionOfIsumoReparacionSetNewIsumoReparacion.getIsumoReparacionSet().remove(isumoReparacionSetNewIsumoReparacion);
+                        oldReparacionOfIsumoReparacionSetNewIsumoReparacion = em.merge(oldReparacionOfIsumoReparacionSetNewIsumoReparacion);
                     }
                 }
             }
-            for (Pago pagosOldPago : pagosOld) {
-                if (!pagosNew.contains(pagosOldPago)) {
-                    pagosOldPago.setReparacionBean(null);
-                    pagosOldPago = em.merge(pagosOldPago);
+            for (Pago pagoSetOldPago : pagoSetOld) {
+                if (!pagoSetNew.contains(pagoSetOldPago)) {
+                    pagoSetOldPago.setReparacion(null);
+                    pagoSetOldPago = em.merge(pagoSetOldPago);
                 }
             }
-            for (Pago pagosNewPago : pagosNew) {
-                if (!pagosOld.contains(pagosNewPago)) {
-                    Reparacion oldReparacionBeanOfPagosNewPago = pagosNewPago.getReparacionBean();
-                    pagosNewPago.setReparacionBean(reparacion);
-                    pagosNewPago = em.merge(pagosNewPago);
-                    if (oldReparacionBeanOfPagosNewPago != null && !oldReparacionBeanOfPagosNewPago.equals(reparacion)) {
-                        oldReparacionBeanOfPagosNewPago.getPagos().remove(pagosNewPago);
-                        oldReparacionBeanOfPagosNewPago = em.merge(oldReparacionBeanOfPagosNewPago);
+            for (Pago pagoSetNewPago : pagoSetNew) {
+                if (!pagoSetOld.contains(pagoSetNewPago)) {
+                    Reparacion oldReparacionOfPagoSetNewPago = pagoSetNewPago.getReparacion();
+                    pagoSetNewPago.setReparacion(reparacion);
+                    pagoSetNewPago = em.merge(pagoSetNewPago);
+                    if (oldReparacionOfPagoSetNewPago != null && !oldReparacionOfPagoSetNewPago.equals(reparacion)) {
+                        oldReparacionOfPagoSetNewPago.getPagoSet().remove(pagoSetNewPago);
+                        oldReparacionOfPagoSetNewPago = em.merge(oldReparacionOfPagoSetNewPago);
                     }
                 }
             }
@@ -261,7 +287,7 @@ public class ReparacionJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -273,35 +299,41 @@ public class ReparacionJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The reparacion with id " + id + " no longer exists.", enfe);
             }
-            Calzado calzadoBean = reparacion.getCalzadoBean();
-            if (calzadoBean != null) {
-                calzadoBean.getReparacions().remove(reparacion);
-                calzadoBean = em.merge(calzadoBean);
+            List<String> illegalOrphanMessages = null;
+            Set<IsumoReparacion> isumoReparacionSetOrphanCheck = reparacion.getIsumoReparacionSet();
+            for (IsumoReparacion isumoReparacionSetOrphanCheckIsumoReparacion : isumoReparacionSetOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Reparacion (" + reparacion + ") cannot be destroyed since the IsumoReparacion " + isumoReparacionSetOrphanCheckIsumoReparacion + " in its isumoReparacionSet field has a non-nullable reparacion field.");
             }
-            EstadoReparacion estadoReparacionBean = reparacion.getEstadoReparacionBean();
-            if (estadoReparacionBean != null) {
-                estadoReparacionBean.getReparacions().remove(reparacion);
-                estadoReparacionBean = em.merge(estadoReparacionBean);
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Persona persona1 = reparacion.getPersona1();
-            if (persona1 != null) {
-                persona1.getReparacions1().remove(reparacion);
-                persona1 = em.merge(persona1);
+            Calzado calzado = reparacion.getCalzado();
+            if (calzado != null) {
+                calzado.setReparacion(null);
+                calzado = em.merge(calzado);
             }
-            Persona persona2 = reparacion.getPersona2();
-            if (persona2 != null) {
-                persona2.getReparacions1().remove(reparacion);
-                persona2 = em.merge(persona2);
+            EstadoReparacion estadoReparacion = reparacion.getEstadoReparacion();
+            if (estadoReparacion != null) {
+                estadoReparacion.getReparacionSet().remove(reparacion);
+                estadoReparacion = em.merge(estadoReparacion);
             }
-            List<IsumoReparacion> isumoReparacions = reparacion.getIsumoReparacions();
-            for (IsumoReparacion isumoReparacionsIsumoReparacion : isumoReparacions) {
-                isumoReparacionsIsumoReparacion.setReparacionBean(null);
-                isumoReparacionsIsumoReparacion = em.merge(isumoReparacionsIsumoReparacion);
+            Persona cliente = reparacion.getCliente();
+            if (cliente != null) {
+                cliente.getReparacionSet().remove(reparacion);
+                cliente = em.merge(cliente);
             }
-            List<Pago> pagos = reparacion.getPagos();
-            for (Pago pagosPago : pagos) {
-                pagosPago.setReparacionBean(null);
-                pagosPago = em.merge(pagosPago);
+            Persona zapateroEncargado = reparacion.getZapateroEncargado();
+            if (zapateroEncargado != null) {
+                zapateroEncargado.getReparacionSet().remove(reparacion);
+                zapateroEncargado = em.merge(zapateroEncargado);
+            }
+            Set<Pago> pagoSet = reparacion.getPagoSet();
+            for (Pago pagoSetPago : pagoSet) {
+                pagoSetPago.setReparacion(null);
+                pagoSetPago = em.merge(pagoSetPago);
             }
             em.remove(reparacion);
             em.getTransaction().commit();
