@@ -25,9 +25,9 @@ import org.zapateria.logica.TipoIdentificacion;
  *
  * @author g.salcedo
  */
-public class TipoIdentificacionJpaController implements Serializable {
+public class TipoIdentificacionMapper implements Serializable {
 
-    public TipoIdentificacionJpaController(EntityManagerFactory emf) {
+    public TipoIdentificacionMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

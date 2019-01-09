@@ -24,9 +24,9 @@ import org.zapateria.logica.Usuario;
  *
  * @author g.salcedo
  */
-public class UsuarioJpaController implements Serializable {
+public class UsuarioMapper implements Serializable {
 
-    public UsuarioJpaController(EntityManagerFactory emf) {
+    public UsuarioMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

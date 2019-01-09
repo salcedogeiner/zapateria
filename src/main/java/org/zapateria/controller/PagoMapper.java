@@ -22,9 +22,9 @@ import org.zapateria.logica.Reparacion;
  *
  * @author g.salcedo
  */
-public class PagoJpaController implements Serializable {
+public class PagoMapper implements Serializable {
 
-    public PagoJpaController(EntityManagerFactory emf) {
+    public PagoMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

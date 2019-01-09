@@ -29,9 +29,9 @@ import org.zapateria.logica.Reparacion;
  *
  * @author g.salcedo
  */
-public class ReparacionJpaController implements Serializable {
+public class ReparacionMapper implements Serializable {
 
-    public ReparacionJpaController(EntityManagerFactory emf) {
+    public ReparacionMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

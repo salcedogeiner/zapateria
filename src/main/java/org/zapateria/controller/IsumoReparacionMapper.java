@@ -22,9 +22,9 @@ import org.zapateria.logica.Reparacion;
  *
  * @author g.salcedo
  */
-public class IsumoReparacionJpaController implements Serializable {
+public class IsumoReparacionMapper implements Serializable {
 
-    public IsumoReparacionJpaController(EntityManagerFactory emf) {
+    public IsumoReparacionMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

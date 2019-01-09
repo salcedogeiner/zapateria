@@ -3,7 +3,6 @@ package org.zapateria.mapper;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Persistence;
-import org.zapateria.controller.UsuarioJpaController;
 import org.zapateria.logica.Usuario;
 import org.zapateria.utilidades.Constantes;
 
@@ -14,7 +13,7 @@ import org.zapateria.utilidades.Constantes;
  */
 public class UsuarioMapper {
 
-    private UsuarioJpaController usuarioController;
+    private org.zapateria.controller.UsuarioMapper usuarioController;
 
     public void finalize() throws Throwable {
 
@@ -22,7 +21,7 @@ public class UsuarioMapper {
 
     public UsuarioMapper() {
 
-        this.usuarioController = new UsuarioJpaController(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
+        this.usuarioController = new org.zapateria.controller.UsuarioMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
         System.out.println(" usuarioController : " + this.usuarioController);
         // TODO llamar a login.
         // EntityManagerFactory emf = Persistence.createEntityManagerFactory(Constantes.CONTEXTO);

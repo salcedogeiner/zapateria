@@ -27,9 +27,9 @@ import org.zapateria.logica.Persona;
  *
  * @author g.salcedo
  */
-public class PersonaJpaController implements Serializable {
+public class PersonaMapper implements Serializable {
 
-    public PersonaJpaController(EntityManagerFactory emf) {
+    public PersonaMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

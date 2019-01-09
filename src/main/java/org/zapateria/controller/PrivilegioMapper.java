@@ -20,9 +20,9 @@ import org.zapateria.logica.Privilegio;
  *
  * @author g.salcedo
  */
-public class PrivilegioJpaController implements Serializable {
+public class PrivilegioMapper implements Serializable {
 
-    public PrivilegioJpaController(EntityManagerFactory emf) {
+    public PrivilegioMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

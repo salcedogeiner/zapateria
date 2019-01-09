@@ -23,9 +23,9 @@ import org.zapateria.logica.Concepto;
  *
  * @author g.salcedo
  */
-public class ConceptoJpaController implements Serializable {
+public class ConceptoMapper implements Serializable {
 
-    public ConceptoJpaController(EntityManagerFactory emf) {
+    public ConceptoMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

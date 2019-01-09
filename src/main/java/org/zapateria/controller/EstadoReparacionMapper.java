@@ -25,9 +25,9 @@ import org.zapateria.logica.EstadoReparacion;
  *
  * @author g.salcedo
  */
-public class EstadoReparacionJpaController implements Serializable {
+public class EstadoReparacionMapper implements Serializable {
 
-    public EstadoReparacionJpaController(EntityManagerFactory emf) {
+    public EstadoReparacionMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

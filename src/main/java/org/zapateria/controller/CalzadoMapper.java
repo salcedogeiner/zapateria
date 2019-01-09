@@ -23,9 +23,9 @@ import org.zapateria.logica.Calzado;
  *
  * @author g.salcedo
  */
-public class CalzadoJpaController implements Serializable {
+public class CalzadoMapper implements Serializable {
 
-    public CalzadoJpaController(EntityManagerFactory emf) {
+    public CalzadoMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

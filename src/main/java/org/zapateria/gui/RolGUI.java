@@ -5,7 +5,11 @@
  */
 package org.zapateria.gui;
 
+import java.util.ArrayList;
+import javax.swing.ComboBoxModel;
+import org.zapateria.logica.Rol;
 import org.zapateria.logica.Usuario;
+import org.zapateria.utilidades.Constantes;
 
 /**
  *
@@ -14,17 +18,17 @@ import org.zapateria.logica.Usuario;
 public class RolGUI extends javax.swing.JFrame {
     
     private Usuario usuario;
-
     /**
      * Creates new form rolGUI
      */
     public RolGUI() {
+        this.usuario = (Usuario)Constantes.session.get(Constantes.USUARIO);
         initComponents();
     }
 
     public RolGUI(Usuario usuario) {
-        initComponents();
         this.usuario = usuario;
+        initComponents();        
     }
 
     /**
@@ -37,17 +41,15 @@ public class RolGUI extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         aceptar = new javax.swing.JButton();
         cancelar = new javax.swing.JButton();
+        jComboRoles = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Zapateria");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel1.setText("Seleccione su rol");
 
@@ -65,36 +67,43 @@ public class RolGUI extends javax.swing.JFrame {
             }
         });
 
+        jComboRoles.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboRolesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(72, Short.MAX_VALUE)
+                .addContainerGap(85, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addGap(50, 50, 50)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(66, 66, 66))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(153, 153, 153)
-                .addComponent(aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
-                .addComponent(cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(37, 37, 37)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(129, 129, 129)
+                        .addComponent(cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboRoles, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(83, 83, 83))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(94, 94, 94)
+                .addContainerGap(78, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboRoles, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                .addGap(67, 67, 67)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(59, 59, 59))
         );
+
+        this.actualizarRoles();
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -111,12 +120,29 @@ public class RolGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
-        // TODO add your handling code here:
+          
+        if (this.jComboRoles.getSelectedItem().equals(Constantes.CLIENTE_ROL)) {
+            ClienteGUI clienteGUI = new ClienteGUI();
+            clienteGUI.setVisible(true);
+            this.dispose();
+            System.out.println(this.jComboRoles.getSelectedItem());
+        }
+        if (this.jComboRoles.getSelectedItem().equals(Constantes.ZAPATERO_ROL)) {
+            System.out.println(this.jComboRoles.getSelectedItem());
+        }
+        if (this.jComboRoles.getSelectedItem().equals(Constantes.ADMIN_ROL)) {
+            System.out.println(this.jComboRoles.getSelectedItem());
+        }
+        
     }//GEN-LAST:event_aceptarActionPerformed
 
     private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cancelarActionPerformed
+
+    private void jComboRolesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboRolesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboRolesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -153,11 +179,22 @@ public class RolGUI extends javax.swing.JFrame {
             }
         });
     }
+    
+    private void actualizarRoles(){
+        this.jComboRoles.addItem(Constantes.CLIENTE_ROL);
+        String tipo = this.usuario.getPersona().getTipo();
+        if (tipo.equals(Constantes.ZAPATERO_ROL)) {
+            this.jComboRoles.addItem(Constantes.ZAPATERO_ROL);
+        } else if ( tipo.equals(Constantes.ADMIN_ROL)) {
+            this.jComboRoles.addItem(Constantes.ZAPATERO_ROL);
+            this.jComboRoles.addItem(Constantes.ADMIN_ROL);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aceptar;
     private javax.swing.JButton cancelar;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboRoles;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables

@@ -20,9 +20,9 @@ import org.zapateria.logica.Rol;
  *
  * @author g.salcedo
  */
-public class RolJpaController implements Serializable {
+public class RolMapper implements Serializable {
 
-    public RolJpaController(EntityManagerFactory emf) {
+    public RolMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;

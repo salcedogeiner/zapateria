@@ -25,9 +25,9 @@ import org.zapateria.logica.Insumo;
  *
  * @author g.salcedo
  */
-public class InsumoJpaController implements Serializable {
+public class InsumoMapper implements Serializable {
 
-    public InsumoJpaController(EntityManagerFactory emf) {
+    public InsumoMapper(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
