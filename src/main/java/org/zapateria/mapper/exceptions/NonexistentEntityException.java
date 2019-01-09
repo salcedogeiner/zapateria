@@ -1,4 +1,4 @@
-package org.zapateria.controller.exceptions;
+package org.zapateria.mapper.exceptions;
 
 public class NonexistentEntityException extends Exception {
     public NonexistentEntityException(String message, Throwable cause) {

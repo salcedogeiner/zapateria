@@ -1,4 +1,4 @@
-package org.zapateria.controller.exceptions;
+package org.zapateria.mapper.exceptions;
 
 import java.util.ArrayList;
 import java.util.List;

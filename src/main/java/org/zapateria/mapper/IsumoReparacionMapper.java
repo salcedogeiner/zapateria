@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.zapateria.controller;
+package org.zapateria.mapper;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,7 +13,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.zapateria.controller.exceptions.NonexistentEntityException;
+import org.zapateria.mapper.exceptions.NonexistentEntityException;
 import org.zapateria.logica.Insumo;
 import org.zapateria.logica.IsumoReparacion;
 import org.zapateria.logica.Reparacion;
