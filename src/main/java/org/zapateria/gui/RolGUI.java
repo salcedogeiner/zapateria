@@ -132,12 +132,20 @@ public class RolGUI extends javax.swing.JFrame {
         }
         if (this.jComboRoles.getSelectedItem().equals(Constantes.ADMIN_ROL)) {
             System.out.println(this.jComboRoles.getSelectedItem());
+            
+            this.dispose();
+            
+            RolAdministradorGUI rolAdminGui = new RolAdministradorGUI();
+            rolAdminGui.setVisible(true);
         }
         
     }//GEN-LAST:event_aceptarActionPerformed
 
     private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
-        // TODO add your handling code here:
+        LoginGUI login = new LoginGUI();
+        login.setVisible(true);
+        this.dispose();
+        
     }//GEN-LAST:event_cancelarActionPerformed
 
     private void jComboRolesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboRolesActionPerformed
@@ -181,6 +189,9 @@ public class RolGUI extends javax.swing.JFrame {
     }
     
     private void actualizarRoles(){
+        
+        System.out.println(" this.usuario.getPersona().getTipo() : " + this.usuario.getPersona().getTipo());
+        
         this.jComboRoles.addItem(Constantes.CLIENTE_ROL);
         String tipo = this.usuario.getPersona().getTipo();
         if (tipo.equals(Constantes.ZAPATERO_ROL)) {
