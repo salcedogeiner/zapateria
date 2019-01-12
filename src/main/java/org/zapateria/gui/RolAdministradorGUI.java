@@ -156,7 +156,16 @@ public class RolAdministradorGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_cerrarSesionActionPerformed
 
     private void comboAdministradorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboAdministradorActionPerformed
-        // TODO add your handling code here:
+        if ( Constantes.ADMIN_EMPTY.equals(this.comboAdministrador.getSelectedItem()) )
+            return;
+        
+        if ( Constantes.ADMIN_PERSONA.equals(this.comboAdministrador.getSelectedItem()) ) {
+            PersonaGUI persona = new PersonaGUI();
+            persona.setVisible(Boolean.TRUE);
+            this.dispose();
+            
+        }
+            
     }//GEN-LAST:event_comboAdministradorActionPerformed
 
     /**
@@ -205,6 +214,7 @@ public class RolAdministradorGUI extends javax.swing.JFrame {
      * metodo el cual agrega items al combo
      */
     public void addComboAdmin() {
+        this.comboAdministrador.addItem(Constantes.ADMIN_EMPTY);
         this.comboAdministrador.addItem(Constantes.ADMIN_PERSONA);
         this.comboAdministrador.addItem(Constantes.ADMIN_INSUMO);
         this.comboAdministrador.addItem(Constantes.ADMIN_ADMINISTRAR);
