@@ -1,5 +1,6 @@
 package org.zapateria.gui;
 
+import org.zapateria.logica.Persona;
 import org.zapateria.utilidades.Constantes;
 
 /**
@@ -31,7 +32,7 @@ public class PersonaGUI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        cambiarRol = new javax.swing.JButton();
+        registrar = new javax.swing.JButton();
         regresar = new javax.swing.JButton();
         cerrarSession = new javax.swing.JButton();
         nombres = new javax.swing.JTextField();
@@ -62,10 +63,10 @@ public class PersonaGUI extends javax.swing.JFrame {
 
         jLabel6.setText("Dirección");
 
-        cambiarRol.setText("Cambiar Rol");
-        cambiarRol.addActionListener(new java.awt.event.ActionListener() {
+        registrar.setText("Registrar");
+        registrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cambiarRolActionPerformed(evt);
+                registrarActionPerformed(evt);
             }
         });
 
@@ -83,25 +84,18 @@ public class PersonaGUI extends javax.swing.JFrame {
             }
         });
 
-        apellidos.setEditable(false);
         apellidos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 apellidosActionPerformed(evt);
             }
         });
 
-        identificacion.setEditable(false);
         identificacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 identificacionActionPerformed(evt);
             }
         });
 
-        tipoIdentificacion.setEditable(false);
-
-        telefono.setEditable(false);
-
-        direccion.setEditable(false);
         direccion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 direccionActionPerformed(evt);
@@ -142,8 +136,9 @@ public class PersonaGUI extends javax.swing.JFrame {
                                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(direccion)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addComponent(cambiarRol, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                                        .addGap(13, 13, 13)
+                                        .addComponent(registrar, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                                         .addComponent(cerrarSession, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(0, 0, Short.MAX_VALUE))))
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -192,7 +187,7 @@ public class PersonaGUI extends javax.swing.JFrame {
                     .addComponent(tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(39, 39, 39)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cambiarRol)
+                    .addComponent(registrar)
                     .addComponent(regresar)
                     .addComponent(cerrarSession))
                 .addGap(28, 28, 28))
@@ -212,9 +207,16 @@ public class PersonaGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cambiarRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cambiarRolActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cambiarRolActionPerformed
+    private void registrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarActionPerformed
+        Persona persona = new Persona();
+        persona.setNombres("");
+        persona.setApellidos("");
+        persona.setIdentificacion("");
+        persona.setTipoIdentificacion(null);
+        persona.setTipo("");
+        
+        
+    }//GEN-LAST:event_registrarActionPerformed
 
     private void apellidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apellidosActionPerformed
         // TODO add your handling code here:
@@ -283,7 +285,6 @@ public class PersonaGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField apellidos;
-    private javax.swing.JButton cambiarRol;
     private javax.swing.JButton cerrarSession;
     private javax.swing.JTextField direccion;
     private javax.swing.JTextField identificacion;
@@ -297,6 +298,7 @@ public class PersonaGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField nombres;
+    private javax.swing.JButton registrar;
     private javax.swing.JButton regresar;
     private javax.swing.JTextField telefono;
     private javax.swing.JTextField tipo;

@@ -73,8 +73,9 @@
                                       <Component id="jLabel7" alignment="0" min="-2" pref="211" max="-2" attributes="0"/>
                                       <Component id="direccion" alignment="0" max="32767" attributes="0"/>
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="cambiarRol" min="-2" pref="124" max="-2" attributes="0"/>
-                                          <EmptySpace pref="45" max="32767" attributes="0"/>
+                                          <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                          <Component id="registrar" min="-2" pref="124" max="-2" attributes="0"/>
+                                          <EmptySpace pref="32" max="32767" attributes="0"/>
                                           <Component id="cerrarSession" min="-2" pref="124" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -143,7 +144,7 @@
                   </Group>
                   <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="cambiarRol" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="registrar" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="regresar" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="cerrarSession" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -183,12 +184,12 @@
             <Property name="text" type="java.lang.String" value="Direcci&#xf3;n"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="cambiarRol">
+        <Component class="javax.swing.JButton" name="registrar">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Cambiar Rol"/>
+            <Property name="text" type="java.lang.String" value="Registrar"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cambiarRolActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="registrarActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="regresar">
@@ -210,35 +211,20 @@
         <Component class="javax.swing.JTextField" name="nombres">
         </Component>
         <Component class="javax.swing.JTextField" name="apellidos">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="apellidosActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="identificacion">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="identificacionActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="tipoIdentificacion">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-          </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="telefono">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-          </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="direccion">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="direccionActionPerformed"/>
           </Events>
