@@ -1,6 +1,9 @@
 package org.zapateria.gui;
 
+import javax.persistence.Persistence;
 import org.zapateria.logica.Persona;
+import org.zapateria.logica.TipoIdentificacion;
+import org.zapateria.mapper.PersonaMapper;
 import org.zapateria.utilidades.Constantes;
 
 /**
@@ -209,12 +212,19 @@ public class PersonaGUI extends javax.swing.JFrame {
 
     private void registrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarActionPerformed
         Persona persona = new Persona();
-        persona.setNombres("");
-        persona.setApellidos("");
-        persona.setIdentificacion("");
-        persona.setTipoIdentificacion(null);
-        persona.setTipo("");
+        TipoIdentificacion tipoIdentificacion = new TipoIdentificacion();
+        tipoIdentificacion.setId(1);
         
+        persona.setNombres(this.nombres.getText());
+        persona.setApellidos(this.apellidos.getText());
+        persona.setIdentificacion(this.identificacion.getText());
+        persona.setTipoIdentificacion(tipoIdentificacion);
+        persona.setTelefono(this.telefono.getText());
+        persona.setDireccion(this.direccion.getText());
+        persona.setTipo(this.tipo.getText());
+
+        PersonaMapper personaMapper = new PersonaMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
+        personaMapper.create(persona);
         
     }//GEN-LAST:event_registrarActionPerformed
 
