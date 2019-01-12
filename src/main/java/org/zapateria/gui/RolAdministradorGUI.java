@@ -160,8 +160,8 @@ public class RolAdministradorGUI extends javax.swing.JFrame {
             return;
         
         if ( Constantes.ADMIN_PERSONA.equals(this.comboAdministrador.getSelectedItem()) ) {
-            PersonaGUI persona = new PersonaGUI();
-            persona.setVisible(Boolean.TRUE);
+            AdminPersonaGUI adminPersona = new AdminPersonaGUI();
+            adminPersona.setVisible(Boolean.TRUE);
             this.dispose();
             
         }
