@@ -137,7 +137,10 @@ public class RolGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_aceptarActionPerformed
 
     private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
-        // TODO add your handling code here:
+        LoginGUI login = new LoginGUI();
+        login.setVisible(true);
+        this.dispose();
+        
     }//GEN-LAST:event_cancelarActionPerformed
 
     private void jComboRolesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboRolesActionPerformed
