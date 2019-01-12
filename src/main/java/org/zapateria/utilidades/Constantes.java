@@ -21,6 +21,11 @@ public class Constantes {
     
     public static String USUARIO = "usuario";
     
+    public static String ADMIN_EMPTY = "";
+    public static String ADMIN_PERSONA = "Administrar personas";
+    public static String ADMIN_INSUMO = "Administrar insumos";
+    public static String ADMIN_ADMINISTRAR = "Administrar";
+    
     // variable miembro de constante para el manejo de informacion en session
     public static Map<String, Object> session = new HashMap<>();
     

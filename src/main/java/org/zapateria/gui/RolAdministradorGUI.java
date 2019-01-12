@@ -15,20 +15,21 @@ import org.zapateria.utilidades.Constantes;
  *
  * @author geiner
  */
-public class RolGUI extends javax.swing.JFrame {
+public class RolAdministradorGUI extends javax.swing.JFrame {
     
     private Usuario usuario;
     /**
      * Creates new form rolGUI
      */
-    public RolGUI() {
+    public RolAdministradorGUI() {
         this.usuario = (Usuario)Constantes.session.get(Constantes.USUARIO);
         initComponents();
     }
 
-    public RolGUI(Usuario usuario) {
+    public RolAdministradorGUI(Usuario usuario) {
         this.usuario = usuario;
-        initComponents();        
+        initComponents();
+        
     }
 
     /**
@@ -42,9 +43,10 @@ public class RolGUI extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        aceptar = new javax.swing.JButton();
-        cancelar = new javax.swing.JButton();
-        jComboRoles = new javax.swing.JComboBox<>();
+        cambiarRol = new javax.swing.JButton();
+        cerrarSesion = new javax.swing.JButton();
+        comboAdministrador = new javax.swing.JComboBox<>();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Zapateria");
@@ -53,57 +55,67 @@ public class RolGUI extends javax.swing.JFrame {
 
         jLabel1.setText("Seleccione su rol");
 
-        aceptar.setText("Aceptar");
-        aceptar.addActionListener(new java.awt.event.ActionListener() {
+        cambiarRol.setText("Cambiar Rol");
+        cambiarRol.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aceptarActionPerformed(evt);
+                cambiarRolActionPerformed(evt);
             }
         });
 
-        cancelar.setText("Cancelar");
-        cancelar.addActionListener(new java.awt.event.ActionListener() {
+        cerrarSesion.setText("Cerrar sesión");
+        cerrarSesion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelarActionPerformed(evt);
+                cerrarSesionActionPerformed(evt);
             }
         });
 
-        jComboRoles.addActionListener(new java.awt.event.ActionListener() {
+		addComboAdmin();
+		
+        comboAdministrador.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboRolesActionPerformed(evt);
+                comboAdministradorActionPerformed(evt);
             }
         });
+
+        jLabel2.setText("Bienvenido a Zapateria (Administrador)");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(85, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(37, 37, 37)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(37, 37, 37)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(comboAdministrador, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(51, 51, 51)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(180, 180, 180)
+                        .addComponent(cambiarRol, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(129, 129, 129)
-                        .addComponent(cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jComboRoles, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(83, 83, 83))
+                        .addComponent(cerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(60, 60, 60))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(78, Short.MAX_VALUE)
+                .addGap(21, 21, 21)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboRoles, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboAdministrador, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(67, 67, 67)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(aceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cambiarRol, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(59, 59, 59))
         );
-
-        this.actualizarRoles();
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -119,38 +131,33 @@ public class RolGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
+    private void cambiarRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cambiarRolActionPerformed
           
-        if (this.jComboRoles.getSelectedItem().equals(Constantes.CLIENTE_ROL)) {
+        if (this.comboAdministrador.getSelectedItem().equals(Constantes.CLIENTE_ROL)) {
             ClienteGUI clienteGUI = new ClienteGUI();
             clienteGUI.setVisible(true);
             this.dispose();
-            System.out.println(this.jComboRoles.getSelectedItem());
+            System.out.println(this.comboAdministrador.getSelectedItem());
         }
-        if (this.jComboRoles.getSelectedItem().equals(Constantes.ZAPATERO_ROL)) {
-            System.out.println(this.jComboRoles.getSelectedItem());
+        if (this.comboAdministrador.getSelectedItem().equals(Constantes.ZAPATERO_ROL)) {
+            System.out.println(this.comboAdministrador.getSelectedItem());
         }
-        if (this.jComboRoles.getSelectedItem().equals(Constantes.ADMIN_ROL)) {
-            System.out.println(this.jComboRoles.getSelectedItem());
-            
-            this.dispose();
-            
-            RolAdministradorGUI rolAdminGui = new RolAdministradorGUI();
-            rolAdminGui.setVisible(true);
+        if (this.comboAdministrador.getSelectedItem().equals(Constantes.ADMIN_ROL)) {
+            System.out.println(this.comboAdministrador.getSelectedItem());
         }
         
-    }//GEN-LAST:event_aceptarActionPerformed
+    }//GEN-LAST:event_cambiarRolActionPerformed
 
-    private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
+    private void cerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrarSesionActionPerformed
         LoginGUI login = new LoginGUI();
         login.setVisible(true);
         this.dispose();
         
-    }//GEN-LAST:event_cancelarActionPerformed
+    }//GEN-LAST:event_cerrarSesionActionPerformed
 
-    private void jComboRolesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboRolesActionPerformed
+    private void comboAdministradorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboAdministradorActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboRolesActionPerformed
+    }//GEN-LAST:event_comboAdministradorActionPerformed
 
     /**
      * @param args the command line arguments
@@ -169,44 +176,46 @@ public class RolGUI extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RolGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RolAdministradorGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RolGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RolAdministradorGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RolGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RolAdministradorGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RolGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RolAdministradorGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new RolGUI().setVisible(true);
+                new RolAdministradorGUI().setVisible(true);
             }
         });
     }
-    
-    private void actualizarRoles(){
-        
-        System.out.println(" this.usuario.getPersona().getTipo() : " + this.usuario.getPersona().getTipo());
-        
-        this.jComboRoles.addItem(Constantes.CLIENTE_ROL);
-        String tipo = this.usuario.getPersona().getTipo();
-        if (tipo.equals(Constantes.ZAPATERO_ROL)) {
-            this.jComboRoles.addItem(Constantes.ZAPATERO_ROL);
-        } else if ( tipo.equals(Constantes.ADMIN_ROL)) {
-            this.jComboRoles.addItem(Constantes.ZAPATERO_ROL);
-            this.jComboRoles.addItem(Constantes.ADMIN_ROL);
-        }
+   
+    /**
+     * metodo el cual agrega items al combo
+     */
+    public void addComboAdmin() {
+        this.comboAdministrador.addItem(Constantes.ADMIN_PERSONA);
+        this.comboAdministrador.addItem(Constantes.ADMIN_INSUMO);
+        this.comboAdministrador.addItem(Constantes.ADMIN_ADMINISTRAR);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton aceptar;
-    private javax.swing.JButton cancelar;
-    private javax.swing.JComboBox<String> jComboRoles;
+    private javax.swing.JButton cambiarRol;
+    private javax.swing.JButton cerrarSesion;
+    private javax.swing.JComboBox<String> comboAdministrador;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
