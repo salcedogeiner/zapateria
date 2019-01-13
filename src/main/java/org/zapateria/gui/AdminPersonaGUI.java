@@ -1,11 +1,24 @@
 package org.zapateria.gui;
 
+import java.util.List;
+import javax.persistence.Persistence;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
+import org.zapateria.logica.Persona;
+import org.zapateria.mapper.PersonaMapper;
+import org.zapateria.utilidades.Constantes;
+
 /**
  *
  * @author geiner
  */
 public class AdminPersonaGUI extends javax.swing.JFrame {
 
+    private static final int BOOLEAN_COLUMN = 3;
+    
+    private List<Persona> listaPersona;
+    
     /**
      * Creates new form clienteGUI
      */
@@ -38,16 +51,20 @@ public class AdminPersonaGUI extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         personaLista.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
+            getListPersona(),
             new String [] {
-                "No", "Calzado", "Fecha ingreso", "Estado", "Detalle"
+                "Identificación", "Nombre", "Rol", "Actualizar"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        personaLista.getModel().addTableModelListener(new CheckBoxModelListener( this ));
         jScrollPane1.setViewportView(personaLista);
 
         jLabel1.setText("Bienvenido a Zapateria ");
@@ -108,7 +125,7 @@ public class AdminPersonaGUI extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(cerrarSesion, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
                     .addComponent(regresar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -140,6 +157,23 @@ public class AdminPersonaGUI extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_registrarPersonaActionPerformed
 
+    private Object[][] getListPersona() {
+        PersonaMapper personaMapper = new PersonaMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
+        
+        listaPersona = personaMapper.findPersonaEntities();
+        
+        int lenght = listaPersona.size();
+        Object[][] objectPersona = new Object[lenght][4];
+        
+        for ( int fila = 0; fila < lenght; fila++ ) {
+            objectPersona[fila][0] = listaPersona.get(fila).getIdentificacion();
+            objectPersona[fila][1] = listaPersona.get(fila).getNombres();
+            objectPersona[fila][2] = listaPersona.get(fila).getTipo();
+            objectPersona[fila][3] = new Boolean(false);
+        }
+        return objectPersona;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -175,6 +209,39 @@ public class AdminPersonaGUI extends javax.swing.JFrame {
             }
         });
     }
+    
+    public class CheckBoxModelListener implements TableModelListener {
+
+        AdminPersonaGUI adminPersonaGUI;
+        
+        public CheckBoxModelListener(AdminPersonaGUI adminPersonaGUI){
+            this.adminPersonaGUI = adminPersonaGUI;
+        }
+        
+        @Override
+        public void tableChanged(TableModelEvent e) {
+            int row = e.getFirstRow();
+            int column = e.getColumn();
+            
+            System.out.println(" row " + row);
+            System.out.println(" column " + column);
+            
+            if (column == BOOLEAN_COLUMN) {
+ 
+                TableModel model = (TableModel) e.getSource();
+                String columnName = model.getColumnName(column);
+                Boolean checked = (Boolean) model.getValueAt(row, column);
+                if (checked) {
+                    
+                    Persona persona = listaPersona.get(row);
+                    PersonaGUI personaGui = new PersonaGUI(persona);
+                    personaGui.setVisible(Boolean.TRUE);
+                    
+                    this.adminPersonaGUI.dispose();
+                } 
+            }
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cerrarSesion;
@@ -187,3 +254,5 @@ public class AdminPersonaGUI extends javax.swing.JFrame {
     private javax.swing.JButton regresar;
     // End of variables declaration//GEN-END:variables
 }
+
+ 

@@ -1,5 +1,6 @@
 package org.zapateria.gui;
 
+import java.util.Objects;
 import javax.persistence.Persistence;
 import org.zapateria.logica.Persona;
 import org.zapateria.logica.TipoIdentificacion;
@@ -12,11 +13,23 @@ import org.zapateria.utilidades.Constantes;
  */
 public class PersonaGUI extends javax.swing.JFrame {
 
+    private Persona persona;
+    
     /**
      * Creates new form clienteGUI
      */
     public PersonaGUI() {
         initComponents();
+    }
+    
+    /**
+     * 
+     * @param persona 
+     */
+    public PersonaGUI(Persona persona) {
+        this.persona = persona;
+        initComponents();
+        establecerValores();
     }
 
     /**
@@ -66,7 +79,7 @@ public class PersonaGUI extends javax.swing.JFrame {
 
         jLabel6.setText("Dirección");
 
-        registrar.setText("Registrar");
+        registrar.setText( Objects.isNull(this.persona) ? "Registrar" : "Actualizar");
         registrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 registrarActionPerformed(evt);
@@ -211,7 +224,10 @@ public class PersonaGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarActionPerformed
-        Persona persona = new Persona();
+        
+        if (Objects.isNull(this.persona))
+            this.persona = new Persona();
+        
         TipoIdentificacion tipoIdentificacion = new TipoIdentificacion();
         tipoIdentificacion.setId(1);
         
@@ -224,10 +240,24 @@ public class PersonaGUI extends javax.swing.JFrame {
         persona.setTipo(this.tipo.getText());
 
         PersonaMapper personaMapper = new PersonaMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
-        personaMapper.create(persona);
+               
+        if (Objects.isNull(this.persona.getId()))
+            personaMapper.create(persona);
+        else 
+            personaMapper.edit(this.persona);
         
     }//GEN-LAST:event_registrarActionPerformed
 
+    private void establecerValores() {
+        this.nombres.setText(this.persona.getNombres());
+        this.apellidos.setText(this.persona.getApellidos());
+        this.identificacion.setText(this.persona.getIdentificacion());
+        this.tipoIdentificacion.setText(this.persona.getTipoIdentificacion().getNombre());
+        this.telefono.setText(this.persona.getTelefono());
+        this.direccion.setText(this.persona.getDireccion());
+        this.tipo.setText(this.persona.getTipo());
+    }
+    
     private void apellidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apellidosActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_apellidosActionPerformed
