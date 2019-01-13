@@ -1,206 +1,234 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.zapateria.logica;
 
-
 import java.io.Serializable;
-import javax.persistence.*;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
-
+import java.util.Set;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * The persistent class for the reparacion database table.
- * 
+ *
+ * @author g.salcedo
  */
 @Entity
-@NamedQuery(name="Reparacion.findAll", query="SELECT r FROM Reparacion r")
+@Table(name = "reparacion", catalog = "zapateriadb", schema = "public")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Reparacion.findAll", query = "SELECT r FROM Reparacion r"),
+    @NamedQuery(name = "Reparacion.findById", query = "SELECT r FROM Reparacion r WHERE r.id = :id"),
+    @NamedQuery(name = "Reparacion.findByFechaSolicitud", query = "SELECT r FROM Reparacion r WHERE r.fechaSolicitud = :fechaSolicitud"),
+    @NamedQuery(name = "Reparacion.findByEstimacionReparacion", query = "SELECT r FROM Reparacion r WHERE r.estimacionReparacion = :estimacionReparacion"),
+    @NamedQuery(name = "Reparacion.findByFechaEntrega", query = "SELECT r FROM Reparacion r WHERE r.fechaEntrega = :fechaEntrega"),
+    @NamedQuery(name = "Reparacion.findByValorReparacion", query = "SELECT r FROM Reparacion r WHERE r.valorReparacion = :valorReparacion"),
+    @NamedQuery(name = "Reparacion.findByCaracteristicaCalzado", query = "SELECT r FROM Reparacion r WHERE r.caracteristicaCalzado = :caracteristicaCalzado"),
+    @NamedQuery(name = "Reparacion.findByComisionZapatero", query = "SELECT r FROM Reparacion r WHERE r.comisionZapatero = :comisionZapatero")})
 public class Reparacion implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	private Integer id;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
+    @Basic(optional = false)
+    @Column(name = "fecha_solicitud")
+    @Temporal(TemporalType.DATE)
+    private Date fechaSolicitud;
+    @Basic(optional = false)
+    @Column(name = "estimacion_reparacion")
+    private int estimacionReparacion;
+    @Column(name = "fecha_entrega")
+    @Temporal(TemporalType.DATE)
+    private Date fechaEntrega;
+    @Column(name = "valor_reparacion")
+    private BigInteger valorReparacion;
+    @Column(name = "caracteristica_calzado")
+    private String caracteristicaCalzado;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "comision_zapatero")
+    private BigDecimal comisionZapatero;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "reparacion")
+    private Set<IsumoReparacion> isumoReparacionSet;
+    @JoinColumn(name = "calzado", referencedColumnName = "id")
+    @OneToOne(optional = false)
+    private Calzado calzado;
+    @JoinColumn(name = "estado_reparacion", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private EstadoReparacion estadoReparacion;
+    @JoinColumn(name = "cliente", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Persona cliente;
+    @JoinColumn(name = "zapatero_encargado", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Persona zapateroEncargado;
+    @OneToMany(mappedBy = "reparacion")
+    private Set<Pago> pagoSet;
 
-	@Column(name="caracteristica_calzado")
-	private String caracteristicaCalzado;
+    public Reparacion() {
+    }
 
-	@Column(name="comision_zapatero")
-	private BigDecimal comisionZapatero;
+    public Reparacion(Integer id) {
+        this.id = id;
+    }
 
-	@Column(name="estimacion_reparacion")
-	private Integer estimacionReparacion;
+    public Reparacion(Integer id, Date fechaSolicitud, int estimacionReparacion) {
+        this.id = id;
+        this.fechaSolicitud = fechaSolicitud;
+        this.estimacionReparacion = estimacionReparacion;
+    }
 
-	@Temporal(TemporalType.DATE)
-	@Column(name="fecha_entrega")
-	private Date fechaEntrega;
+    public Integer getId() {
+        return id;
+    }
 
-	@Temporal(TemporalType.DATE)
-	@Column(name="fecha_solicitud")
-	private Date fechaSolicitud;
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@Column(name="valor_reparacion")
-	private BigDecimal valorReparacion;
+    public Date getFechaSolicitud() {
+        return fechaSolicitud;
+    }
 
-	//bi-directional many-to-one association to IsumoReparacion
-	@OneToMany(mappedBy="reparacionBean")
-	private List<IsumoReparacion> isumoReparacions;
+    public void setFechaSolicitud(Date fechaSolicitud) {
+        this.fechaSolicitud = fechaSolicitud;
+    }
 
-	//bi-directional many-to-one association to Pago
-	@OneToMany(mappedBy="reparacionBean")
-	private List<Pago> pagos;
+    public int getEstimacionReparacion() {
+        return estimacionReparacion;
+    }
 
-	//bi-directional many-to-one association to Calzado
-	@ManyToOne
-	@JoinColumn(name="calzado")
-	private Calzado calzadoBean;
+    public void setEstimacionReparacion(int estimacionReparacion) {
+        this.estimacionReparacion = estimacionReparacion;
+    }
 
-	//bi-directional many-to-one association to EstadoReparacion
-	@ManyToOne
-	@JoinColumn(name="estado_reparacion")
-	private EstadoReparacion estadoReparacionBean;
+    public Date getFechaEntrega() {
+        return fechaEntrega;
+    }
 
-	//bi-directional many-to-one association to Persona
-	@ManyToOne
-	@JoinColumn(name="cliente")
-	private Persona persona1;
+    public void setFechaEntrega(Date fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
+    }
 
-	//bi-directional many-to-one association to Persona
-	@ManyToOne
-	@JoinColumn(name="zapatero_encargado")
-	private Persona persona2;
+    public BigInteger getValorReparacion() {
+        return valorReparacion;
+    }
 
-	public Reparacion() {
-	}
+    public void setValorReparacion(BigInteger valorReparacion) {
+        this.valorReparacion = valorReparacion;
+    }
 
-	public Integer getId() {
-		return this.id;
-	}
+    public String getCaracteristicaCalzado() {
+        return caracteristicaCalzado;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setCaracteristicaCalzado(String caracteristicaCalzado) {
+        this.caracteristicaCalzado = caracteristicaCalzado;
+    }
 
-	public String getCaracteristicaCalzado() {
-		return this.caracteristicaCalzado;
-	}
+    public BigDecimal getComisionZapatero() {
+        return comisionZapatero;
+    }
 
-	public void setCaracteristicaCalzado(String caracteristicaCalzado) {
-		this.caracteristicaCalzado = caracteristicaCalzado;
-	}
+    public void setComisionZapatero(BigDecimal comisionZapatero) {
+        this.comisionZapatero = comisionZapatero;
+    }
 
-	public BigDecimal getComisionZapatero() {
-		return this.comisionZapatero;
-	}
+    @XmlTransient
+    public Set<IsumoReparacion> getIsumoReparacionSet() {
+        return isumoReparacionSet;
+    }
 
-	public void setComisionZapatero(BigDecimal comisionZapatero) {
-		this.comisionZapatero = comisionZapatero;
-	}
+    public void setIsumoReparacionSet(Set<IsumoReparacion> isumoReparacionSet) {
+        this.isumoReparacionSet = isumoReparacionSet;
+    }
 
-	public Integer getEstimacionReparacion() {
-		return this.estimacionReparacion;
-	}
+    public Calzado getCalzado() {
+        return calzado;
+    }
 
-	public void setEstimacionReparacion(Integer estimacionReparacion) {
-		this.estimacionReparacion = estimacionReparacion;
-	}
+    public void setCalzado(Calzado calzado) {
+        this.calzado = calzado;
+    }
 
-	public Date getFechaEntrega() {
-		return this.fechaEntrega;
-	}
+    public EstadoReparacion getEstadoReparacion() {
+        return estadoReparacion;
+    }
 
-	public void setFechaEntrega(Date fechaEntrega) {
-		this.fechaEntrega = fechaEntrega;
-	}
+    public void setEstadoReparacion(EstadoReparacion estadoReparacion) {
+        this.estadoReparacion = estadoReparacion;
+    }
 
-	public Date getFechaSolicitud() {
-		return this.fechaSolicitud;
-	}
+    public Persona getCliente() {
+        return cliente;
+    }
 
-	public void setFechaSolicitud(Date fechaSolicitud) {
-		this.fechaSolicitud = fechaSolicitud;
-	}
+    public void setCliente(Persona cliente) {
+        this.cliente = cliente;
+    }
 
-	public BigDecimal getValorReparacion() {
-		return this.valorReparacion;
-	}
+    public Persona getZapateroEncargado() {
+        return zapateroEncargado;
+    }
 
-	public void setValorReparacion(BigDecimal valorReparacion) {
-		this.valorReparacion = valorReparacion;
-	}
+    public void setZapateroEncargado(Persona zapateroEncargado) {
+        this.zapateroEncargado = zapateroEncargado;
+    }
 
-	public List<IsumoReparacion> getIsumoReparacions() {
-		return this.isumoReparacions;
-	}
+    @XmlTransient
+    public Set<Pago> getPagoSet() {
+        return pagoSet;
+    }
 
-	public void setIsumoReparacions(List<IsumoReparacion> isumoReparacions) {
-		this.isumoReparacions = isumoReparacions;
-	}
+    public void setPagoSet(Set<Pago> pagoSet) {
+        this.pagoSet = pagoSet;
+    }
 
-	public IsumoReparacion addIsumoReparacion(IsumoReparacion isumoReparacion) {
-		getIsumoReparacions().add(isumoReparacion);
-		isumoReparacion.setReparacionBean(this);
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
 
-		return isumoReparacion;
-	}
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Reparacion)) {
+            return false;
+        }
+        Reparacion other = (Reparacion) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
 
-	public IsumoReparacion removeIsumoReparacion(IsumoReparacion isumoReparacion) {
-		getIsumoReparacions().remove(isumoReparacion);
-		isumoReparacion.setReparacionBean(null);
-
-		return isumoReparacion;
-	}
-
-	public List<Pago> getPagos() {
-		return this.pagos;
-	}
-
-	public void setPagos(List<Pago> pagos) {
-		this.pagos = pagos;
-	}
-
-	public Pago addPago(Pago pago) {
-		getPagos().add(pago);
-		pago.setReparacionBean(this);
-
-		return pago;
-	}
-
-	public Pago removePago(Pago pago) {
-		getPagos().remove(pago);
-		pago.setReparacionBean(null);
-
-		return pago;
-	}
-
-	public Calzado getCalzadoBean() {
-		return this.calzadoBean;
-	}
-
-	public void setCalzadoBean(Calzado calzadoBean) {
-		this.calzadoBean = calzadoBean;
-	}
-
-	public EstadoReparacion getEstadoReparacionBean() {
-		return this.estadoReparacionBean;
-	}
-
-	public void setEstadoReparacionBean(EstadoReparacion estadoReparacionBean) {
-		this.estadoReparacionBean = estadoReparacionBean;
-	}
-
-	public Persona getPersona1() {
-		return this.persona1;
-	}
-
-	public void setPersona1(Persona persona1) {
-		this.persona1 = persona1;
-	}
-
-	public Persona getPersona2() {
-		return this.persona2;
-	}
-
-	public void setPersona2(Persona persona2) {
-		this.persona2 = persona2;
-	}
-
+    @Override
+    public String toString() {
+        return "org.zapateria.logica.Reparacion[ id=" + id + " ]";
+    }
+    
 }

@@ -5,6 +5,9 @@
  */
 package org.zapateria.utilidades;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author JOSE
@@ -12,5 +15,18 @@ package org.zapateria.utilidades;
 public class Constantes {
     
     public static String CONTEXTO = "zapateria";
+    public static String ZAPATERO_ROL = "Zapatero";
+    public static String CLIENTE_ROL = "Cliente";
+    public static String ADMIN_ROL = "Administrador";
+    
+    public static String USUARIO = "usuario";
+    
+    public static String ADMIN_EMPTY = "";
+    public static String ADMIN_PERSONA = "Administrar personas";
+    public static String ADMIN_INSUMO = "Administrar insumos";
+    public static String ADMIN_ADMINISTRAR = "Administrar";
+    
+    // variable miembro de constante para el manejo de informacion en session
+    public static Map<String, Object> session = new HashMap<>();
     
 }

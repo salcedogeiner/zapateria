@@ -1,88 +1,133 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.zapateria.logica;
 
 import java.io.Serializable;
-import javax.persistence.*;
-import java.util.List;
-
+import java.util.Set;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * The persistent class for the estado_reparacion database table.
- * 
+ *
+ * @author g.salcedo
  */
 @Entity
-@Table(name="estado_reparacion")
-@NamedQuery(name="EstadoReparacion.findAll", query="SELECT e FROM EstadoReparacion e")
+@Table(name = "estado_reparacion", catalog = "zapateriadb", schema = "public")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "EstadoReparacion.findAll", query = "SELECT e FROM EstadoReparacion e"),
+    @NamedQuery(name = "EstadoReparacion.findById", query = "SELECT e FROM EstadoReparacion e WHERE e.id = :id"),
+    @NamedQuery(name = "EstadoReparacion.findByNombre", query = "SELECT e FROM EstadoReparacion e WHERE e.nombre = :nombre"),
+    @NamedQuery(name = "EstadoReparacion.findByDescripcion", query = "SELECT e FROM EstadoReparacion e WHERE e.descripcion = :descripcion"),
+    @NamedQuery(name = "EstadoReparacion.findByAbreviacion", query = "SELECT e FROM EstadoReparacion e WHERE e.abreviacion = :abreviacion")})
 public class EstadoReparacion implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	private Integer id;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
+    @Basic(optional = false)
+    @Column(name = "nombre")
+    private String nombre;
+    @Column(name = "descripcion")
+    private String descripcion;
+    @Column(name = "abreviacion")
+    private String abreviacion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estadoReparacion")
+    private Set<Reparacion> reparacionSet;
 
-	private String abreviacion;
+    public EstadoReparacion() {
+    }
 
-	private String descripcion;
+    public EstadoReparacion(Integer id) {
+        this.id = id;
+    }
 
-	private String nombre;
+    public EstadoReparacion(Integer id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
 
-	//bi-directional many-to-one association to Reparacion
-	@OneToMany(mappedBy="estadoReparacionBean")
-	private List<Reparacion> reparacions;
+    public Integer getId() {
+        return id;
+    }
 
-	public EstadoReparacion() {
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Integer getId() {
-		return this.id;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public String getAbreviacion() {
-		return this.abreviacion;
-	}
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-	public void setAbreviacion(String abreviacion) {
-		this.abreviacion = abreviacion;
-	}
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-	public String getDescripcion() {
-		return this.descripcion;
-	}
+    public String getAbreviacion() {
+        return abreviacion;
+    }
 
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
+    public void setAbreviacion(String abreviacion) {
+        this.abreviacion = abreviacion;
+    }
 
-	public String getNombre() {
-		return this.nombre;
-	}
+    @XmlTransient
+    public Set<Reparacion> getReparacionSet() {
+        return reparacionSet;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    public void setReparacionSet(Set<Reparacion> reparacionSet) {
+        this.reparacionSet = reparacionSet;
+    }
 
-	public List<Reparacion> getReparacions() {
-		return this.reparacions;
-	}
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
 
-	public void setReparacions(List<Reparacion> reparacions) {
-		this.reparacions = reparacions;
-	}
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof EstadoReparacion)) {
+            return false;
+        }
+        EstadoReparacion other = (EstadoReparacion) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
 
-	public Reparacion addReparacion(Reparacion reparacion) {
-		getReparacions().add(reparacion);
-		reparacion.setEstadoReparacionBean(this);
-
-		return reparacion;
-	}
-
-	public Reparacion removeReparacion(Reparacion reparacion) {
-		getReparacions().remove(reparacion);
-		reparacion.setEstadoReparacionBean(null);
-
-		return reparacion;
-	}
-
+    @Override
+    public String toString() {
+        return "org.zapateria.logica.EstadoReparacion[ id=" + id + " ]";
+    }
+    
 }

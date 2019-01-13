@@ -1,182 +1,207 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.zapateria.logica;
 
 import java.io.Serializable;
-import javax.persistence.*;
-import java.util.List;
-
+import java.util.Set;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * The persistent class for the persona database table.
- * 
+ *
+ * @author g.salcedo
  */
 @Entity
-@NamedQuery(name="Persona.findAll", query="SELECT p FROM Persona p")
+@Table(name = "persona", catalog = "zapateriadb", schema = "public")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Persona.findAll", query = "SELECT p FROM Persona p"),
+    @NamedQuery(name = "Persona.findById", query = "SELECT p FROM Persona p WHERE p.id = :id"),
+    @NamedQuery(name = "Persona.findByNombres", query = "SELECT p FROM Persona p WHERE p.nombres = :nombres"),
+    @NamedQuery(name = "Persona.findByApellidos", query = "SELECT p FROM Persona p WHERE p.apellidos = :apellidos"),
+    @NamedQuery(name = "Persona.findByIdentificacion", query = "SELECT p FROM Persona p WHERE p.identificacion = :identificacion"),
+    @NamedQuery(name = "Persona.findByTelefono", query = "SELECT p FROM Persona p WHERE p.telefono = :telefono"),
+    @NamedQuery(name = "Persona.findByDireccion", query = "SELECT p FROM Persona p WHERE p.direccion = :direccion"),
+    @NamedQuery(name = "Persona.findByTipo", query = "SELECT p FROM Persona p WHERE p.tipo = :tipo")})
 public class Persona implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	private Integer id;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
+    @Basic(optional = false)
+    @Column(name = "nombres")
+    private String nombres;
+    @Basic(optional = false)
+    @Column(name = "apellidos")
+    private String apellidos;
+    @Basic(optional = false)
+    @Column(name = "identificacion")
+    private String identificacion;
+    @Column(name = "telefono")
+    private String telefono;
+    @Column(name = "direccion")
+    private String direccion;
+    @Basic(optional = false)
+    @Column(name = "tipo")
+    private String tipo;
+    @JoinColumn(name = "tipo_identificacion", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private TipoIdentificacion tipoIdentificacion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cliente")
+    private Set<Reparacion> reparacionSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "zapateroEncargado")
+    private Set<Reparacion> reparacionSet1;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
+    private Usuario usuario;
 
-	private String apellidos;
+    public Persona() {
+    }
 
-	private String direccion;
+    public Persona(Integer id) {
+        this.id = id;
+    }
 
-	private String identificacion;
+    public Persona(Integer id, String nombres, String apellidos, String identificacion, String tipo) {
+        this.id = id;
+        this.nombres = nombres;
+        this.apellidos = apellidos;
+        this.identificacion = identificacion;
+        this.tipo = tipo;
+    }
 
-	private String nombres;
+    public Integer getId() {
+        return id;
+    }
 
-	private String telefono;
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	private String tipo;
+    public String getNombres() {
+        return nombres;
+    }
 
-	//bi-directional many-to-one association to TipoIdentificacion
-	@ManyToOne
-	@JoinColumn(name="tipo_identificacion")
-	private TipoIdentificacion tipoIdentificacionBean;
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
+    }
 
-	//bi-directional many-to-one association to Reparacion
-	@OneToMany(mappedBy="persona1")
-	private List<Reparacion> reparacions1;
+    public String getApellidos() {
+        return apellidos;
+    }
 
-	//bi-directional many-to-one association to Reparacion
-	@OneToMany(mappedBy="persona2")
-	private List<Reparacion> reparacions2;
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
 
-	//bi-directional many-to-one association to Usuario
-	@OneToMany(mappedBy="personaBean")
-	private List<Usuario> usuarios;
+    public String getIdentificacion() {
+        return identificacion;
+    }
 
-	public Persona() {
-	}
+    public void setIdentificacion(String identificacion) {
+        this.identificacion = identificacion;
+    }
 
-	public Integer getId() {
-		return this.id;
-	}
+    public String getTelefono() {
+        return telefono;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
 
-	public String getApellidos() {
-		return this.apellidos;
-	}
+    public String getDireccion() {
+        return direccion;
+    }
 
-	public void setApellidos(String apellidos) {
-		this.apellidos = apellidos;
-	}
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
 
-	public String getDireccion() {
-		return this.direccion;
-	}
+    public String getTipo() {
+        return tipo;
+    }
 
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
-	}
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 
-	public String getIdentificacion() {
-		return this.identificacion;
-	}
+    public TipoIdentificacion getTipoIdentificacion() {
+        return tipoIdentificacion;
+    }
 
-	public void setIdentificacion(String identificacion) {
-		this.identificacion = identificacion;
-	}
+    public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion) {
+        this.tipoIdentificacion = tipoIdentificacion;
+    }
 
-	public String getNombres() {
-		return this.nombres;
-	}
+    @XmlTransient
+    public Set<Reparacion> getReparacionSet() {
+        return reparacionSet;
+    }
 
-	public void setNombres(String nombres) {
-		this.nombres = nombres;
-	}
+    public void setReparacionSet(Set<Reparacion> reparacionSet) {
+        this.reparacionSet = reparacionSet;
+    }
 
-	public String getTelefono() {
-		return this.telefono;
-	}
+    @XmlTransient
+    public Set<Reparacion> getReparacionSet1() {
+        return reparacionSet1;
+    }
 
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
-	}
+    public void setReparacionSet1(Set<Reparacion> reparacionSet1) {
+        this.reparacionSet1 = reparacionSet1;
+    }
 
-	public String getTipo() {
-		return this.tipo;
-	}
+    public Usuario getUsuario() {
+        return usuario;
+    }
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
-	public TipoIdentificacion getTipoIdentificacionBean() {
-		return this.tipoIdentificacionBean;
-	}
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
 
-	public void setTipoIdentificacionBean(TipoIdentificacion tipoIdentificacionBean) {
-		this.tipoIdentificacionBean = tipoIdentificacionBean;
-	}
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Persona)) {
+            return false;
+        }
+        Persona other = (Persona) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
 
-	public List<Reparacion> getReparacions1() {
-		return this.reparacions1;
-	}
-
-	public void setReparacions1(List<Reparacion> reparacions1) {
-		this.reparacions1 = reparacions1;
-	}
-
-	public Reparacion addReparacions1(Reparacion reparacions1) {
-		getReparacions1().add(reparacions1);
-		reparacions1.setPersona1(this);
-
-		return reparacions1;
-	}
-
-	public Reparacion removeReparacions1(Reparacion reparacions1) {
-		getReparacions1().remove(reparacions1);
-		reparacions1.setPersona1(null);
-
-		return reparacions1;
-	}
-
-	public List<Reparacion> getReparacions2() {
-		return this.reparacions2;
-	}
-
-	public void setReparacions2(List<Reparacion> reparacions2) {
-		this.reparacions2 = reparacions2;
-	}
-
-	public Reparacion addReparacions2(Reparacion reparacions2) {
-		getReparacions2().add(reparacions2);
-		reparacions2.setPersona2(this);
-
-		return reparacions2;
-	}
-
-	public Reparacion removeReparacions2(Reparacion reparacions2) {
-		getReparacions2().remove(reparacions2);
-		reparacions2.setPersona2(null);
-
-		return reparacions2;
-	}
-
-	public List<Usuario> getUsuarios() {
-		return this.usuarios;
-	}
-
-	public void setUsuarios(List<Usuario> usuarios) {
-		this.usuarios = usuarios;
-	}
-
-	/*public Usuario addUsuario(Usuario usuario) {
-		getUsuarios().add(usuario);
-		usuario.setPersonaBean(this);
-
-		return usuario;
-	}*/
-
-	public Usuario removeUsuario(Usuario usuario) {
-		getUsuarios().remove(usuario);
-		usuario.setPersonaBean(null);
-
-		return usuario;
-	}
-
+    @Override
+    public String toString() {
+        return "org.zapateria.logica.Persona[ id=" + id + " ]";
+    }
+    
 }

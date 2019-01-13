@@ -1,70 +1,86 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.zapateria.logica;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import org.zapateria.logica.RolUsuario;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * The persistent class for the usuario database table.
- *
- * @author geiner
- * @version 1.0
- * @created 19-dic.-2018 16:15:34
+ * @author g.salcedo
  */
 @Entity
-@NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")
+@Table(name = "usuario", catalog = "zapateriadb", schema = "public")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u"),
+    @NamedQuery(name = "Usuario.findById", query = "SELECT u FROM Usuario u WHERE u.id = :id"),
+    @NamedQuery(name = "Usuario.findByNombreUsuario", query = "SELECT u FROM Usuario u WHERE u.nombreUsuario = :nombreUsuario"),
+    @NamedQuery(name = "Usuario.findByClave", query = "SELECT u FROM Usuario u WHERE u.clave = :clave")})
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * id principal de usuario
-     */
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
     private Integer id;
-
-    /**
-     * Clave de usuario
-     */
-    
-    private String clave;
-
+    @Basic(optional = false)
     @Column(name = "nombre_usuario")
     private String nombreUsuario;
+    @Basic(optional = false)
+    @Column(name = "clave")
+    private String clave;
+    @JoinColumn(name = "persona", referencedColumnName = "id")
+    @OneToOne(optional = false)
+    private Persona persona;
+    @ManyToMany(cascade = {
+        CascadeType.PERSIST,
+        CascadeType.MERGE
+    })
+    @JoinTable(name = "rol_usuario",
+            joinColumns = @JoinColumn(name = "usuario"),
+            inverseJoinColumns = @JoinColumn(name = "rol")
+    )
+    private Set<Rol> roles = new HashSet<>();
 
-    @Transient
-    private Rol rol;
+    public Set<Rol> getRoles() {
+        return roles;
+    }
 
-    // private Set<Rol> roles;
-    //bi-directional many-to-one association to RolUsuario
-    @OneToMany(mappedBy = "usuarioBean")
-    private List<RolUsuario> rolUsuarios;
+    public void setRoles(Set<Rol> roles) {
+        this.roles = roles;
+    }
 
-    //bi-directional many-to-one association to Persona
-    @ManyToOne
-    @JoinColumn(name = "persona")
-    private Persona personaBean;
-
-    /**
-     * Constructor por defecto
-     */
     public Usuario() {
     }
 
-    public String getClave() {
-        return clave;
+    public Usuario(Integer id) {
+        this.id = id;
     }
 
-    public void setClave(String clave) {
+    public Usuario(Integer id, String nombreUsuario, String clave) {
+        this.id = id;
+        this.nombreUsuario = nombreUsuario;
         this.clave = clave;
     }
 
@@ -84,42 +100,45 @@ public class Usuario implements Serializable {
         this.nombreUsuario = nombreUsuario;
     }
 
-    public Rol getRol() {
-        return rol;
+    public String getClave() {
+        return clave;
     }
 
-    public void setRol(Rol rol) {
-        this.rol = rol;
+    public void setClave(String clave) {
+        this.clave = clave;
     }
 
-    public List<RolUsuario> getRolUsuarios() {
-        return this.rolUsuarios;
+    public Persona getPersona() {
+        return persona;
     }
 
-    public void setRolUsuarios(List<RolUsuario> rolUsuarios) {
-        this.rolUsuarios = rolUsuarios;
-    }
-/*
-    public RolUsuario addRolUsuario(RolUsuario rolUsuario) {
-        getRolUsuarios().add(rolUsuario);
-        rolUsuario.setUsuarioBean(this);
-        return rolUsuario;
+    public void setPersona(Persona persona) {
+        this.persona = persona;
     }
 
-    public RolUsuario removeRolUsuario(RolUsuario rolUsuario) {
-        getRolUsuarios().remove(rolUsuario);
-        rolUsuario.setUsuarioBean(null);
-
-        return rolUsuario;
-    }
-*/
-    public Persona getPersonaBean() {
-        return this.personaBean;
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
     }
 
-    public void setPersonaBean(Persona personaBean) {
-        this.personaBean = personaBean;
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Usuario)) {
+            return false;
+        }
+        Usuario other = (Usuario) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
-}//end Usuario 
-
+    @Override
+    public String toString() {
+        return "org.zapateria.logica.Usuario[ id=" + id + " ]";
+    }
+    
+}

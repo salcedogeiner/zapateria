@@ -6,10 +6,13 @@
 package org.zapateria.gui;
 
 
+import java.util.Objects;
+import javax.persistence.Persistence;
 import javax.swing.JPasswordField;
 
 import org.zapateria.logica.Usuario;
 import org.zapateria.mapper.UsuarioMapper;
+import org.zapateria.utilidades.Constantes;
 /**
  *
  * @author geiner
@@ -134,17 +137,17 @@ public class LoginGUI extends javax.swing.JFrame {
     private void jButtonIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIngresarActionPerformed
         // TODO add your handling code here:
         
-        UsuarioMapper usuarioMapper = new UsuarioMapper();
-        
+        UsuarioMapper usuarioMapper = new org.zapateria.mapper.UsuarioMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
         Usuario usuario = new Usuario();
         usuario.setClave(this.jTextPassword.getText());
         usuario.setNombreUsuario(this.jTextUsuario.getText());
-        
-        if (usuarioMapper.consultarUsuario(usuario)) {
+        usuario = usuarioMapper.consultarUsuario(usuario);
+             if ( Objects.nonNull(usuario)) {
+            Constantes.session.put(Constantes.USUARIO, usuario);
             this.dispose();
             RolGUI rolGUI = new RolGUI();
             rolGUI.setVisible(true);
-            this.jLabelMensaje.setText("Usuario valido");
+                 System.out.println(usuario.getPersona().getApellidos());
         } else {
             this.jLabelMensaje.setText("Usuario invalido");
         }

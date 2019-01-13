@@ -1,105 +1,229 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.zapateria.mapper;
 
-import java.util.Objects;
-import java.util.Set;
-import javax.persistence.Persistence;
-import org.zapateria.controller.UsuarioJpaController;
+import java.io.Serializable;
+import javax.persistence.Query;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import org.zapateria.logica.Persona;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import org.zapateria.mapper.exceptions.IllegalOrphanException;
+import org.zapateria.mapper.exceptions.NonexistentEntityException;
 import org.zapateria.logica.Usuario;
-import org.zapateria.utilidades.Constantes;
 
 /**
- * @author geiner
- * @version 1.0
- * @created 19-dic.-2018 16:15:34
+ *
+ * @author g.salcedo
  */
-public class UsuarioMapper {
+public class UsuarioMapper implements Serializable {
 
-    private UsuarioJpaController usuarioController;
+    public UsuarioMapper(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
+    private EntityManagerFactory emf = null;
 
-    public void finalize() throws Throwable {
-
+    public EntityManager getEntityManager() {
+        return emf.createEntityManager();
     }
 
-    public UsuarioMapper() {
-
-        this.usuarioController = new UsuarioJpaController(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
-        System.out.println(" usuarioController : " + this.usuarioController);
-        // TODO llamar a login.
-        // EntityManagerFactory emf = Persistence.createEntityManagerFactory(Constantes.CONTEXTO);
-        // EntityManager em = emf.createEntityManager();
-
-        // em.getTransaction().begin();
-        // List resultado = em.createNativeQuery("Select * from calzado").getResultList();
-
-        // System.out.println(" Resultado : " + resultado);
-
-        // em.getTransaction().commit();
-        // em.close();
+    public void create(Usuario usuario) throws IllegalOrphanException {
+        List<String> illegalOrphanMessages = null;
+        Persona personaOrphanCheck = usuario.getPersona();
+        if (personaOrphanCheck != null) {
+            Usuario oldUsuarioOfPersona = personaOrphanCheck.getUsuario();
+            if (oldUsuarioOfPersona != null) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("The Persona " + personaOrphanCheck + " already has an item of type Usuario whose persona column cannot be null. Please make another selection for the persona field.");
+            }
+        }
+        if (illegalOrphanMessages != null) {
+            throw new IllegalOrphanException(illegalOrphanMessages);
+        }
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();
+            Persona persona = usuario.getPersona();
+            if (persona != null) {
+                persona = em.getReference(persona.getClass(), persona.getId());
+                usuario.setPersona(persona);
+            }
+            em.persist(usuario);
+            if (persona != null) {
+                persona.setUsuario(usuario);
+                persona = em.merge(persona);
+            }
+            em.getTransaction().commit();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
 
-    /**
-     *
-     * @param usuario
-     */
-    public void actualizar(Usuario usuario) {
-
+    public void edit(Usuario usuario) throws IllegalOrphanException, NonexistentEntityException, Exception {
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();
+            Usuario persistentUsuario = em.find(Usuario.class, usuario.getId());
+            Persona personaOld = persistentUsuario.getPersona();
+            Persona personaNew = usuario.getPersona();
+            List<String> illegalOrphanMessages = null;
+            if (personaNew != null && !personaNew.equals(personaOld)) {
+                Usuario oldUsuarioOfPersona = personaNew.getUsuario();
+                if (oldUsuarioOfPersona != null) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("The Persona " + personaNew + " already has an item of type Usuario whose persona column cannot be null. Please make another selection for the persona field.");
+                }
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            if (personaNew != null) {
+                personaNew = em.getReference(personaNew.getClass(), personaNew.getId());
+                usuario.setPersona(personaNew);
+            }
+            usuario = em.merge(usuario);
+            if (personaOld != null && !personaOld.equals(personaNew)) {
+                personaOld.setUsuario(null);
+                personaOld = em.merge(personaOld);
+            }
+            if (personaNew != null && !personaNew.equals(personaOld)) {
+                personaNew.setUsuario(usuario);
+                personaNew = em.merge(personaNew);
+            }
+            em.getTransaction().commit();
+        } catch (Exception ex) {
+            String msg = ex.getLocalizedMessage();
+            if (msg == null || msg.length() == 0) {
+                Integer id = usuario.getId();
+                if (findUsuario(id) == null) {
+                    throw new NonexistentEntityException("The usuario with id " + id + " no longer exists.");
+                }
+            }
+            throw ex;
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
 
-    /**
-     *
-     * @param id
-     */
-    public Set<Usuario> buscarPorId(Integer id) {
-        return null;
+    public void destroy(Integer id) throws NonexistentEntityException {
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();
+            Usuario usuario;
+            try {
+                usuario = em.getReference(Usuario.class, id);
+                usuario.getId();
+            } catch (EntityNotFoundException enfe) {
+                throw new NonexistentEntityException("The usuario with id " + id + " no longer exists.", enfe);
+            }
+            Persona persona = usuario.getPersona();
+            if (persona != null) {
+                persona.setUsuario(null);
+                persona = em.merge(persona);
+            }
+            em.remove(usuario);
+            em.getTransaction().commit();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
 
-    /**
-     *
-     * @param usuario
-     */
-    public Usuario buscarPorNombreUsuario(String usuario) {
-        return null;
+    public List<Usuario> findUsuarioEntities() {
+        return findUsuarioEntities(true, -1, -1);
     }
 
-    public Set<Usuario> buscarTodos() {
-        return null;
+    public List<Usuario> findUsuarioEntities(int maxResults, int firstResult) {
+        return findUsuarioEntities(false, maxResults, firstResult);
     }
 
-    /**
-     *
-     * @param usuario
-     */
-    public void eliminar(Usuario usuario) {
-
+    private List<Usuario> findUsuarioEntities(boolean all, int maxResults, int firstResult) {
+        EntityManager em = getEntityManager();
+        try {
+            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
+            cq.select(cq.from(Usuario.class));
+            Query q = em.createQuery(cq);
+            if (!all) {
+                q.setMaxResults(maxResults);
+                q.setFirstResult(firstResult);
+            }
+            return q.getResultList();
+        } finally {
+            em.close();
+        }
     }
 
-    /**
-     *
-     * @param id
-     */
-    public void eliminarPorId(Integer id) {
-
+    public Usuario findUsuario(Integer id) {
+        EntityManager em = getEntityManager();
+        try {
+            return em.find(Usuario.class, id);
+        } finally {
+            em.close();
+        }
     }
 
-    /**
-     *
-     * @param usuario
-     */
-    public void insertar(Usuario usuario) {
-       //  usuarioController.create(null);
+    public int getUsuarioCount() {
+        EntityManager em = getEntityManager();
+        try {
+            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
+            Root<Usuario> rt = cq.from(Usuario.class);
+            cq.select(em.getCriteriaBuilder().count(rt));
+            Query q = em.createQuery(cq);
+            return ((Long) q.getSingleResult()).intValue();
+        } finally {
+            em.close();
+        }
     }
     
-     public boolean consultarUsuario(Usuario usuario) {
-         boolean login = false;
-         try {
-             usuario = usuarioController.consultarUsuario(usuario);
-             if ( Objects.nonNull(login) && Objects.nonNull(usuario.getPersonaBean())  )
-                 login = true;
-         } catch(Exception e) {
-             login = false;
-         }
-         return login;
-     }
+    /**
+     * Consulta el usuario por medio de nombre_usuario y clave
+     * @param usuario
+     * @return usuario
+     */
+    public Usuario consultarUsuario(Usuario usuario) {
+        EntityManager em = getEntityManager();
+        try {
+            Query query;
+            query = em.createQuery
+                ("SELECT usuario FROM Usuario usuario WHERE usuario.nombreUsuario = :nombre and usuario.clave = :clave");
+            query.setParameter("nombre", usuario.getNombreUsuario());
+            query.setParameter("clave", usuario.getClave());
+            
+            usuario = (Usuario) query.getSingleResult();
+            System.out.println(usuario.getPersona().getApellidos());
+            for (Iterator iterator = usuario.getRoles().iterator(); iterator.hasNext();) {
+                Object next = iterator.next();
+                System.out.println(next.toString());                
+            }
+            
+            return usuario;
+        } catch(Exception e){
+            System.out.println(e.toString());
+            return null;
+        }
+        finally {
+            em.close();
+        }
+    }
     
-    
-}//end UsuarioMapper
+}

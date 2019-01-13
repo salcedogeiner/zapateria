@@ -1,87 +1,118 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.zapateria.logica;
 
 import java.io.Serializable;
-import javax.persistence.*;
-import java.util.List;
-
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * The persistent class for the privilegio database table.
- * 
+ *
+ * @author g.salcedo
  */
 @Entity
-@NamedQuery(name="Privilegio.findAll", query="SELECT p FROM Privilegio p")
+@Table(name = "privilegio", catalog = "zapateriadb", schema = "public")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Privilegio.findAll", query = "SELECT p FROM Privilegio p"),
+    @NamedQuery(name = "Privilegio.findById", query = "SELECT p FROM Privilegio p WHERE p.id = :id"),
+    @NamedQuery(name = "Privilegio.findByNombre", query = "SELECT p FROM Privilegio p WHERE p.nombre = :nombre"),
+    @NamedQuery(name = "Privilegio.findByDescripcion", query = "SELECT p FROM Privilegio p WHERE p.descripcion = :descripcion"),
+    @NamedQuery(name = "Privilegio.findByAbreviacion", query = "SELECT p FROM Privilegio p WHERE p.abreviacion = :abreviacion")})
 public class Privilegio implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	@Id
-	private Integer id;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
+    @Basic(optional = false)
+    @Column(name = "nombre")
+    private String nombre;
+    @Column(name = "descripcion")
+    private String descripcion;
+    @Column(name = "abreviacion")
+    private String abreviacion;
 
-	private String abreviacion;
+    public Privilegio() {
+    }
 
-	private String descripcion;
+    public Privilegio(Integer id) {
+        this.id = id;
+    }
 
-	private String nombre;
+    public Privilegio(Integer id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
 
-	//bi-directional many-to-one association to RolPrivilegio
-	@OneToMany(mappedBy="privilegioBean")
-	private List<RolPrivilegio> rolPrivilegios;
+    public Integer getId() {
+        return id;
+    }
 
-	public Privilegio() {
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Integer getId() {
-		return this.id;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public String getAbreviacion() {
-		return this.abreviacion;
-	}
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-	public void setAbreviacion(String abreviacion) {
-		this.abreviacion = abreviacion;
-	}
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
-	public String getDescripcion() {
-		return this.descripcion;
-	}
+    public String getAbreviacion() {
+        return abreviacion;
+    }
 
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
+    public void setAbreviacion(String abreviacion) {
+        this.abreviacion = abreviacion;
+    }
 
-	public String getNombre() {
-		return this.nombre;
-	}
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Privilegio)) {
+            return false;
+        }
+        Privilegio other = (Privilegio) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
 
-	public List<RolPrivilegio> getRolPrivilegios() {
-		return this.rolPrivilegios;
-	}
-
-	public void setRolPrivilegios(List<RolPrivilegio> rolPrivilegios) {
-		this.rolPrivilegios = rolPrivilegios;
-	}
-
-	public RolPrivilegio addRolPrivilegio(RolPrivilegio rolPrivilegio) {
-		getRolPrivilegios().add(rolPrivilegio);
-		rolPrivilegio.setPrivilegioBean(this);
-
-		return rolPrivilegio;
-	}
-
-	public RolPrivilegio removeRolPrivilegio(RolPrivilegio rolPrivilegio) {
-		getRolPrivilegios().remove(rolPrivilegio);
-		rolPrivilegio.setPrivilegioBean(null);
-
-		return rolPrivilegio;
-	}
-
+    @Override
+    public String toString() {
+        return "org.zapateria.logica.Privilegio[ id=" + id + " ]";
+    }
+    
 }
