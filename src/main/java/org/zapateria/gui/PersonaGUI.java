@@ -2,6 +2,7 @@ package org.zapateria.gui;
 
 import java.util.Objects;
 import javax.persistence.Persistence;
+import javax.swing.JOptionPane;
 import org.zapateria.logica.Persona;
 import org.zapateria.logica.TipoIdentificacion;
 import org.zapateria.mapper.PersonaMapper;
@@ -14,17 +15,17 @@ import org.zapateria.utilidades.Constantes;
 public class PersonaGUI extends javax.swing.JFrame {
 
     private Persona persona;
-    
+
     /**
      * Creates new form clienteGUI
      */
     public PersonaGUI() {
         initComponents();
     }
-    
+
     /**
-     * 
-     * @param persona 
+     *
+     * @param persona
      */
     public PersonaGUI(Persona persona) {
         this.persona = persona;
@@ -224,13 +225,14 @@ public class PersonaGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarActionPerformed
-        
-        if (Objects.isNull(this.persona))
+
+        if (Objects.isNull(this.persona)) {
             this.persona = new Persona();
-        
+        }
+
         TipoIdentificacion tipoIdentificacion = new TipoIdentificacion();
         tipoIdentificacion.setId(1);
-        
+
         persona.setNombres(this.nombres.getText());
         persona.setApellidos(this.apellidos.getText());
         persona.setIdentificacion(this.identificacion.getText());
@@ -240,12 +242,24 @@ public class PersonaGUI extends javax.swing.JFrame {
         persona.setTipo(this.tipo.getText());
 
         PersonaMapper personaMapper = new PersonaMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
-               
-        if (Objects.isNull(this.persona.getId()))
+
+        String estado = "";
+        if (Objects.isNull(this.persona.getId())) {
             personaMapper.create(persona);
-        else 
+            estado = "Registro Almacenado exitosamente";
+        } else {
             personaMapper.edit(this.persona);
+            estado = "Registro Actualizado exitosamente";
+        }
         
+        int respuestaDialog = JOptionPane.showOptionDialog(null, estado,
+                "Información", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+
+        if (respuestaDialog == JOptionPane.CANCEL_OPTION || respuestaDialog == JOptionPane.CLOSED_OPTION) {
+            throw new RuntimeException("Cancelo Login");
+        }
+        
+        regresarActionPerformed(null);
     }//GEN-LAST:event_registrarActionPerformed
 
     private void establecerValores() {
@@ -257,7 +271,7 @@ public class PersonaGUI extends javax.swing.JFrame {
         this.direccion.setText(this.persona.getDireccion());
         this.tipo.setText(this.persona.getTipo());
     }
-    
+
     private void apellidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apellidosActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_apellidosActionPerformed
@@ -274,14 +288,14 @@ public class PersonaGUI extends javax.swing.JFrame {
         AdminPersonaGUI adminPersona = new AdminPersonaGUI();
         adminPersona.setVisible(Boolean.TRUE);
         this.dispose();
-        
+
     }//GEN-LAST:event_regresarActionPerformed
 
     private void cerrarSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrarSessionActionPerformed
         Constantes.session.clear();
         LoginGUI loginGui = new LoginGUI();
         loginGui.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_cerrarSessionActionPerformed
 
