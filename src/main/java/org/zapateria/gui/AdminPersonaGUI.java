@@ -86,6 +86,11 @@ public class AdminPersonaGUI extends javax.swing.JFrame {
         });
 
         cerrarSesion.setText("Cerrar sesión");
+        cerrarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cerrarSesionActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -156,6 +161,14 @@ public class AdminPersonaGUI extends javax.swing.JFrame {
         persona.setVisible(Boolean.TRUE);
         this.dispose();
     }//GEN-LAST:event_registrarPersonaActionPerformed
+
+    private void cerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrarSesionActionPerformed
+         Constantes.session.clear();
+        LoginGUI loginGui = new LoginGUI();
+        loginGui.setVisible(true);
+
+        this.dispose();
+    }//GEN-LAST:event_cerrarSesionActionPerformed
 
     private Object[][] getListPersona() {
         PersonaMapper personaMapper = new PersonaMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
