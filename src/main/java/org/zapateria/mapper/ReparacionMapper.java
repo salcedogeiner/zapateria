@@ -40,7 +40,7 @@ public class ReparacionMapper implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Reparacion reparacion) throws IllegalOrphanException {
+    public void create(Reparacion reparacion) throws RuntimeException {
         if (reparacion.getIsumoReparacionSet() == null) {
             reparacion.setIsumoReparacionSet(new HashSet<IsumoReparacion>());
         }
@@ -58,9 +58,9 @@ public class ReparacionMapper implements Serializable {
                 illegalOrphanMessages.add("The Calzado " + calzadoOrphanCheck + " already has an item of type Reparacion whose calzado column cannot be null. Please make another selection for the calzado field.");
             }
         }
-        if (illegalOrphanMessages != null) {
+        /*if (illegalOrphanMessages != null) {
             throw new IllegalOrphanException(illegalOrphanMessages);
-        }
+        }*/
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -140,7 +140,7 @@ public class ReparacionMapper implements Serializable {
         }
     }
 
-    public void edit(Reparacion reparacion) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Reparacion reparacion) throws RuntimeException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -273,13 +273,13 @@ public class ReparacionMapper implements Serializable {
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
-            if (msg == null || msg.length() == 0) {
+            /*if (msg == null || msg.length() == 0) {
                 Integer id = reparacion.getId();
                 if (findReparacion(id) == null) {
                     throw new NonexistentEntityException("The reparacion with id " + id + " no longer exists.");
                 }
             }
-            throw ex;
+            throw ex;*/
         } finally {
             if (em != null) {
                 em.close();

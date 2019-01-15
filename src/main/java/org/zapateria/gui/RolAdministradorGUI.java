@@ -163,7 +163,12 @@ public class RolAdministradorGUI extends javax.swing.JFrame {
             AdminPersonaGUI adminPersona = new AdminPersonaGUI();
             adminPersona.setVisible(Boolean.TRUE);
             this.dispose();
-            
+        }
+        
+        if ( Constantes.ADMIN_INSUMO.equals(this.comboAdministrador.getSelectedItem())){
+            AdminReparacionGUI adminInsumo = new AdminReparacionGUI();
+            adminInsumo.setVisible(Boolean.TRUE);
+            this.dispose();
         }
             
     }//GEN-LAST:event_comboAdministradorActionPerformed
