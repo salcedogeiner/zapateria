@@ -68,7 +68,7 @@ public class InsumoMapper implements Serializable {
         }
     }
 
-    public void edit(Insumo insumo) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Insumo insumo)  {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -88,15 +88,15 @@ public class InsumoMapper implements Serializable {
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
-            Set<IsumoReparacion> attachedIsumoReparacionSetNew = new HashSet<IsumoReparacion>();
+           /* Set<IsumoReparacion> attachedIsumoReparacionSetNew = new HashSet<IsumoReparacion>();
             for (IsumoReparacion isumoReparacionSetNewIsumoReparacionToAttach : isumoReparacionSetNew) {
                 isumoReparacionSetNewIsumoReparacionToAttach = em.getReference(isumoReparacionSetNewIsumoReparacionToAttach.getClass(), isumoReparacionSetNewIsumoReparacionToAttach.getId());
                 attachedIsumoReparacionSetNew.add(isumoReparacionSetNewIsumoReparacionToAttach);
-            }
-            isumoReparacionSetNew = attachedIsumoReparacionSetNew;
-            insumo.setIsumoReparacionSet(isumoReparacionSetNew);
+            }*/
+            /*isumoReparacionSetNew = attachedIsumoReparacionSetNew;
+            insumo.setIsumoReparacionSet(isumoReparacionSetNew);*/
             insumo = em.merge(insumo);
-            for (IsumoReparacion isumoReparacionSetNewIsumoReparacion : isumoReparacionSetNew) {
+            /*for (IsumoReparacion isumoReparacionSetNewIsumoReparacion : isumoReparacionSetNew) {
                 if (!isumoReparacionSetOld.contains(isumoReparacionSetNewIsumoReparacion)) {
                     Insumo oldInsumoOfIsumoReparacionSetNewIsumoReparacion = isumoReparacionSetNewIsumoReparacion.getInsumo();
                     isumoReparacionSetNewIsumoReparacion.setInsumo(insumo);
@@ -106,17 +106,11 @@ public class InsumoMapper implements Serializable {
                         oldInsumoOfIsumoReparacionSetNewIsumoReparacion = em.merge(oldInsumoOfIsumoReparacionSetNewIsumoReparacion);
                     }
                 }
-            }
+            }*/
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
-            if (msg == null || msg.length() == 0) {
-                Integer id = insumo.getId();
-                if (findInsumo(id) == null) {
-                    throw new NonexistentEntityException("The insumo with id " + id + " no longer exists.");
-                }
-            }
-            throw ex;
+            ex.printStackTrace();
         } finally {
             if (em != null) {
                 em.close();

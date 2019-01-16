@@ -200,8 +200,11 @@ public class Persona implements Serializable {
     }
 
     @Override
+    /**
+     * No modificar este metodo sobreescrito
+     */
     public String toString() {
-        return "org.zapateria.logica.Persona[ id=" + id + " ]";
+        return this.nombres +" "+ this.apellidos;
     }
     
 }

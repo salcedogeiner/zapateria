@@ -1,10 +1,25 @@
 package org.zapateria.gui;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.JOptionPane;
+import org.zapateria.logica.Calzado;
+import org.zapateria.logica.EstadoReparacion;
+import org.zapateria.logica.Persona;
 import org.zapateria.logica.Reparacion;
 import org.zapateria.logica.TipoIdentificacion;
+import org.zapateria.mapper.CalzadoMapper;
+import org.zapateria.mapper.EstadoReparacionMapper;
+import org.zapateria.mapper.PersonaMapper;
 import org.zapateria.mapper.ReparacionMapper;
 import org.zapateria.utilidades.Constantes;
 
@@ -15,11 +30,15 @@ import org.zapateria.utilidades.Constantes;
 public class ReparacionGUI extends javax.swing.JFrame {
 
     private Reparacion reparacion;
+    private EntityManagerFactory emf;
+    private List<Persona> clienteLista;
+    private List<Persona> zapateroLista;
 
     /**
      * Creates new form clienteGUI
      */
     public ReparacionGUI() {
+        this.emf = Persistence.createEntityManagerFactory(Constantes.CONTEXTO);
         initComponents();
     }
 
@@ -28,6 +47,7 @@ public class ReparacionGUI extends javax.swing.JFrame {
      * @param persona
      */
     public ReparacionGUI(Reparacion reparacion) {
+        this.emf = Persistence.createEntityManagerFactory(Constantes.CONTEXTO);
         this.reparacion = reparacion;
         initComponents();
         establecerValores();
@@ -52,15 +72,19 @@ public class ReparacionGUI extends javax.swing.JFrame {
         registrar = new javax.swing.JButton();
         regresar = new javax.swing.JButton();
         cerrarSession = new javax.swing.JButton();
-        nombres = new javax.swing.JTextField();
-        apellidos = new javax.swing.JTextField();
-        identificacion = new javax.swing.JTextField();
-        tipoIdentificacion = new javax.swing.JTextField();
-        telefono = new javax.swing.JTextField();
-        direccion = new javax.swing.JTextField();
+        fechaSolicitud = new javax.swing.JTextField();
+        fechaEntrega = new javax.swing.JTextField();
+        estimacion = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        tipo = new javax.swing.JTextField();
+        valor = new javax.swing.JTextField();
+        comision = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        comboBoxCliente = new javax.swing.JComboBox<>();
+        comboBoxZapatero = new javax.swing.JComboBox<>();
+        comboBoxCalzado = new javax.swing.JComboBox<>();
+        comboBoxEstadoReparacion = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Zapateria-Cliente");
@@ -68,17 +92,17 @@ public class ReparacionGUI extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setText("Nombres");
+        jLabel1.setText("Fecha Solicitud (dd/mm/yyyy)");
 
-        jLabel2.setText("Apellidos");
+        jLabel2.setText("Fecha Entrega (dd/mm/yyyy)");
 
-        jLabel3.setText("Identificación");
+        jLabel3.setText("Estimación");
 
-        jLabel4.setText("Tipo Identificación");
+        jLabel4.setText("Estado Reparación");
 
-        jLabel5.setText("Teléfono");
+        jLabel5.setText("Cliente");
 
-        jLabel6.setText("Dirección");
+        jLabel6.setText("Zapatero Encargado");
 
         registrar.setText( Objects.isNull(this.reparacion) ? "Registrar" : "Actualizar");
         registrar.addActionListener(new java.awt.event.ActionListener() {
@@ -101,27 +125,33 @@ public class ReparacionGUI extends javax.swing.JFrame {
             }
         });
 
-        apellidos.addActionListener(new java.awt.event.ActionListener() {
+        fechaEntrega.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                apellidosActionPerformed(evt);
+                fechaEntregaActionPerformed(evt);
             }
         });
 
-        identificacion.addActionListener(new java.awt.event.ActionListener() {
+        estimacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                identificacionActionPerformed(evt);
-            }
-        });
-
-        direccion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                direccionActionPerformed(evt);
+                estimacionActionPerformed(evt);
             }
         });
 
         jLabel7.setText("Bienvenidos a Zapateria Cliente");
 
-        jLabel8.setText("Tipo");
+        jLabel8.setText("Valor");
+
+        jLabel9.setText("Comisión");
+
+        jLabel10.setText("Calzado");
+
+        getClienteLista();
+
+        getZapateroLista();
+
+        getCalzadoLista();
+
+        getEstadoReparacionLista();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -131,6 +161,15 @@ public class ReparacionGUI extends javax.swing.JFrame {
                 .addGap(88, 88, 88)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(34, 34, 34)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(valor, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(comision, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -139,27 +178,28 @@ public class ReparacionGUI extends javax.swing.JFrame {
                                 .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(nombres)
-                            .addComponent(apellidos)
-                            .addComponent(identificacion)
-                            .addComponent(tipoIdentificacion)
-                            .addComponent(telefono)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fechaSolicitud)
+                            .addComponent(fechaEntrega)
+                            .addComponent(estimacion)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(tipo)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(direccion)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addGap(13, 13, 13)
-                                        .addComponent(registrar, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                                        .addComponent(cerrarSession, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(75, Short.MAX_VALUE))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(comboBoxCalzado, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(comboBoxCliente, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addGap(13, 13, 13)
+                                            .addComponent(registrar, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                                            .addComponent(cerrarSession, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(comboBoxZapatero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(comboBoxEstadoReparacion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,37 +212,42 @@ public class ReparacionGUI extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(nombres, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(fechaSolicitud, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(apellidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(fechaEntrega, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(identificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(estimacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(6, 6, 6)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(46, 46, 46))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(tipoIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(telefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(direccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(comboBoxEstadoReparacion, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboBoxCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(39, 39, 39)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboBoxZapatero, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboBoxCalzado, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(valor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(comision, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(44, 44, 44)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(registrar)
                     .addComponent(regresar)
@@ -218,7 +263,9 @@ public class ReparacionGUI extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -226,22 +273,28 @@ public class ReparacionGUI extends javax.swing.JFrame {
 
     private void registrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarActionPerformed
 
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
         if (Objects.isNull(this.reparacion)) {
             this.reparacion = new Reparacion();
         }
 
-        TipoIdentificacion tipoIdentificacion = new TipoIdentificacion();
-        tipoIdentificacion.setId(1);
+        try {
+            reparacion.setFechaSolicitud(sdf.parse(this.fechaSolicitud.getText()));
+            reparacion.setFechaEntrega(sdf.parse(this.fechaEntrega.getText()));
+        } catch (ParseException ex) {
+            Logger.getLogger(ReparacionGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-        /*persona.setNombres(this.nombres.getText());
-        persona.setApellidos(this.apellidos.getText());
-        persona.setIdentificacion(this.identificacion.getText());
-        persona.setTipoIdentificacion(tipoIdentificacion);
-        persona.setTelefono(this.telefono.getText());
-        persona.setDireccion(this.direccion.getText());
-        persona.setTipo(this.tipo.getText());*/
+        reparacion.setEstimacionReparacion( Integer.valueOf(this.estimacion.getText()) );
+        reparacion.setEstadoReparacion((EstadoReparacion) comboBoxEstadoReparacion.getSelectedItem());
+        reparacion.setCliente((Persona) this.comboBoxCliente.getSelectedItem());
+        reparacion.setZapateroEncargado((Persona) comboBoxZapatero.getSelectedItem());
+        reparacion.setCalzado((Calzado) comboBoxCalzado.getSelectedItem());
+        reparacion.setValorReparacion(new BigInteger(this.valor.getText()));
+        reparacion.setComisionZapatero(new BigDecimal(this.comision.getText()));
 
-        ReparacionMapper reparacionMapper = new ReparacionMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
+        ReparacionMapper reparacionMapper = new ReparacionMapper(emf);
 
         String estado = "";
         if (Objects.isNull(this.reparacion.getId())) {
@@ -251,42 +304,93 @@ public class ReparacionGUI extends javax.swing.JFrame {
             reparacionMapper.edit(this.reparacion);
             estado = "Registro Actualizado exitosamente";
         }
-        
+
         int respuestaDialog = JOptionPane.showOptionDialog(null, estado,
                 "Información", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
         if (respuestaDialog == JOptionPane.CANCEL_OPTION || respuestaDialog == JOptionPane.CLOSED_OPTION) {
-            throw new RuntimeException("Cancelo Login");
+            throw new RuntimeException("Error ");
         }
-        
+
         regresarActionPerformed(null);
     }//GEN-LAST:event_registrarActionPerformed
 
+    /**
+     * 
+     */
     private void establecerValores() {
-        /*this.nombres.setText(this.reparacion.getNombres());
-        this.apellidos.setText(this.reparacion.getApellidos());
-        this.identificacion.setText(this.reparacion.getIdentificacion());
-        this.tipoIdentificacion.setText(this.reparacion.getTipoIdentificacion().getNombre());
-        this.telefono.setText(this.reparacion.getTelefono());
-        this.direccion.setText(this.reparacion.getDireccion());
-        this.tipo.setText(this.reparacion.getTipo()); */
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        
+        this.fechaSolicitud.setText(sdf.format(reparacion.getFechaSolicitud()));
+        this.fechaEntrega.setText(sdf.format(reparacion.getFechaEntrega()));
+        this.estimacion.setText(reparacion.getEstimacionReparacion()+"");
+
+        this.comboBoxEstadoReparacion.setSelectedItem(reparacion.getEstadoReparacion());
+        this.comboBoxCliente.setSelectedItem(reparacion.getCliente());
+        this.comboBoxZapatero.setSelectedItem(reparacion.getZapateroEncargado());
+        this.comboBoxCalzado.setSelectedItem(reparacion.getCalzado());
+        
+        this.valor.setText(reparacion.getValorReparacion().toString());
+        this.comision.setText(reparacion.getComisionZapatero().toString());
+
     }
 
-    private void apellidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apellidosActionPerformed
+    /**
+     * 
+     */
+    private void getClienteLista(){
+        PersonaMapper personaMapper = new PersonaMapper(emf);
+        clienteLista = personaMapper.getPersonaTipo(Constantes.CLIENTE_ROL);
+        if ( Objects.nonNull(clienteLista)) {
+            clienteLista.forEach(persona -> comboBoxCliente.addItem(persona) );
+        }
+    } 
+    
+    /**
+     * 
+     */
+    private void getZapateroLista(){
+        PersonaMapper personaMapper = new PersonaMapper(emf);
+        List<Persona> zapateroLista = personaMapper.getPersonaTipo(Constantes.ZAPATERO_ROL);
+        if ( Objects.nonNull(zapateroLista)) {
+            zapateroLista.forEach(persona -> comboBoxZapatero.addItem(persona) );
+        }
+    }
+    
+     /**
+     * 
+     */
+    private void getCalzadoLista(){
+        CalzadoMapper calzadoMapper = new CalzadoMapper(emf);
+        List<Calzado> calzadoLista = calzadoMapper.findCalzadoEntities();
+        if ( Objects.nonNull(calzadoLista)) {
+            calzadoLista.forEach(calzado -> comboBoxCalzado.addItem(calzado) );
+        }
+    }
+    
+         /**
+     * 
+     */
+    private void getEstadoReparacionLista(){
+        EstadoReparacionMapper estadoMapper = new EstadoReparacionMapper(emf);
+        List<EstadoReparacion> estadoLista = estadoMapper.findEstadoReparacionEntities();
+        if ( Objects.nonNull(estadoLista)) {
+            estadoLista.forEach(estado -> comboBoxEstadoReparacion.addItem(estado) );
+        }
+    }
+    
+    private void fechaEntregaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaEntregaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_apellidosActionPerformed
+    }//GEN-LAST:event_fechaEntregaActionPerformed
 
-    private void identificacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificacionActionPerformed
+    private void estimacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_estimacionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_identificacionActionPerformed
-
-    private void direccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_direccionActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_direccionActionPerformed
+    }//GEN-LAST:event_estimacionActionPerformed
 
     private void regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarActionPerformed
-        AdminPersonaGUI adminPersona = new AdminPersonaGUI();
-        adminPersona.setVisible(Boolean.TRUE);
+        AdminReparacionGUI admin = new AdminReparacionGUI();
+        admin.setVisible(Boolean.TRUE);
         this.dispose();
 
     }//GEN-LAST:event_regresarActionPerformed
@@ -342,11 +446,17 @@ public class ReparacionGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField apellidos;
     private javax.swing.JButton cerrarSession;
-    private javax.swing.JTextField direccion;
-    private javax.swing.JTextField identificacion;
+    private javax.swing.JComboBox<Object> comboBoxCalzado;
+    private javax.swing.JComboBox<Object> comboBoxCliente;
+    private javax.swing.JComboBox<Object> comboBoxEstadoReparacion;
+    private javax.swing.JComboBox<Object> comboBoxZapatero;
+    private javax.swing.JTextField comision;
+    private javax.swing.JTextField estimacion;
+    private javax.swing.JTextField fechaEntrega;
+    private javax.swing.JTextField fechaSolicitud;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -354,12 +464,10 @@ public class ReparacionGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField nombres;
     private javax.swing.JButton registrar;
     private javax.swing.JButton regresar;
-    private javax.swing.JTextField telefono;
-    private javax.swing.JTextField tipo;
-    private javax.swing.JTextField tipoIdentificacion;
+    private javax.swing.JTextField valor;
     // End of variables declaration//GEN-END:variables
 }

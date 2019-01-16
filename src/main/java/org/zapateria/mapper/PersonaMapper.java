@@ -323,4 +323,28 @@ public class PersonaMapper implements Serializable {
         }
     }
     
+    /**
+     * realiza cosulta de persona (tipo)
+     * @param tipo
+     * @return 
+     */
+    public List<Persona> getPersonaTipo(String tipo) {
+         EntityManager em = getEntityManager();
+         List<Persona> personas = null;
+        try {
+            Query query = em.createQuery("Select persona from Persona persona "
+                    + " where persona.tipo = :tipo ");
+            query.setParameter("tipo", tipo);
+            
+            personas = query.getResultList();
+            
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        
+        return personas;
+    }
+    
 }
