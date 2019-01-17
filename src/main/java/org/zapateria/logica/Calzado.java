@@ -141,7 +141,7 @@ public class Calzado implements Serializable {
 
     @Override
     public String toString() {
-        return "org.zapateria.logica.Calzado[ id=" + id + " ]";
+        return this.marca + "-" + this.talla;
     }
     
 }

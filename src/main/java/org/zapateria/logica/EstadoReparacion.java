@@ -127,7 +127,7 @@ public class EstadoReparacion implements Serializable {
 
     @Override
     public String toString() {
-        return "org.zapateria.logica.EstadoReparacion[ id=" + id + " ]";
+        return this.nombre;
     }
     
 }

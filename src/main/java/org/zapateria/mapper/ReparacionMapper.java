@@ -40,7 +40,7 @@ public class ReparacionMapper implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Reparacion reparacion) throws IllegalOrphanException {
+    public void create(Reparacion reparacion) throws RuntimeException {
         if (reparacion.getIsumoReparacionSet() == null) {
             reparacion.setIsumoReparacionSet(new HashSet<IsumoReparacion>());
         }
@@ -58,9 +58,9 @@ public class ReparacionMapper implements Serializable {
                 illegalOrphanMessages.add("The Calzado " + calzadoOrphanCheck + " already has an item of type Reparacion whose calzado column cannot be null. Please make another selection for the calzado field.");
             }
         }
-        if (illegalOrphanMessages != null) {
+        /*if (illegalOrphanMessages != null) {
             throw new IllegalOrphanException(illegalOrphanMessages);
-        }
+        }*/
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -140,7 +140,7 @@ public class ReparacionMapper implements Serializable {
         }
     }
 
-    public void edit(Reparacion reparacion) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Reparacion reparacion) throws RuntimeException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -195,20 +195,20 @@ public class ReparacionMapper implements Serializable {
                 zapateroEncargadoNew = em.getReference(zapateroEncargadoNew.getClass(), zapateroEncargadoNew.getId());
                 reparacion.setZapateroEncargado(zapateroEncargadoNew);
             }
-            Set<IsumoReparacion> attachedIsumoReparacionSetNew = new HashSet<IsumoReparacion>();
+            /*Set<IsumoReparacion> attachedIsumoReparacionSetNew = new HashSet<IsumoReparacion>();
             for (IsumoReparacion isumoReparacionSetNewIsumoReparacionToAttach : isumoReparacionSetNew) {
                 isumoReparacionSetNewIsumoReparacionToAttach = em.getReference(isumoReparacionSetNewIsumoReparacionToAttach.getClass(), isumoReparacionSetNewIsumoReparacionToAttach.getId());
                 attachedIsumoReparacionSetNew.add(isumoReparacionSetNewIsumoReparacionToAttach);
-            }
-            isumoReparacionSetNew = attachedIsumoReparacionSetNew;
+            }*/
+            /*isumoReparacionSetNew = attachedIsumoReparacionSetNew;
             reparacion.setIsumoReparacionSet(isumoReparacionSetNew);
             Set<Pago> attachedPagoSetNew = new HashSet<Pago>();
             for (Pago pagoSetNewPagoToAttach : pagoSetNew) {
                 pagoSetNewPagoToAttach = em.getReference(pagoSetNewPagoToAttach.getClass(), pagoSetNewPagoToAttach.getId());
                 attachedPagoSetNew.add(pagoSetNewPagoToAttach);
-            }
-            pagoSetNew = attachedPagoSetNew;
-            reparacion.setPagoSet(pagoSetNew);
+            }*/
+            /*pagoSetNew = attachedPagoSetNew;
+            reparacion.setPagoSet(pagoSetNew);*/
             reparacion = em.merge(reparacion);
             if (calzadoOld != null && !calzadoOld.equals(calzadoNew)) {
                 calzadoOld.setReparacion(null);
@@ -242,7 +242,7 @@ public class ReparacionMapper implements Serializable {
                 zapateroEncargadoNew.getReparacionSet().add(reparacion);
                 zapateroEncargadoNew = em.merge(zapateroEncargadoNew);
             }
-            for (IsumoReparacion isumoReparacionSetNewIsumoReparacion : isumoReparacionSetNew) {
+            /*for (IsumoReparacion isumoReparacionSetNewIsumoReparacion : isumoReparacionSetNew) {
                 if (!isumoReparacionSetOld.contains(isumoReparacionSetNewIsumoReparacion)) {
                     Reparacion oldReparacionOfIsumoReparacionSetNewIsumoReparacion = isumoReparacionSetNewIsumoReparacion.getReparacion();
                     isumoReparacionSetNewIsumoReparacion.setReparacion(reparacion);
@@ -258,8 +258,8 @@ public class ReparacionMapper implements Serializable {
                     pagoSetOldPago.setReparacion(null);
                     pagoSetOldPago = em.merge(pagoSetOldPago);
                 }
-            }
-            for (Pago pagoSetNewPago : pagoSetNew) {
+            }*/
+            /*for (Pago pagoSetNewPago : pagoSetNew) {
                 if (!pagoSetOld.contains(pagoSetNewPago)) {
                     Reparacion oldReparacionOfPagoSetNewPago = pagoSetNewPago.getReparacion();
                     pagoSetNewPago.setReparacion(reparacion);
@@ -269,17 +269,18 @@ public class ReparacionMapper implements Serializable {
                         oldReparacionOfPagoSetNewPago = em.merge(oldReparacionOfPagoSetNewPago);
                     }
                 }
-            }
+            }*/
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
-            if (msg == null || msg.length() == 0) {
+            ex.printStackTrace();
+            /*if (msg == null || msg.length() == 0) {
                 Integer id = reparacion.getId();
                 if (findReparacion(id) == null) {
                     throw new NonexistentEntityException("The reparacion with id " + id + " no longer exists.");
                 }
             }
-            throw ex;
+            throw ex;*/
         } finally {
             if (em != null) {
                 em.close();
