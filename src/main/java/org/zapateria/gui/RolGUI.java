@@ -129,6 +129,12 @@ public class RolGUI extends javax.swing.JFrame {
         }
         if (this.jComboRoles.getSelectedItem().equals(Constantes.ZAPATERO_ROL)) {
             System.out.println(this.jComboRoles.getSelectedItem());
+            
+            this.dispose();
+            
+            ZapateroGUI zapateroGui = new ZapateroGUI();
+            zapateroGui.setVisible(true);
+            System.out.println(this.jComboRoles.getSelectedItem());
         }
         if (this.jComboRoles.getSelectedItem().equals(Constantes.ADMIN_ROL)) {
             System.out.println(this.jComboRoles.getSelectedItem());

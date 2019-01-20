@@ -391,4 +391,24 @@ public class ReparacionMapper implements Serializable {
         }
     }
     
+    public List<Reparacion> consultarReparacionesZapatero(String id_zapatero) {
+        EntityManager em = getEntityManager();
+        try {
+            Query query;
+            query = em.createQuery
+                ("SELECT reparacion.fecha_solicitud, cliente.nombres || ' ' || cliente.apellidos nombre_cliente, calzado.marca || '-' calzado.color calzado, reparacion.estado_reparacion FROM Reparacion reparacion "
+                        + "INNER JOIN Cliente cliente ON cliente.id=reparacion.cliente "
+                        + "INNER JOIN Calzado calzado ON calzado.id=reparacion.calzado "
+                        + "WHERE reparacion.zapatero_encargado = :id_zapatero");
+            query.setParameter("id_zapatero", id_zapatero);
+            
+            return query.getResultList();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+    
 }

@@ -25,6 +25,16 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>5.4.0.Final</version>
+		 <exclusions>
+		  <exclusion>
+		   <groupId>org.glassfish.jaxb</groupId>
+		   <artifactId>txw2</artifactId>
+		  </exclusion>
+		  <exclusion>
+		   <groupId>org.jvnet.staxex</groupId>
+		   <artifactId>stax-ex</artifactId>
+		  </exclusion>
+		 </exclusions>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager -->
@@ -40,7 +50,6 @@
                         <artifactId>postgresql</artifactId>
                         <version>42.2.5</version>
                 </dependency>
-
 	</dependencies>
         
 	<build>
