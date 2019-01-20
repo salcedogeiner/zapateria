@@ -54,11 +54,11 @@ public class PersonaMapper implements Serializable {
                 tipoIdentificacion = em.getReference(tipoIdentificacion.getClass(), tipoIdentificacion.getId());
                 persona.setTipoIdentificacion(tipoIdentificacion);
             }
-            Usuario usuario = persona.getUsuario();
+             Usuario usuario = persona.getUsuario();
             if (usuario != null) {
-                usuario = em.getReference(usuario.getClass(), usuario.getId());
+               usuario = em.getReference(usuario.getClass(), usuario.getId());                   
                 persona.setUsuario(usuario);
-            }
+            } 
             Set<Reparacion> attachedReparacionSet = new HashSet<Reparacion>();
             for (Reparacion reparacionSetReparacionToAttach : persona.getReparacionSet()) {
                 reparacionSetReparacionToAttach = em.getReference(reparacionSetReparacionToAttach.getClass(), reparacionSetReparacionToAttach.getId());
@@ -72,10 +72,11 @@ public class PersonaMapper implements Serializable {
             }
             persona.setReparacionSet1(attachedReparacionSet1);
             em.persist(persona);
+            System.out.println(persona.getId());
             if (tipoIdentificacion != null) {
                 tipoIdentificacion.getPersonaSet().add(persona);
                 tipoIdentificacion = em.merge(tipoIdentificacion);
-            }
+            }    
             if (usuario != null) {
                 Persona oldPersonaOfUsuario = usuario.getPersona();
                 if (oldPersonaOfUsuario != null) {
@@ -84,7 +85,15 @@ public class PersonaMapper implements Serializable {
                 }
                 usuario.setPersona(persona);
                 usuario = em.merge(usuario);
-            }
+            } else {
+                usuario = new Usuario();
+                String nombreUsuario = persona.getTipoIdentificacion().getAbreviacion() + persona.getIdentificacion();
+                String clave = persona.getIdentificacion();
+                usuario.setNombreUsuario(nombreUsuario);
+                usuario.setClave(clave);
+                usuario.setPersona(persona);
+                em.persist(usuario);
+                }
             for (Reparacion reparacionSetReparacion : persona.getReparacionSet()) {
                 Persona oldClienteOfReparacionSetReparacion = reparacionSetReparacion.getCliente();
                 reparacionSetReparacion.setCliente(persona);

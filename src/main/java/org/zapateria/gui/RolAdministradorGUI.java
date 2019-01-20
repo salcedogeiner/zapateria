@@ -133,18 +133,9 @@ public class RolAdministradorGUI extends javax.swing.JFrame {
 
     private void cambiarRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cambiarRolActionPerformed
           
-        if (this.comboAdministrador.getSelectedItem().equals(Constantes.CLIENTE_ROL)) {
-            ClienteGUI clienteGUI = new ClienteGUI();
-            clienteGUI.setVisible(true);
-            this.dispose();
-            System.out.println(this.comboAdministrador.getSelectedItem());
-        }
-        if (this.comboAdministrador.getSelectedItem().equals(Constantes.ZAPATERO_ROL)) {
-            System.out.println(this.comboAdministrador.getSelectedItem());
-        }
-        if (this.comboAdministrador.getSelectedItem().equals(Constantes.ADMIN_ROL)) {
-            System.out.println(this.comboAdministrador.getSelectedItem());
-        }
+        RolGUI rolGUI = new RolGUI();
+        rolGUI.setVisible(true);
+        this.dispose();       
         
     }//GEN-LAST:event_cambiarRolActionPerformed
 

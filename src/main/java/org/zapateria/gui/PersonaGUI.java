@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import org.zapateria.logica.Calzado;
 import org.zapateria.logica.Persona;
 import org.zapateria.logica.TipoIdentificacion;
+import org.zapateria.logica.Usuario;
 import org.zapateria.mapper.CalzadoMapper;
 import org.zapateria.mapper.PersonaMapper;
 import org.zapateria.mapper.TipoIdentificacionMapper;
@@ -252,7 +253,7 @@ public class PersonaGUI extends javax.swing.JFrame {
         persona.setTipoIdentificacion((TipoIdentificacion) this.comboBoxIdentificacion.getSelectedItem());
         persona.setTelefono(this.telefono.getText());
         persona.setDireccion(this.direccion.getText());
-        persona.setTipo(this.tipo.getSelectedItem().toString());
+        persona.setTipo(this.tipo.getSelectedItem().toString()); 
 
         PersonaMapper personaMapper = new PersonaMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
 
