@@ -148,6 +148,11 @@ public class ReparacionGUI extends javax.swing.JFrame {
         getClienteLista();
 
         getZapateroLista();
+        comboBoxZapatero.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxZapateroActionPerformed(evt);
+            }
+        });
 
         getCalzadoLista();
 
@@ -402,6 +407,10 @@ public class ReparacionGUI extends javax.swing.JFrame {
 
         this.dispose();
     }//GEN-LAST:event_cerrarSessionActionPerformed
+
+    private void comboBoxZapateroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxZapateroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboBoxZapateroActionPerformed
 
     /**
      * @param args the command line arguments
