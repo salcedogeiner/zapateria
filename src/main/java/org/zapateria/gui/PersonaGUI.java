@@ -1,11 +1,16 @@
 package org.zapateria.gui;
 
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.JOptionPane;
+import org.zapateria.logica.Calzado;
 import org.zapateria.logica.Persona;
 import org.zapateria.logica.TipoIdentificacion;
+import org.zapateria.mapper.CalzadoMapper;
 import org.zapateria.mapper.PersonaMapper;
+import org.zapateria.mapper.TipoIdentificacionMapper;
 import org.zapateria.utilidades.Constantes;
 
 /**
@@ -14,12 +19,14 @@ import org.zapateria.utilidades.Constantes;
  */
 public class PersonaGUI extends javax.swing.JFrame {
 
+    private EntityManagerFactory emf;
     private Persona persona;
 
     /**
      * Creates new form clienteGUI
      */
     public PersonaGUI() {
+        this.emf = Persistence.createEntityManagerFactory(Constantes.CONTEXTO);
         initComponents();
     }
 
@@ -28,6 +35,7 @@ public class PersonaGUI extends javax.swing.JFrame {
      * @param persona
      */
     public PersonaGUI(Persona persona) {
+        this.emf = Persistence.createEntityManagerFactory(Constantes.CONTEXTO);
         this.persona = persona;
         initComponents();
         establecerValores();
@@ -55,12 +63,12 @@ public class PersonaGUI extends javax.swing.JFrame {
         nombres = new javax.swing.JTextField();
         apellidos = new javax.swing.JTextField();
         identificacion = new javax.swing.JTextField();
-        tipoIdentificacion = new javax.swing.JTextField();
         telefono = new javax.swing.JTextField();
         direccion = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        tipo = new javax.swing.JTextField();
+        comboBoxIdentificacion = new javax.swing.JComboBox<>();
+        tipo = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Zapateria-Cliente");
@@ -123,6 +131,10 @@ public class PersonaGUI extends javax.swing.JFrame {
 
         jLabel8.setText("Tipo");
 
+        getIdentificacionLista();
+
+        tipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Administrador", "Cliente", "Zapatero" }));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -141,15 +153,13 @@ public class PersonaGUI extends javax.swing.JFrame {
                                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(nombres)
                             .addComponent(apellidos)
                             .addComponent(identificacion)
-                            .addComponent(tipoIdentificacion)
                             .addComponent(telefono)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(tipo)
                                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(direccion)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -157,9 +167,14 @@ public class PersonaGUI extends javax.swing.JFrame {
                                         .addComponent(registrar, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                                         .addComponent(cerrarSession, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(75, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(comboBoxIdentificacion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(tipo, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(75, 75, 75))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -189,8 +204,9 @@ public class PersonaGUI extends javax.swing.JFrame {
                         .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(46, 46, 46))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(tipoIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(comboBoxIdentificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(telefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -201,8 +217,8 @@ public class PersonaGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(39, 39, 39)
+                    .addComponent(tipo, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(40, 40, 40)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(registrar)
                     .addComponent(regresar)
@@ -230,16 +246,13 @@ public class PersonaGUI extends javax.swing.JFrame {
             this.persona = new Persona();
         }
 
-        TipoIdentificacion tipoIdentificacion = new TipoIdentificacion();
-        tipoIdentificacion.setId(1);
-
         persona.setNombres(this.nombres.getText());
         persona.setApellidos(this.apellidos.getText());
         persona.setIdentificacion(this.identificacion.getText());
-        persona.setTipoIdentificacion(tipoIdentificacion);
+        persona.setTipoIdentificacion((TipoIdentificacion) this.comboBoxIdentificacion.getSelectedItem());
         persona.setTelefono(this.telefono.getText());
         persona.setDireccion(this.direccion.getText());
-        persona.setTipo(this.tipo.getText());
+        persona.setTipo(this.tipo.getSelectedItem().toString());
 
         PersonaMapper personaMapper = new PersonaMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
 
@@ -266,10 +279,10 @@ public class PersonaGUI extends javax.swing.JFrame {
         this.nombres.setText(this.persona.getNombres());
         this.apellidos.setText(this.persona.getApellidos());
         this.identificacion.setText(this.persona.getIdentificacion());
-        this.tipoIdentificacion.setText(this.persona.getTipoIdentificacion().getNombre());
+        this.comboBoxIdentificacion.setSelectedItem(this.persona.getTipoIdentificacion()); 
         this.telefono.setText(this.persona.getTelefono());
         this.direccion.setText(this.persona.getDireccion());
-        this.tipo.setText(this.persona.getTipo());
+        this.tipo.setSelectedItem(this.persona.getTipo());
     }
 
     private void apellidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apellidosActionPerformed
@@ -299,6 +312,16 @@ public class PersonaGUI extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_cerrarSessionActionPerformed
 
+    private void getIdentificacionLista(){
+        TipoIdentificacionMapper identificacionMapper = new TipoIdentificacionMapper(emf);
+        
+        List<TipoIdentificacion> identificacionLista = identificacionMapper.findTipoIdentificacionEntities();
+        if ( Objects.nonNull(identificacionLista)) {
+            identificacionLista.forEach(identificacion -> comboBoxIdentificacion.addItem(identificacion) );
+        }
+    }
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -340,6 +363,7 @@ public class PersonaGUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField apellidos;
     private javax.swing.JButton cerrarSession;
+    private javax.swing.JComboBox<Object> comboBoxIdentificacion;
     private javax.swing.JTextField direccion;
     private javax.swing.JTextField identificacion;
     private javax.swing.JLabel jLabel1;
@@ -355,7 +379,6 @@ public class PersonaGUI extends javax.swing.JFrame {
     private javax.swing.JButton registrar;
     private javax.swing.JButton regresar;
     private javax.swing.JTextField telefono;
-    private javax.swing.JTextField tipo;
-    private javax.swing.JTextField tipoIdentificacion;
+    private javax.swing.JComboBox<String> tipo;
     // End of variables declaration//GEN-END:variables
 }
