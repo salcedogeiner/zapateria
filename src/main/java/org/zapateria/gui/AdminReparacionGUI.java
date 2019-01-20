@@ -174,7 +174,7 @@ public class AdminReparacionGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_registrarReparacionActionPerformed
 
     private void cerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrarSesionActionPerformed
-         Constantes.session.clear();
+        Constantes.session.clear();
         LoginGUI loginGui = new LoginGUI();
         loginGui.setVisible(true);
 
