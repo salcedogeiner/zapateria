@@ -1,16 +1,44 @@
 package org.zapateria.gui;
 
+import java.util.List;
+import java.util.Objects;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
+import org.zapateria.logica.Reparacion;
+import org.zapateria.mapper.ReparacionMapper;
+import org.zapateria.utilidades.Constantes;
+
 /**
  *
  * @author geiner
  */
 public class ClienteGUI extends javax.swing.JFrame {
 
+    private Reparacion reparacion;
+    private EntityManagerFactory emf;
+    private static final int BOOLEAN_COLUMN = 5;
+    private List<Reparacion> listaReparacion;
+    
     /**
      * Creates new form clienteGUI
      */
     public ClienteGUI() {
+        this.emf = Persistence.createEntityManagerFactory(Constantes.CONTEXTO);
         initComponents();
+    }
+    
+     /**
+     *
+     * @param persona
+     */
+    public ClienteGUI(Reparacion reparacion) {
+        this.emf = Persistence.createEntityManagerFactory(Constantes.CONTEXTO);
+        this.reparacion = reparacion;
+        initComponents();
+        // establecerValores();
     }
 
     /**
@@ -25,6 +53,9 @@ public class ClienteGUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        cambiarRol = new javax.swing.JButton();
+        cerrarSession = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Zapateria-Cliente");
@@ -33,33 +64,69 @@ public class ClienteGUI extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
+            getListReparacion(),
             new String [] {
-                "No", "Calzado", "Fecha ingreso", "Estado", "Detalle"
+                "Reparación", "Calzado", "Fecha Ingreso", "Valor", "Zapatero", "Detalle"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jTable1.getModel().addTableModelListener(new CheckBoxModelListener( this ));
         jScrollPane1.setViewportView(jTable1);
+
+        jLabel1.setText("Bienvenido a Zapateria Cliente");
+
+        cambiarRol.setText("Cambiar de rol");
+        cambiarRol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cambiarRolActionPerformed(evt);
+            }
+        });
+
+        cerrarSession.setText("Cerrar sesión");
+        cerrarSession.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cerrarSessionActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(202, 202, 202)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(44, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 513, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cambiarRol, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(224, 224, 224)
+                .addComponent(cerrarSession, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(46, 46, 46))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 557, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(62, 62, 62)
+                .addGap(17, 17, 17)
+                .addComponent(jLabel1)
+                .addGap(29, 29, 29)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cerrarSession, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cambiarRol, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(55, 55, 55))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -76,6 +143,79 @@ public class ClienteGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cerrarSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrarSessionActionPerformed
+        Constantes.session.clear();
+        LoginGUI loginGui = new LoginGUI();
+        loginGui.setVisible(true);
+
+        this.dispose();
+    }//GEN-LAST:event_cerrarSessionActionPerformed
+
+    private void cambiarRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cambiarRolActionPerformed
+        RolGUI rol = new RolGUI();
+        rol.setVisible(Boolean.TRUE);
+        
+        this.dispose();
+    }//GEN-LAST:event_cambiarRolActionPerformed
+
+    /**
+     * obtiene lista de reparacion
+     * @return 
+     */
+    private Object[][] getListReparacion() {
+        ReparacionMapper reparacionMapper = new ReparacionMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
+        
+        listaReparacion = reparacionMapper.findReparacionEntities();
+        
+        if ( Objects.isNull(listaReparacion))
+            return null;
+        
+        int lenght = listaReparacion.size();
+        Object[][] objectPersona = new Object[lenght][6];
+        
+        for ( int fila = 0; fila < lenght; fila++ ) {
+             objectPersona[fila][0] = listaReparacion.get(fila).getId().toString();
+             objectPersona[fila][1] = listaReparacion.get(fila).getCalzado().getMarca();
+             objectPersona[fila][2] = listaReparacion.get(fila).getFechaSolicitud().toString();
+             objectPersona[fila][3] = listaReparacion.get(fila).getValorReparacion().toString();
+             objectPersona[fila][4] = listaReparacion.get(fila).getZapateroEncargado().getNombres();
+             objectPersona[fila][5] = new Boolean(false);
+        }
+        return objectPersona;
+    }
+    
+     public class CheckBoxModelListener implements TableModelListener {
+
+        private ClienteGUI clienteGUI;
+        
+        public CheckBoxModelListener(ClienteGUI clienteGUI){
+            this.clienteGUI = clienteGUI;
+        }
+        
+        @Override
+        public void tableChanged(TableModelEvent e) {
+            int row = e.getFirstRow();
+            int column = e.getColumn();
+            
+            System.out.println(" row " + row);
+            System.out.println(" column " + column);
+            
+            if (column == BOOLEAN_COLUMN) {
+ 
+                TableModel model = (TableModel) e.getSource();
+                String columnName = model.getColumnName(column);
+                Boolean checked = (Boolean) model.getValueAt(row, column);
+                if (checked) {
+                    
+                    Reparacion reparacion = listaReparacion.get(row);
+                    DetalleClienteGUI personaGui = new DetalleClienteGUI(reparacion);
+                    personaGui.setVisible(Boolean.TRUE);
+                    
+                    this.clienteGUI.dispose();
+                } 
+            }
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -112,6 +252,9 @@ public class ClienteGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cambiarRol;
+    private javax.swing.JButton cerrarSession;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;

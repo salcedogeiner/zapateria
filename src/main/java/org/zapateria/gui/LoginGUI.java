@@ -142,7 +142,7 @@ public class LoginGUI extends javax.swing.JFrame {
         usuario.setClave(this.jTextPassword.getText());
         usuario.setNombreUsuario(this.jTextUsuario.getText());
         usuario = usuarioMapper.consultarUsuario(usuario);
-             if ( Objects.nonNull(usuario)) {
+        if ( Objects.nonNull(usuario)) {
             Constantes.session.put(Constantes.USUARIO, usuario);
             this.dispose();
             RolGUI rolGUI = new RolGUI();

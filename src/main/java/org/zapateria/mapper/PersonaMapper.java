@@ -111,7 +111,7 @@ public class PersonaMapper implements Serializable {
         }
     }
 
-    public void edit(Persona persona) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Persona persona) {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -159,6 +159,7 @@ public class PersonaMapper implements Serializable {
                 usuarioNew = em.getReference(usuarioNew.getClass(), usuarioNew.getId());
                 persona.setUsuario(usuarioNew);
             }
+            /*
             Set<Reparacion> attachedReparacionSetNew = new HashSet<Reparacion>();
             for (Reparacion reparacionSetNewReparacionToAttach : reparacionSetNew) {
                 reparacionSetNewReparacionToAttach = em.getReference(reparacionSetNewReparacionToAttach.getClass(), reparacionSetNewReparacionToAttach.getId());
@@ -173,6 +174,7 @@ public class PersonaMapper implements Serializable {
             }
             reparacionSet1New = attachedReparacionSet1New;
             persona.setReparacionSet1(reparacionSet1New);
+            */
             persona = em.merge(persona);
             if (tipoIdentificacionOld != null && !tipoIdentificacionOld.equals(tipoIdentificacionNew)) {
                 tipoIdentificacionOld.getPersonaSet().remove(persona);
@@ -191,7 +193,7 @@ public class PersonaMapper implements Serializable {
                 usuarioNew.setPersona(persona);
                 usuarioNew = em.merge(usuarioNew);
             }
-            for (Reparacion reparacionSetNewReparacion : reparacionSetNew) {
+          /*  for (Reparacion reparacionSetNewReparacion : reparacionSetNew) {
                 if (!reparacionSetOld.contains(reparacionSetNewReparacion)) {
                     Persona oldClienteOfReparacionSetNewReparacion = reparacionSetNewReparacion.getCliente();
                     reparacionSetNewReparacion.setCliente(persona);
@@ -212,17 +214,11 @@ public class PersonaMapper implements Serializable {
                         oldZapateroEncargadoOfReparacionSet1NewReparacion = em.merge(oldZapateroEncargadoOfReparacionSet1NewReparacion);
                     }
                 }
-            }
+            }*/
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
-            if (msg == null || msg.length() == 0) {
-                Integer id = persona.getId();
-                if (findPersona(id) == null) {
-                    throw new NonexistentEntityException("The persona with id " + id + " no longer exists.");
-                }
-            }
-            throw ex;
+            
         } finally {
             if (em != null) {
                 em.close();
@@ -325,6 +321,30 @@ public class PersonaMapper implements Serializable {
         } finally {
             em.close();
         }
+    }
+    
+    /**
+     * realiza cosulta de persona (tipo)
+     * @param tipo
+     * @return 
+     */
+    public List<Persona> getPersonaTipo(String tipo) {
+         EntityManager em = getEntityManager();
+         List<Persona> personas = null;
+        try {
+            Query query = em.createQuery("Select persona from Persona persona "
+                    + " where persona.tipo = :tipo ");
+            query.setParameter("tipo", tipo);
+            
+            personas = query.getResultList();
+            
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        
+        return personas;
     }
     
 }

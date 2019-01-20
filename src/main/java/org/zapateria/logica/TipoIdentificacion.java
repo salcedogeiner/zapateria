@@ -127,7 +127,7 @@ public class TipoIdentificacion implements Serializable {
 
     @Override
     public String toString() {
-        return "org.zapateria.logica.TipoIdentificacion[ id=" + id + " ]";
+        return this.nombre;
     }
     
 }
