@@ -5,6 +5,7 @@
  */
 package org.zapateria.gui;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Persistence;
@@ -51,7 +52,7 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         marcarCalzado = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        telaCalzado = new javax.swing.JTextField();
+        colorCalzado = new javax.swing.JTextField();
         tallaCalzado = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -60,6 +61,8 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
         regresar = new javax.swing.JButton();
         cerrarSesion = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        materialCalzado = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Zapatería-Zapatero");
@@ -75,7 +78,7 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
         jLabel3.setText("Marca calzado");
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel4.setText("Tela calzado");
+        jLabel4.setText("color calzado");
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Talla calzado");
@@ -108,37 +111,52 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
             }
         });
 
+        jLabel7.setText("material calzado");
+
+        materialCalzado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                materialCalzadoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(marcarCalzado))
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(marcarCalzado))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(colorCalzado))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
+                                .addComponent(cerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(tallaCalzado)))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(telaCalzado))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(tallaCalzado))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(cerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(232, 232, 232)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(materialCalzado)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -155,22 +173,23 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(telaCalzado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(colorCalzado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tallaCalzado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(materialCalzado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cerrarSesion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cerrarSesion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(regresar, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -183,14 +202,16 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarActionPerformed
-        GestionReparacionGUI grGui = new GestionReparacionGUI();
+        GestionReparacionGUI grGui = new GestionReparacionGUI(this.reparacion);
         grGui.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_regresarActionPerformed
@@ -204,23 +225,37 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_cerrarSesionActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Calzado calzado = reparacion.getCalzado();
+       Calzado calzado = new Calzado();
+        if (Objects.isNull(this.reparacion.getCalzado())) {            
+            calzado.setReparacion(this.reparacion);
+        } else {
+            calzado = this.reparacion.getCalzado();
+        }
         calzado.setMarca(marcarCalzado.getText());
-        calzado.setTalla(telaCalzado.getText());
-        calzado.setMaterial(tallaCalzado.getText());
-        Reparacion rep = calzado.getReparacion();
-        rep.setCaracteristicaCalzado(reparacionDesc.getText());
-        calzado.setReparacion(rep);
+        calzado.setColor(colorCalzado.getText());
+        calzado.setTalla(tallaCalzado.getText());
+        calzado.setMaterial(materialCalzado.getText());
+        this.reparacion.setCaracteristicaCalzado(reparacionDesc.getText());
+        calzado.setReparacion(this.reparacion);
+        this.reparacion.setCalzado(calzado);
         
         CalzadoMapper calzadoMapper = new CalzadoMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
         try {
-            calzadoMapper.edit(calzado);
+            if (calzado.getId() != null) {
+                calzadoMapper.edit(calzado);
+            } else {
+                calzadoMapper.create(calzado);
+            }            
             JOptionPane.showMessageDialog(null, "Caracterización actualizada");
         } catch (Exception ex) {
             Logger.getLogger(CaracterizarCalzadoGUI.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Ocurrio un error al actualizar la caracterización del calzado");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void materialCalzadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_materialCalzadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_materialCalzadoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -258,15 +293,24 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
     }
     
     private void establecerValores() {
-        Calzado calzado = reparacion.getCalzado();
+        Calzado calzado = new Calzado();
+        if (Objects.isNull(this.reparacion.getCalzado())) {            
+            calzado.setReparacion(this.reparacion);
+        } else {
+            calzado = this.reparacion.getCalzado();
+        }
+        
         if (calzado.getMarca() != null) {
             marcarCalzado.setText(calzado.getMarca());
         }
-        if (calzado.getTalla() != null) {
-            telaCalzado.setText(calzado.getTalla());
+        if (calzado.getColor()!= null) {
+            colorCalzado.setText(calzado.getColor());
+        }
+        if (calzado.getTalla()!= null) {
+            tallaCalzado.setText(calzado.getTalla());
         }
         if (calzado.getMaterial() != null) {
-            tallaCalzado.setText(calzado.getMaterial());
+            materialCalzado.setText(calzado.getMaterial());
         }
         if (calzado.getReparacion() != null) {
             if (calzado.getReparacion().getCaracteristicaCalzado() != null) {
@@ -277,6 +321,7 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cerrarSesion;
+    private javax.swing.JTextField colorCalzado;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -284,12 +329,13 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField marcarCalzado;
+    private javax.swing.JTextField materialCalzado;
     private javax.swing.JButton regresar;
     private javax.swing.JTextArea reparacionDesc;
     private javax.swing.JTextField tallaCalzado;
-    private javax.swing.JTextField telaCalzado;
     // End of variables declaration//GEN-END:variables
 }

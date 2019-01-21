@@ -177,7 +177,11 @@ public class ZapateroGUI extends javax.swing.JFrame {
         for ( int fila = 0; fila < lenght; fila++ ) {
              objectPersona[fila][0] = listaReparacion.get(fila).getFechaSolicitud().toString();
              objectPersona[fila][1] = listaReparacion.get(fila).getCliente().toString();
-             objectPersona[fila][2] = listaReparacion.get(fila).getCalzado().toString();
+             if (listaReparacion.get(fila).getCalzado() != null) {
+                objectPersona[fila][2] = listaReparacion.get(fila).getCalzado().toString();
+            } else {
+                 objectPersona[fila][2] = "";
+             } 
              objectPersona[fila][3] = listaReparacion.get(fila).getEstadoReparacion().toString();
              objectPersona[fila][4] = new Boolean(false);
         }

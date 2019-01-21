@@ -159,7 +159,7 @@ public class EntregarReparacionGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarActionPerformed
-        GestionReparacionGUI grGui = new GestionReparacionGUI();
+        GestionReparacionGUI grGui = new GestionReparacionGUI(this.reparacion);
         grGui.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_regresarActionPerformed
