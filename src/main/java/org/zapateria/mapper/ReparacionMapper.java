@@ -98,7 +98,7 @@ public class ReparacionMapper implements Serializable {
             }
             reparacion.setPagoSet(attachedPagoSet);
             em.persist(reparacion);
-            if (calzado != null) {
+            /*if (calzado != null) {
                 calzado.setReparacion(reparacion);
                 calzado = em.merge(calzado);
             }
@@ -131,7 +131,7 @@ public class ReparacionMapper implements Serializable {
                     oldReparacionOfPagoSetPago.getPagoSet().remove(pagoSetPago);
                     oldReparacionOfPagoSetPago = em.merge(oldReparacionOfPagoSetPago);
                 }
-            }
+            }*/
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -159,7 +159,7 @@ public class ReparacionMapper implements Serializable {
             Set<Pago> pagoSetOld = persistentReparacion.getPagoSet();
             Set<Pago> pagoSetNew = reparacion.getPagoSet();
             List<String> illegalOrphanMessages = null;
-            if (calzadoNew != null && !calzadoNew.equals(calzadoOld)) {
+            /*if (calzadoNew != null && !calzadoNew.equals(calzadoOld)) {
                 Reparacion oldReparacionOfCalzado = calzadoNew.getReparacion();
                 if (oldReparacionOfCalzado != null) {
                     if (illegalOrphanMessages == null) {
@@ -167,15 +167,15 @@ public class ReparacionMapper implements Serializable {
                     }
                     illegalOrphanMessages.add("The Calzado " + calzadoNew + " already has an item of type Reparacion whose calzado column cannot be null. Please make another selection for the calzado field.");
                 }
-            }
-            for (IsumoReparacion isumoReparacionSetOldIsumoReparacion : isumoReparacionSetOld) {
+            }*/
+            /*for (IsumoReparacion isumoReparacionSetOldIsumoReparacion : isumoReparacionSetOld) {
                 if (!isumoReparacionSetNew.contains(isumoReparacionSetOldIsumoReparacion)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add("You must retain IsumoReparacion " + isumoReparacionSetOldIsumoReparacion + " since its reparacion field is not nullable.");
                 }
-            }
+            }*/
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
@@ -210,7 +210,7 @@ public class ReparacionMapper implements Serializable {
             /*pagoSetNew = attachedPagoSetNew;
             reparacion.setPagoSet(pagoSetNew);*/
             reparacion = em.merge(reparacion);
-            if (calzadoOld != null && !calzadoOld.equals(calzadoNew)) {
+            /*if (calzadoOld != null && !calzadoOld.equals(calzadoNew)) {
                 calzadoOld.setReparacion(null);
                 calzadoOld = em.merge(calzadoOld);
             }
@@ -241,7 +241,7 @@ public class ReparacionMapper implements Serializable {
             if (zapateroEncargadoNew != null && !zapateroEncargadoNew.equals(zapateroEncargadoOld)) {
                 zapateroEncargadoNew.getReparacionSet().add(reparacion);
                 zapateroEncargadoNew = em.merge(zapateroEncargadoNew);
-            }
+            }*/
             /*for (IsumoReparacion isumoReparacionSetNewIsumoReparacion : isumoReparacionSetNew) {
                 if (!isumoReparacionSetOld.contains(isumoReparacionSetNewIsumoReparacion)) {
                     Reparacion oldReparacionOfIsumoReparacionSetNewIsumoReparacion = isumoReparacionSetNewIsumoReparacion.getReparacion();
@@ -391,7 +391,7 @@ public class ReparacionMapper implements Serializable {
         }
     }
     
-    public List<Reparacion> consultarReparacionesZapatero(String id_zapatero) {
+    public List<Reparacion> consultarReparacionesZapatero(Integer id_zapatero) {
         EntityManager em = getEntityManager();
         try {
             Query query;
@@ -399,7 +399,6 @@ public class ReparacionMapper implements Serializable {
                 ("SELECT r FROM Reparacion r "
                     + "WHERE r.zapateroEncargado.id = :id_zapatero");
             query.setParameter("id_zapatero", id_zapatero);
-            
             return query.getResultList();
         } catch (Exception e) {
             System.out.println(e.toString());
@@ -409,4 +408,20 @@ public class ReparacionMapper implements Serializable {
         }
     }
     
+    public List<Reparacion> consultarReparacionesCliente(Integer id_cliente) {
+        EntityManager em = getEntityManager();
+        try {
+            Query query;
+            query = em.createQuery
+                ("SELECT r FROM Reparacion r "
+                    + "WHERE r.cliente.id = :id_cliente");
+            query.setParameter("id_cliente", id_cliente);
+            return query.getResultList();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 }

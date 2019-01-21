@@ -5,7 +5,15 @@
  */
 package org.zapateria.gui;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.Persistence;
+import javax.swing.JOptionPane;
+import org.zapateria.logica.Calzado;
+import org.zapateria.logica.Reparacion;
 import org.zapateria.utilidades.Constantes;
+import org.zapateria.mapper.CalzadoMapper;
+import org.zapateria.mapper.exceptions.NonexistentEntityException;
 
 /**
  *
@@ -13,11 +21,19 @@ import org.zapateria.utilidades.Constantes;
  */
 public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
 
+    Reparacion reparacion;
+    
     /**
      * Creates new form CaracterizarCalzadoGUI
      */
     public CaracterizarCalzadoGUI() {
         initComponents();
+    }
+    
+    public CaracterizarCalzadoGUI(Reparacion reparacion) {
+        initComponents();
+        this.reparacion = reparacion;
+        establecerValores();
     }
 
     /**
@@ -33,14 +49,14 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        marcarCalzado = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        telaCalzado = new javax.swing.JTextField();
+        tallaCalzado = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        reparacionDesc = new javax.swing.JTextArea();
         regresar = new javax.swing.JButton();
         cerrarSesion = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
@@ -67,9 +83,9 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel6.setText("Reparación a realizar");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        reparacionDesc.setColumns(20);
+        reparacionDesc.setRows(5);
+        jScrollPane1.setViewportView(reparacionDesc);
 
         regresar.setText("Regresar");
         regresar.addActionListener(new java.awt.event.ActionListener() {
@@ -86,6 +102,11 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
         });
 
         jButton1.setText("Actualizar caracterización");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -99,15 +120,15 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField1))
+                        .addComponent(marcarCalzado))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField2))
+                        .addComponent(telaCalzado))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField3))
+                        .addComponent(tallaCalzado))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -130,15 +151,15 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
                 .addGap(34, 34, 34)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(marcarCalzado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(telaCalzado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tallaCalzado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -182,6 +203,25 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_cerrarSesionActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Calzado calzado = reparacion.getCalzado();
+        calzado.setMarca(marcarCalzado.getText());
+        calzado.setTalla(telaCalzado.getText());
+        calzado.setMaterial(tallaCalzado.getText());
+        Reparacion rep = calzado.getReparacion();
+        rep.setCaracteristicaCalzado(reparacionDesc.getText());
+        calzado.setReparacion(rep);
+        
+        CalzadoMapper calzadoMapper = new CalzadoMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
+        try {
+            calzadoMapper.edit(calzado);
+            JOptionPane.showMessageDialog(null, "Caracterización actualizada");
+        } catch (Exception ex) {
+            Logger.getLogger(CaracterizarCalzadoGUI.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Ocurrio un error al actualizar la caracterización del calzado");
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -216,6 +256,24 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
             }
         });
     }
+    
+    private void establecerValores() {
+        Calzado calzado = reparacion.getCalzado();
+        if (calzado.getMarca() != null) {
+            marcarCalzado.setText(calzado.getMarca());
+        }
+        if (calzado.getTalla() != null) {
+            telaCalzado.setText(calzado.getTalla());
+        }
+        if (calzado.getMaterial() != null) {
+            tallaCalzado.setText(calzado.getMaterial());
+        }
+        if (calzado.getReparacion() != null) {
+            if (calzado.getReparacion().getCaracteristicaCalzado() != null) {
+                reparacionDesc.append(calzado.getReparacion().getCaracteristicaCalzado());
+            }
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cerrarSesion;
@@ -228,10 +286,10 @@ public class CaracterizarCalzadoGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField marcarCalzado;
     private javax.swing.JButton regresar;
+    private javax.swing.JTextArea reparacionDesc;
+    private javax.swing.JTextField tallaCalzado;
+    private javax.swing.JTextField telaCalzado;
     // End of variables declaration//GEN-END:variables
 }

@@ -195,7 +195,8 @@ public class AdminReparacionGUI extends javax.swing.JFrame {
         for ( int fila = 0; fila < lenght; fila++ ) {
              objectPersona[fila][0] = listaReparacion.get(fila).getFechaSolicitud().toString();
              objectPersona[fila][1] = listaReparacion.get(fila).getCliente().getNombres();
-             objectPersona[fila][2] = listaReparacion.get(fila).getCalzado().getMarca();
+             if ( Objects.nonNull(listaReparacion.get(fila).getCalzado()))
+                objectPersona[fila][2] = listaReparacion.get(fila).getCalzado().getMarca();
              objectPersona[fila][3] = listaReparacion.get(fila).getEstadoReparacion().getNombre();
              objectPersona[fila][4] = new Boolean(false);
         }

@@ -73,7 +73,7 @@ public class Reparacion implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "reparacion")
     private Set<IsumoReparacion> isumoReparacionSet;
     @JoinColumn(name = "calzado", referencedColumnName = "id")
-    @OneToOne(optional = false)
+    @ManyToOne(optional = true)
     private Calzado calzado;
     @JoinColumn(name = "estado_reparacion", referencedColumnName = "id")
     @ManyToOne(optional = false)

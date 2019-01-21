@@ -130,7 +130,7 @@ public class Insumo implements Serializable {
 
     @Override
     public String toString() {
-        return "org.zapateria.logica.Insumo[ id=" + id + " ]";
+        return this.nombre;
     }
     
 }

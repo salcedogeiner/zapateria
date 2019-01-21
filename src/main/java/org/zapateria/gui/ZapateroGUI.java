@@ -20,7 +20,7 @@ public class ZapateroGUI extends javax.swing.JFrame {
 
     private Reparacion reparacion;
     private EntityManagerFactory emf;
-    private static final int BOOLEAN_COLUMN = 5;
+    private static final int BOOLEAN_COLUMN = 4;
     private List<Reparacion> listaReparacion;
     
     /**
@@ -166,7 +166,7 @@ public class ZapateroGUI extends javax.swing.JFrame {
     private Object[][] getListReparacion() {
         ReparacionMapper reparacionMapper = new ReparacionMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
         Usuario usuario = (Usuario)Constantes.session.get(Constantes.USUARIO);
-        listaReparacion = reparacionMapper.consultarReparacionesZapatero(usuario.getId().toString());
+        listaReparacion = reparacionMapper.consultarReparacionesZapatero(usuario.getPersona().getId());
         
         if ( Objects.isNull(listaReparacion))
             return null;
@@ -179,17 +179,17 @@ public class ZapateroGUI extends javax.swing.JFrame {
              objectPersona[fila][1] = listaReparacion.get(fila).getCliente().toString();
              objectPersona[fila][2] = listaReparacion.get(fila).getCalzado().toString();
              objectPersona[fila][3] = listaReparacion.get(fila).getEstadoReparacion().toString();
-             objectPersona[fila][5] = new Boolean(false);
+             objectPersona[fila][4] = new Boolean(false);
         }
         return objectPersona;
     }
     
      public class CheckBoxModelListener implements TableModelListener {
 
-        private ZapateroGUI clienteGUI;
+        private ZapateroGUI zapateroGUI;
         
-        public CheckBoxModelListener(ZapateroGUI clienteGUI){
-            this.clienteGUI = clienteGUI;
+        public CheckBoxModelListener(ZapateroGUI zapateroGUI){
+            this.zapateroGUI = zapateroGUI;
         }
         
         @Override
@@ -208,10 +208,10 @@ public class ZapateroGUI extends javax.swing.JFrame {
                 if (checked) {
                     
                     Reparacion reparacion = listaReparacion.get(row);
-                    DetalleClienteGUI personaGui = new DetalleClienteGUI(reparacion);
-                    personaGui.setVisible(Boolean.TRUE);
+                    GestionReparacionGUI gestionGui = new GestionReparacionGUI(reparacion);
+                    gestionGui.setVisible(Boolean.TRUE);
                     
-                    this.clienteGUI.dispose();
+                    this.zapateroGUI.dispose();
                 } 
             }
         }

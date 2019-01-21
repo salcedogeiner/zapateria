@@ -295,7 +295,11 @@ public class ReparacionGUI extends javax.swing.JFrame {
         reparacion.setEstadoReparacion((EstadoReparacion) comboBoxEstadoReparacion.getSelectedItem());
         reparacion.setCliente((Persona) this.comboBoxCliente.getSelectedItem());
         reparacion.setZapateroEncargado((Persona) comboBoxZapatero.getSelectedItem());
+        
+        if (Objects.isNull(reparacion.getCalzado()))
+            reparacion.setCalzado(new Calzado());
         reparacion.setCalzado((Calzado) comboBoxCalzado.getSelectedItem());
+        
         reparacion.setValorReparacion(new BigInteger(this.valor.getText()));
         reparacion.setComisionZapatero(new BigDecimal(this.comision.getText()));
 

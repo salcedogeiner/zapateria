@@ -5,6 +5,13 @@
  */
 package org.zapateria.gui;
 
+import java.util.Date;
+import javax.persistence.Persistence;
+import javax.swing.JOptionPane;
+import org.zapateria.logica.EstadoReparacion;
+import org.zapateria.logica.Reparacion;
+import org.zapateria.mapper.EstadoReparacionMapper;
+import org.zapateria.mapper.ReparacionMapper;
 import org.zapateria.utilidades.Constantes;
 
 /**
@@ -13,11 +20,18 @@ import org.zapateria.utilidades.Constantes;
  */
 public class EntregarReparacionGUI extends javax.swing.JFrame {
 
+    Reparacion reparacion;
+    
     /**
      * Creates new form EntregarReparacionGUI
      */
     public EntregarReparacionGUI() {
         initComponents();
+    }
+    
+    public EntregarReparacionGUI(Reparacion reparacion) {
+        initComponents();
+        this.reparacion = reparacion;
     }
 
     /**
@@ -34,7 +48,7 @@ public class EntregarReparacionGUI extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        caracteristica = new javax.swing.JTextArea();
         jLabel4 = new javax.swing.JLabel();
         regresar = new javax.swing.JButton();
         cerrarSesion = new javax.swing.JButton();
@@ -55,9 +69,9 @@ public class EntregarReparacionGUI extends javax.swing.JFrame {
         jLabel3.setText("¿Esta seguro que la reparación está lista para la entrega?");
         jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        caracteristica.setColumns(20);
+        caracteristica.setRows(5);
+        jScrollPane1.setViewportView(caracteristica);
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Observación");
@@ -77,6 +91,11 @@ public class EntregarReparacionGUI extends javax.swing.JFrame {
         });
 
         jButton1.setText("Entregar reparación");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -153,6 +172,21 @@ public class EntregarReparacionGUI extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_cerrarSesionActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        EstadoReparacionMapper estadoReparacionMapper = new EstadoReparacionMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
+        ReparacionMapper reparacionMapper = new ReparacionMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
+        
+        EstadoReparacion estadoFinalizado = estadoReparacionMapper.findEstadoReparacion(3);
+        this.reparacion.setEstadoReparacion(estadoFinalizado);
+        this.reparacion.setCaracteristicaCalzado(caracteristica.getText());
+        this.reparacion.setFechaEntrega(new Date());
+        
+        reparacionMapper.edit(this.reparacion);
+        
+        JOptionPane.showConfirmDialog(null, "Reparación entregada");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -189,6 +223,7 @@ public class EntregarReparacionGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea caracteristica;
     private javax.swing.JButton cerrarSesion;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
@@ -197,7 +232,6 @@ public class EntregarReparacionGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JButton regresar;
     // End of variables declaration//GEN-END:variables
 }

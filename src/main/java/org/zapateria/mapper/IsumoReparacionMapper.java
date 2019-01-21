@@ -49,14 +49,6 @@ public class IsumoReparacionMapper implements Serializable {
                 isumoReparacion.setReparacion(reparacion);
             }
             em.persist(isumoReparacion);
-            if (insumo != null) {
-                insumo.getIsumoReparacionSet().add(isumoReparacion);
-                insumo = em.merge(insumo);
-            }
-            if (reparacion != null) {
-                reparacion.getIsumoReparacionSet().add(isumoReparacion);
-                reparacion = em.merge(reparacion);
-            }
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -189,6 +181,25 @@ public class IsumoReparacionMapper implements Serializable {
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
+        } finally {
+            em.close();
+        }
+    }
+    
+    public List<IsumoReparacion> consultarInsumosReparacion(Reparacion reparacion, Insumo insumo) {
+        EntityManager em = getEntityManager();
+        try {
+            Query query;
+            query = em.createQuery
+                ("SELECT r FROM IsumoReparacion r "
+                    + "WHERE r.reparacion.id = :id_reparacion "
+                    + "r.insumo.id = :id_insumo");
+            query.setParameter("id_reparacion", reparacion.getId());
+            query.setParameter("id_insumo", insumo.getId());
+            return query.getResultList();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return null;
         } finally {
             em.close();
         }

@@ -5,6 +5,9 @@
  */
 package org.zapateria.gui;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import org.zapateria.logica.Reparacion;
 import org.zapateria.utilidades.Constantes;
 
 /**
@@ -13,10 +16,19 @@ import org.zapateria.utilidades.Constantes;
  */
 public class GestionReparacionGUI extends javax.swing.JFrame {
 
+    private Reparacion reparacion;
+    private EntityManagerFactory emf;
+    
     /**
      * Creates new form GestionReparacionGUI
      */
     public GestionReparacionGUI() {
+        initComponents();
+    }
+    
+    public GestionReparacionGUI(Reparacion reparacion) {
+        this.emf = Persistence.createEntityManagerFactory(Constantes.CONTEXTO);
+        this.reparacion = reparacion;
         initComponents();
     }
 
@@ -56,8 +68,18 @@ public class GestionReparacionGUI extends javax.swing.JFrame {
         });
 
         jButton2.setText("Caracterizar calzado");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Entregar reparación");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         regresar.setText("Regresar");
         regresar.addActionListener(new java.awt.event.ActionListener() {
@@ -133,7 +155,9 @@ public class GestionReparacionGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        ActualizarInsumosGUI actualizarGUI = new ActualizarInsumosGUI(this.reparacion);
+        actualizarGUI.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void regresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regresarActionPerformed
@@ -149,6 +173,18 @@ public class GestionReparacionGUI extends javax.swing.JFrame {
 
         this.dispose();
     }//GEN-LAST:event_cerrarSesionActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        CaracterizarCalzadoGUI caracterizarGUI = new CaracterizarCalzadoGUI(this.reparacion);
+        caracterizarGUI.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        EntregarReparacionGUI entregarGUI = new EntregarReparacionGUI(this.reparacion);
+        entregarGUI.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -184,6 +220,7 @@ public class GestionReparacionGUI extends javax.swing.JFrame {
             }
         });
     }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cerrarSesion;

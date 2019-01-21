@@ -5,6 +5,19 @@
  */
 package org.zapateria.gui;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.Persistence;
+import javax.swing.JOptionPane;
+import org.zapateria.logica.Reparacion;
+import org.zapateria.logica.Insumo;
+import org.zapateria.logica.IsumoReparacion;
+import org.zapateria.mapper.InsumoMapper;
+import org.zapateria.mapper.IsumoReparacionMapper;
 import org.zapateria.utilidades.Constantes;
 
 /**
@@ -13,11 +26,20 @@ import org.zapateria.utilidades.Constantes;
  */
 public class ActualizarInsumosGUI extends javax.swing.JFrame {
 
+    private Reparacion reparacion;
+    private List<Insumo> listaInsumos;
+
     /**
      * Creates new form ActualizarInsumosGUI
      */
     public ActualizarInsumosGUI() {
         initComponents();
+    }
+
+    public ActualizarInsumosGUI(Reparacion reparacion) {
+        this.reparacion = reparacion;
+        initComponents();
+        consultarInsumos();
     }
 
     /**
@@ -33,7 +55,7 @@ public class ActualizarInsumosGUI extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        comboBoxInsumo = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
@@ -53,12 +75,15 @@ public class ActualizarInsumosGUI extends javax.swing.JFrame {
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel3.setText("Seleccione insumo utilizado");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Cantidad usada del insumo");
 
         jButton1.setText("Actualizar uso del insumo");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         regresar.setText("Regresar");
         regresar.addActionListener(new java.awt.event.ActionListener() {
@@ -89,7 +114,7 @@ public class ActualizarInsumosGUI extends javax.swing.JFrame {
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(comboBoxInsumo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jTextField1))))
                 .addGap(20, 20, 20))
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -112,7 +137,7 @@ public class ActualizarInsumosGUI extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addGap(59, 59, 59)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jComboBox1)
+                    .addComponent(comboBoxInsumo)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -155,6 +180,30 @@ public class ActualizarInsumosGUI extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_cerrarSesionActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        IsumoReparacionMapper insumoReparacionMapper = new IsumoReparacionMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
+
+        IsumoReparacion insumoReparacion = new IsumoReparacion();
+
+        insumoReparacion.setReparacion(reparacion);
+        insumoReparacion.setCantidadUtilizada(new BigInteger(jTextField1.getText()));
+        insumoReparacion.setCantidadEstimada(new BigInteger(jTextField1.getText()));
+        insumoReparacion.setInsumo((Insumo) comboBoxInsumo.getSelectedItem());
+
+        try {
+            insumoReparacionMapper.create(insumoReparacion);
+            JOptionPane.showMessageDialog(null, "Insumos actualizados");
+
+        } catch (Exception ex) {
+            Logger.getLogger(ActualizarInsumosGUI.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Se presentó un error el actualizar los insumos utilizados");
+        }
+
+        GestionReparacionGUI gestion = new GestionReparacionGUI(this.reparacion);
+        gestion.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -190,10 +239,20 @@ public class ActualizarInsumosGUI extends javax.swing.JFrame {
         });
     }
 
+    private void consultarInsumos() {
+        InsumoMapper insumoMapper = new InsumoMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
+        listaInsumos = insumoMapper.findInsumoEntities();
+
+        for (Insumo insumo : listaInsumos) {
+            comboBoxInsumo.addItem(insumo);
+        }
+
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cerrarSesion;
+    private javax.swing.JComboBox<Object> comboBoxInsumo;
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

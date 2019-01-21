@@ -8,6 +8,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import org.zapateria.logica.Reparacion;
+import org.zapateria.logica.Usuario;
 import org.zapateria.mapper.ReparacionMapper;
 import org.zapateria.utilidades.Constantes;
 
@@ -164,8 +165,8 @@ public class ClienteGUI extends javax.swing.JFrame {
      */
     private Object[][] getListReparacion() {
         ReparacionMapper reparacionMapper = new ReparacionMapper(Persistence.createEntityManagerFactory(Constantes.CONTEXTO));
-        
-        listaReparacion = reparacionMapper.findReparacionEntities();
+        Usuario usuario = (Usuario)Constantes.session.get(Constantes.USUARIO);
+        listaReparacion = reparacionMapper.consultarReparacionesCliente(usuario.getPersona().getId());
         
         if ( Objects.isNull(listaReparacion))
             return null;
